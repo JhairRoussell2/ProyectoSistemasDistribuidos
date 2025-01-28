@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css"; // Importar estilos de Mapbox
+import Navbar from '../components/Navbar'; // Importar el componente Navba
 
 mapboxgl.accessToken = "pk.eyJ1IjoiZGFuaWVscHJ1ZWJhMjMiLCJhIjoiY200YnlpbGV5MDVqeTJ3b3ZsOXp0bXpmbiJ9.bh_ogcw3BioUBy--uuJ0LQ";
 
@@ -89,6 +90,10 @@ const RegistroSiniestro = () => {
   };
 
   return (
+    <div>
+      
+      <Navbar /> {/* Agregar el Navbar aquí */}
+      <div style={{ transform: 'scale(0.80)', transformOrigin: 'top' }}>
     <div className="max-w-7xl mx-auto mt-10 p-8 bg-gradient-to-br from-red-200 to-red-400 border-4 border-red-600 rounded-lg shadow-lg">
       <h1 className="text-4xl font-bold text-red-700 text-center mb-8 tracking-wide uppercase">
         Registrar Siniestro
@@ -169,6 +174,8 @@ const RegistroSiniestro = () => {
           <div ref={mapContainerRef} className="w-full h-full"></div>
         </div>
       </div>
+    </div>
+    </div>
     </div>
   );
 };
