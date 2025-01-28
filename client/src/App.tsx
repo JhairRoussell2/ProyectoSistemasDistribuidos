@@ -7,6 +7,7 @@ import PersonalDashboard from "./pages/PersonalDashboard";
 import GeneralDashboard from "./pages/GeneralDashboard";
 // import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
+import MantenerBeneficiarios from "./pages/Beneficiarios";
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
         <Route path="/dashboard/personal" element={<PersonalDashboard />} />
         <Route path="/dashboard/general" element={<GeneralDashboard />} />
         <Route path="/registro-siniestro" element={<RegistroSiniestro />} />
+        <Route path="/Mantener-Beneficiario" element={<MantenerBeneficiarios />} />
         {/* Rutas protegidas */}
         {/* <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
