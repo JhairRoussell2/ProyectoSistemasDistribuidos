@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Importar useNavigate para navegación
 import axios from "axios";
 import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css"; // Importar estilos de Mapbox
-import Navbar from '../components/Navbar'; // Importar el componente Navba
+import "mapbox-gl/dist/mapbox-gl.css";
+import Navbar from '../components/Navbar';
 
 mapboxgl.accessToken = "pk.eyJ1IjoiZGFuaWVscHJ1ZWJhMjMiLCJhIjoiY200YnlpbGV5MDVqeTJ3b3ZsOXp0bXpmbiJ9.bh_ogcw3BioUBy--uuJ0LQ";
 
 const RegistroSiniestro = () => {
+  const navigate = useNavigate(); // Hook para la navegación
   const [form, setForm] = useState({
     tipoSiniestro: "",
     fechaSiniestro: "",
@@ -22,20 +24,18 @@ const RegistroSiniestro = () => {
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<mapboxgl.Marker | null>(null);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
   };
 
   useEffect(() => {
-    if (mapRef.current) return; // Inicializar solo si el mapa no existe
+    if (mapRef.current) return;
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current!,
       style: "mapbox://styles/mapbox/streets-v11",
-      center: [-77.0428, -12.0464], // Coordenadas iniciales (Lima, Perú)
+      center: [-77.0428, -12.0464],
       zoom: 12,
     });
 
@@ -90,93 +90,103 @@ const RegistroSiniestro = () => {
   };
 
   return (
-    <div>
-      
-      <Navbar /> {/* Agregar el Navbar aquí */}
+    <div style={{ backgroundColor: "#1E3A5F", minHeight: "100vh" }}>
+      <Navbar />
       <div style={{ transform: 'scale(0.80)', transformOrigin: 'top' }}>
-    <div className="max-w-7xl mx-auto mt-10 p-8 bg-gradient-to-br from-red-200 to-red-400 border-4 border-red-600 rounded-lg shadow-lg">
-      <h1 className="text-4xl font-bold text-red-700 text-center mb-8 tracking-wide uppercase">
-        Registrar Siniestro
-      </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-        
-        {/* Formulario */}
-        <form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
-          <div className="grid grid-cols-1 gap-4">
-            <input
-              type="text"
-              name="tipoSiniestro"
-              placeholder="Tipo de Siniestro"
-              value={form.tipoSiniestro}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300"
-              required
-            />
-            <input
-              type="date"
-              name="fechaSiniestro"
-              value={form.fechaSiniestro}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300"
-              required
-            />
-            <input
-              type="text"
-              name="departamento"
-              placeholder="Departamento"
-              value={form.departamento}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300"
-            />
-            <input
-              type="text"
-              name="distrito"
-              placeholder="Distrito"
-              value={form.distrito}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300"
-            />
-            <input
-              type="text"
-              name="provincia"
-              placeholder="Provincia"
-              value={form.provincia}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300"
-            />
-            <input
-              type="text"
-              name="ubicacion"
-              placeholder="Ubicación"
-              value={form.ubicacion}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300"
-            />
-          </div>
-          <textarea
-            name="descripcion"
-            placeholder="Descripción"
-            value={form.descripcion}
-            onChange={handleChange}
-            className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300 flex-grow"
-            required
-          ></textarea>
-          <button
-            type="submit"
-            className="w-full bg-red-500 text-white font-bold px-6 py-3 mt-4 rounded-lg hover:bg-red-600 hover:text-white focus:ring focus:ring-red-300 shadow-md transition duration-300"
-          >
+        <div className="max-w-7xl mx-auto mt-10 p-8 bg-gradient-to-br from-red-200 to-red-400 border-4 border-red-600 rounded-lg shadow-lg">
+          <h1 className="text-4xl font-bold text-red-700 text-center mb-8 tracking-wide uppercase">
             Registrar Siniestro
-          </button>
-        </form>
+          </h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            
+            {/* Formulario */}
+            <form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
+              <div className="grid grid-cols-1 gap-4">
+                <input
+                  type="text"
+                  name="tipoSiniestro"
+                  placeholder="Tipo de Siniestro"
+                  value={form.tipoSiniestro}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300"
+                  required
+                />
+                <input
+                  type="date"
+                  name="fechaSiniestro"
+                  value={form.fechaSiniestro}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300"
+                  required
+                />
+                <input
+                  type="text"
+                  name="departamento"
+                  placeholder="Departamento"
+                  value={form.departamento}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300"
+                />
+                <input
+                  type="text"
+                  name="distrito"
+                  placeholder="Distrito"
+                  value={form.distrito}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300"
+                />
+                <input
+                  type="text"
+                  name="provincia"
+                  placeholder="Provincia"
+                  value={form.provincia}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300"
+                />
+                <input
+                  type="text"
+                  name="ubicacion"
+                  placeholder="Ubicación"
+                  value={form.ubicacion}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300"
+                />
+              </div>
+              <textarea
+                name="descripcion"
+                placeholder="Descripción"
+                value={form.descripcion}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300 flex-grow"
+                required
+              ></textarea>
+              <button
+                type="submit"
+                className="w-full bg-red-500 text-white font-bold px-6 py-3 mt-4 rounded-lg hover:bg-red-600 focus:ring focus:ring-red-300 shadow-md transition duration-300"
+              >
+                Registrar Siniestro
+              </button>
+            </form>
 
-        {/* Mapa */}
-        <div className="w-full h-[480px] border border-red-400 rounded-lg">
-          <div ref={mapContainerRef} className="w-full h-full"></div>
+            {/* Mapa */}
+            <div className="w-full h-[480px] border border-red-400 rounded-lg">
+              <div ref={mapContainerRef} className="w-full h-full"></div>
+              </div>
+          </div>
         </div>
       </div>
-    </div>
-    </div>
-    </div>
+          {/* Botón de regreso al dashboard - Debajo del formulario */}
+          <div className="-mt-20 flex justify-center ">
+            <button
+              onClick={() => navigate("/dashboard/general")}
+              className="bg-gray-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-gray-700 focus:ring focus:ring-gray-300 shadow-md transition duration-300"
+            >
+              Regresar al Dashboard
+            </button>
+          </div>
+
+        </div>
+      
   );
 };
 
