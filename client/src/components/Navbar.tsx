@@ -36,7 +36,7 @@ const Navbar = () => {
           Ver Perfil
         </button>
         {showProfile && (
-          <Modal onClose={() => setShowProfile(false)}>
+          <Modal isOpen={showProfile} title="Perfil de Usuario" onClose={() => setShowProfile(false)}>
             <h2 className="text-xl font-bold text-white mb-2">Perfil de Usuario</h2>
             <p className="text-gray-300"><span className="font-bold">Nombre:</span> {user?.Nombre} {user?.Apellido}</p>
             <p className="text-gray-300"><span className="font-bold">Correo:</span> {user?.Email}</p>
