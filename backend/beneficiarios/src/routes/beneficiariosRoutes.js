@@ -8,4 +8,6 @@ const beneficiariosController_1 = require("../controllers/beneficiariosControlle
 const router = express_1.default.Router();
 router.get('/', beneficiariosController_1.getBeneficiarios);
 router.post('/', beneficiariosController_1.createBeneficiario);
+router.put('/:id', beneficiariosController_1.updateBeneficiario);
+router.delete('/:id', beneficiariosController_1.deleteBeneficiario);
 exports.default = router;
