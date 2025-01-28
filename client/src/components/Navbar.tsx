@@ -1,6 +1,7 @@
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import Modal from './Modal';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -19,16 +20,23 @@ const Navbar = () => {
           Seguro<span className="text-blue-400">Flex</span>
         </span>
       </h1>
-      <div className="relative">
+      <div className="flex items-center space-x-4">
+        {user?.Rol === 'Administrador' && (
+          <button
+            onClick={() => navigate('/usuarios')}
+            className="bg-green-600 hover:bg-green-700 px-5 py-2 rounded-lg text-white font-semibold transition shadow-lg"
+          >
+            Ver Usuarios
+          </button>
+        )}
         <button
           onClick={() => setShowProfile(!showProfile)}
           className="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-white font-semibold transition shadow-lg"
         >
           Ver Perfil
         </button>
-
         {showProfile && (
-          <div className="absolute right-0 mt-2 w-72 bg-gray-700 border border-gray-600 rounded-lg shadow-lg p-6">
+          <Modal onClose={() => setShowProfile(false)}>
             <h2 className="text-xl font-bold text-white mb-2">Perfil de Usuario</h2>
             <p className="text-gray-300"><span className="font-bold">Nombre:</span> {user?.Nombre} {user?.Apellido}</p>
             <p className="text-gray-300"><span className="font-bold">Correo:</span> {user?.Email}</p>
@@ -39,7 +47,7 @@ const Navbar = () => {
             >
               Cerrar sesión
             </button>
-          </div>
+          </Modal>
         )}
       </div>
     </nav>
