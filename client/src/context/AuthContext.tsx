@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import apiClient from '../services/apiClient';
+import { useAuth } from '../context/AuthContext'; 
 
 interface AuthResponse {
   token: string;
@@ -9,6 +10,7 @@ interface AuthResponse {
 interface AuthContextType {
   user: { UsuarioID: number; Nombre: string; Apellido: string; Email: string; Rol: 'Personal' | 'Administrador' | 'General' } | null;
   login: (email: string, password: string) => Promise<void>;
+  register: (userData: { Nombre: string; Apellido: string; Email: string; Password: string; Rol?: string }) => Promise<void>; // ✅ Agregada función register
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -53,6 +55,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  // ✅ Nueva función register para registrar usuarios
+  const register = async (userData: { Nombre: string; Apellido: string; Email: string; Password: string; Rol?: string }) => {
+    try {
+      const response = await apiClient.post<AuthResponse>('/register', userData);
+
+      if (!response.data || !response.data.user) {
+        throw new Error('Error en el registro');
+      }
+
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      setUser(response.data.user);
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error('Error en registro:', error);
+      throw new Error('No se pudo registrar el usuario');
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -61,7 +82,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, login, register, logout, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { PencilSquareIcon, TrashIcon, UserPlusIcon } from "@heroicons/react/24/outline";
+import Navbar from "../components/Navbar";
 import Modal from "../components/Modal";
 
-// Define el tipo para los beneficiarios
 interface Beneficiario {
   BeneficiarioID: number;
   Nombre: string;
@@ -26,7 +25,6 @@ const MantenerBeneficiarios = () => {
     Telefono: "",
   });
 
-  // Obtener beneficiarios al cargar la página
   useEffect(() => {
     const fetchBeneficiarios = async () => {
       try {
@@ -40,7 +38,6 @@ const MantenerBeneficiarios = () => {
     fetchBeneficiarios();
   }, []);
 
-  // Filtrar por DNI
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchDNI(value);
@@ -48,7 +45,6 @@ const MantenerBeneficiarios = () => {
     setFilteredBeneficiarios(filtered);
   };
 
-  // Eliminar beneficiario
   const handleDelete = async (id: number) => {
     try {
       await axios.delete(`http://localhost:3000/api/beneficiarios/${id}`);
@@ -62,15 +58,12 @@ const MantenerBeneficiarios = () => {
     }
   };
 
-  // Manejo de cambios en los inputs
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewBeneficiario({ ...newBeneficiario, [e.target.name]: e.target.value });
   };
 
-  // Guardar nuevo beneficiario en la BD
   const handleSave = async () => {
     try {
-      // Validación simple antes de enviar
       if (!newBeneficiario.Nombre || !newBeneficiario.Apellido || !newBeneficiario.DNI || !newBeneficiario.Email || !newBeneficiario.Telefono) {
         alert("Por favor, completa todos los campos.");
         return;
@@ -80,12 +73,8 @@ const MantenerBeneficiarios = () => {
 
       if (response.status === 201) {
         alert("Beneficiario agregado correctamente");
-
-        // 🔄 Cerrar el modal y limpiar los campos
         setIsModalOpen(false);
         setNewBeneficiario({ Nombre: "", Apellido: "", DNI: "", Email: "", Telefono: "" });
-
-        // 🔄 Actualizar la lista de beneficiarios en la tabla sin recargar la página
         setBeneficiarios([...beneficiarios, response.data]);
       }
     } catch (error) {
@@ -95,75 +84,84 @@ const MantenerBeneficiarios = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto mt-10 p-8 bg-red-100 border border-gray-200 rounded-lg shadow-lg">
-      <h1 className="text-4xl font-bold text-gray-700 text-center mb-8">
-        Mantener Beneficiarios
-      </h1>
+    <>
+      <Navbar />
+      <div className="max-w-6xl mx-auto mt-10 p-8 bg-gray-900 border border-gray-700 rounded-lg shadow-lg text-white">
+        <h1 className="text-4xl font-bold text-white text-center mb-8">
+          Mantener Beneficiarios
+        </h1>
 
-      <div className="mb-6 flex justify-between items-center">
-        <input
-          type="text"
-          placeholder="Buscar por DNI"
-          value={searchDNI}
-          onChange={handleSearchChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-300 focus:outline-none"
-        />
-        <button
-          className="ml-4 bg-red-500 text-black font-bold px-4 py-2 rounded-lg hover:bg-red-600 flex items-center space-x-2"
-          onClick={() => setIsModalOpen(true)}
-        >
-          <UserPlusIcon className="w-5 h-5" />
-          <span>Agregar Beneficiario</span>
-        </button>
-      </div>
-
-      <table className="w-full border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-red-500 text-white">
-            <th className="border border-gray-300 px-4 py-2">Nombre</th>
-            <th className="border border-gray-300 px-4 py-2">Apellido</th>
-            <th className="border border-gray-300 px-4 py-2">DNI</th>
-            <th className="border border-gray-300 px-4 py-2">Teléfono</th>
-            <th className="border border-gray-300 px-4 py-2">Email</th>
-            <th className="border border-gray-300 px-4 py-2">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredBeneficiarios.map((b) => (
-            <tr key={b.BeneficiarioID} className="text-center">
-              <td className="border border-gray-300 px-4 py-2">{b.Nombre}</td>
-              <td className="border border-gray-300 px-4 py-2">{b.Apellido}</td>
-              <td className="border border-gray-300 px-4 py-2">{b.DNI}</td>
-              <td className="border border-gray-300 px-4 py-2">{b.Telefono}</td>
-              <td className="border border-gray-300 px-4 py-2">{b.Email}</td>
-              <td className="border border-gray-300 px-4 py-2 flex justify-center space-x-4">
-                <button onClick={() => alert(`Editar beneficiario: ${b.BeneficiarioID}`)}>
-                  <PencilSquareIcon className="w-6 h-6 text-blue-600 hover:text-blue-800" />
-                </button>
-                <button onClick={() => handleDelete(b.BeneficiarioID)}>
-                  <TrashIcon className="w-6 h-6 text-red-600 hover:text-red-800" />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Modal de Agregar Beneficiario */}
-      <Modal isOpen={isModalOpen} title="Agregar Beneficiario" onClose={() => setIsModalOpen(false)}>
-        <input type="text" name="Nombre" placeholder="Nombre" className="w-full px-4 py-2 border rounded-md my-2 text-gray-900" onChange={handleInputChange} />
-        <input type="text" name="Apellido" placeholder="Apellido" className="w-full px-4 py-2 border rounded-md my-2 text-gray-900" onChange={handleInputChange} />
-        <input type="text" name="DNI" placeholder="DNI" className="w-full px-4 py-2 border rounded-md my-2 text-gray-900" onChange={handleInputChange} />
-        <input type="email" name="Email" placeholder="Correo Electrónico" className="w-full px-4 py-2 border rounded-md my-2 text-gray-900" onChange={handleInputChange} />
-        <input type="text" name="Telefono" placeholder="Teléfono" className="w-full px-4 py-2 border rounded-md my-2 text-gray-900" onChange={handleInputChange} />
-
-        <div className="mt-4 flex justify-center">
-          <button className="bg-red-500 text-black font-bold px-4 py-2 rounded-lg hover:bg-red-600" onClick={handleSave}>
-            Guardar
+        <div className="mb-6 flex justify-between items-center">
+          <input
+            type="text"
+            placeholder="Buscar por DNI"
+            value={searchDNI}
+            onChange={handleSearchChange}
+            className="w-full px-4 py-2 border border-gray-500 rounded-lg shadow-sm bg-gray-800 text-white placeholder-gray-400 focus:ring focus:ring-red-500 focus:outline-none"
+          />
+          <button
+            className="ml-4 bg-red-500 text-white font-bold px-4 py-2 rounded-lg hover:bg-red-600 flex items-center space-x-2"
+            onClick={() => setIsModalOpen(true)}
+          >
+            Agregar Beneficiario
           </button>
         </div>
-      </Modal>
-    </div>
+
+        <table className="w-full border-collapse border border-gray-700">
+          <thead>
+            <tr className="bg-red-500 text-white">
+              <th className="border border-gray-700 px-4 py-2">Nombre</th>
+              <th className="border border-gray-700 px-4 py-2">Apellido</th>
+              <th className="border border-gray-700 px-4 py-2">DNI</th>
+              <th className="border border-gray-700 px-4 py-2">Teléfono</th>
+              <th className="border border-gray-700 px-4 py-2">Email</th>
+              <th className="border border-gray-700 px-4 py-2">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredBeneficiarios.map((b) => (
+              <tr key={b.BeneficiarioID} className="text-center bg-gray-800">
+                <td className="border border-gray-700 px-4 py-2">{b.Nombre}</td>
+                <td className="border border-gray-700 px-4 py-2">{b.Apellido}</td>
+                <td className="border border-gray-700 px-4 py-2">{b.DNI}</td>
+                <td className="border border-gray-700 px-4 py-2">{b.Telefono}</td>
+                <td className="border border-gray-700 px-4 py-2">{b.Email}</td>
+                <td className="border border-gray-700 px-4 py-2 flex justify-center space-x-4">
+                  <button className="text-blue-400 hover:underline" onClick={() => alert(`Editar beneficiario: ${b.BeneficiarioID}`)}>
+                    Editar
+                  </button>
+                  <button className="text-red-400 hover:underline" onClick={() => handleDelete(b.BeneficiarioID)}>
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {isModalOpen && (
+          <Modal onClose={() => setIsModalOpen(false)}>
+            <h2 className="text-xl font-bold text-white mb-4">Agregar Beneficiario</h2>
+            {["Nombre", "Apellido", "DNI", "Email", "Telefono"].map((field) => (
+              <input
+                key={field}
+                type="text"
+                name={field}
+                placeholder={field}
+                className="w-full px-4 py-2 border border-gray-500 rounded-md my-2 bg-gray-800 text-white placeholder-gray-400"
+                onChange={handleInputChange}
+              />
+            ))}
+            <button
+              onClick={handleSave}
+              className="mt-4 w-full bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg text-white font-semibold transition"
+            >
+              Guardar
+            </button>
+          </Modal>
+        )}
+      </div>
+    </>
   );
 };
 
