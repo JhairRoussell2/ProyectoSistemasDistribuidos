@@ -1,4 +1,3 @@
-
 import { ReactNode } from "react";
 
 interface ModalProps {
@@ -8,17 +7,18 @@ interface ModalProps {
 
 const Modal = ({ children, onClose }: ModalProps) => {
   return (
-    <div className="fixed top-16 right-4 z-50">
-      <div 
-        className="bg-gray-900 text-white p-6 rounded-lg shadow-xl w-80 relative border border-gray-700"
-      >
-        <button 
-          onClick={onClose} 
-          className="absolute top-3 right-3 text-gray-300 hover:text-white text-xl"
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/30 backdrop-blur-sm">
+      <div className="bg-white text-gray-800 p-6 rounded-xl shadow-2xl w-[420px] relative border border-gray-300 modal-texture">
+        {/* Botón de Cierre con Emoji */}
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 transition-all text-lg"
         >
-          ✖
+          ❌
         </button>
-        {children}
+
+        {/* Contenido del Modal */}
+        <div className="text-center">{children}</div>
       </div>
     </div>
   );
