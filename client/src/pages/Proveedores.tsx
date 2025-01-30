@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Trash2, Pencil, Plus } from "lucide-react";
 import Alert from "../components/Alert";
 import Modal from "../components/Modal";
+import Navbar from "../components/Navbar"; // Importar el Navbar
 
 const API_PROVEEDORES_URL = import.meta.env.VITE_API_PROVEEDORES_URL || "http://localhost:5000/api/proveedores";
 
@@ -41,7 +42,11 @@ const Proveedores = () => {
   };
 
   return (
-    <div className="p-8 min-h-screen bg-gradient-to-br from-white via-gray-100 to-red-50 text-gray-900">
+    <>
+      <Navbar />
+    
+<div className="p-8 min-h-screen bg-gradient-to-br from-white via-gray-100 to-red-50 text-gray-900 pt-24">
+
       {alert && <Alert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />}
 
       <div className="flex justify-between items-center mb-6">
@@ -122,6 +127,7 @@ const Proveedores = () => {
         </Modal>
       )}
     </div>
+    </>
   );
 };
 

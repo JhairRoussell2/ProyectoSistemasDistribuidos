@@ -31,7 +31,7 @@ const Alert: React.FC<AlertProps> = ({ type, message, onClose, autoClose = 3000 
   };
 
   return (
-    <div className={`fixed top-5 right-5 flex items-center gap-3 p-4 border rounded-lg shadow-lg ${bgColor[type]} transition-all transform scale-100`}>
+    <div className={`fixed top-24 right-5 flex items-center gap-3 p-4 border rounded-lg shadow-lg ${bgColor[type]} transition-all transform scale-100`}>
       {iconMap[type]}
       <p className="flex-1 font-medium">{message}</p>
       <button onClick={onClose} className="text-gray-500 hover:text-gray-700 transition">

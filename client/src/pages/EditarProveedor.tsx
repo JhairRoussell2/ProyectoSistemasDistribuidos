@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Alert from "../components/Alert";
 import { Edit3, Save, ArrowLeft } from "lucide-react";
+import Navbar from "../components/Navbar"; // Importar el Navbar
 
 const API_PROVEEDORES_URL = import.meta.env.VITE_API_PROVEEDORES_URL || "http://localhost:5000/api/proveedores";
 
@@ -58,7 +59,10 @@ const EditarProveedor = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gradient-to-r from-red-100 via-red-200 to-red-300 p-6 text-gray-900">
+    <>
+    <Navbar/>
+
+    <div className="min-h-screen flex justify-center items-center bg-gradient-to-r from-red-100 via-red-200 to-red-300 p-6 text-gray-900 pt-24">
       {alert && <Alert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />}
 
       <div className="bg-white shadow-xl rounded-xl p-8 w-full max-w-2xl border border-red-300">
@@ -185,6 +189,7 @@ const EditarProveedor = () => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 

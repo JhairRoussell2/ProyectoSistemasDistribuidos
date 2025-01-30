@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle, MapPin, Mail, Phone, User, Star } from "lucide-react";
 import Alert from "../components/Alert";
-
+import Navbar from "../components/Navbar"; // Importar el Navbar
 const API_PROVEEDORES_URL = import.meta.env.VITE_API_PROVEEDORES_URL || "http://localhost:5000/api/proveedores";
 
 const RegistrarProveedor = () => {
@@ -45,7 +45,9 @@ const RegistrarProveedor = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gradient-to-r from-red-100 via-red-200 to-red-300 text-gray-900 p-6">
+    <>
+      <Navbar />
+    <div className="min-h-screen flex justify-center items-center bg-gradient-to-r from-red-100 via-red-200 to-red-300 text-gray-900 pt-24">
       {alert && <Alert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />}
 
       <div className="bg-white shadow-xl rounded-xl p-8 w-full max-w-4xl border border-red-300">
@@ -191,6 +193,7 @@ const RegistrarProveedor = () => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 
