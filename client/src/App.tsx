@@ -11,14 +11,16 @@ import MantenerBeneficiarios from "./pages/Beneficiarios";
 import RegistrarProveedor from "./pages/RegistrarProveedor";
 import Proveedores from "./pages/Proveedores";
 import EditarProveedor from "./pages/EditarProveedor";
-import EliminarProveedor from "./pages/EliminarProveedor";
+import PaginaPrincipal from "./pages/PaginaPrincipal";
+
 
 
 const App = () => {
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/" element={<Login />} />
+      <Route path="/" element={<PaginaPrincipal />} />
+      <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard/admin" element={<AdminDashboard />} />
         <Route path="/dashboard/personal" element={<PersonalDashboard />} />
@@ -28,7 +30,7 @@ const App = () => {
         <Route path="/proveedores" element={<Proveedores/>} />
         <Route path="/registrar-proveedor" element={<RegistrarProveedor />} />
         <Route path="/editar-proveedor/:id" element={<EditarProveedor />} />
-        <Route path="/eliminar-proveedor/:id" element={<EliminarProveedor />} />
+
 
       </Routes>
     </AuthProvider>
