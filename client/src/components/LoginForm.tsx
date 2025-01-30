@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Usamos useNavigate para redirigir
 
 const LoginForm = ({ onSubmit }: { onSubmit: (email: string, password: string) => void }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // Esto nos permite redirigir a otras rutas
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,9 +19,12 @@ const LoginForm = ({ onSubmit }: { onSubmit: (email: string, password: string) =
     }
   };
 
+  const handleRedirectToRegister = () => {
+    navigate('/register'); // Redirige a la página de registro
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
-      {/* Formulario de inicio de sesión */}
       <form
         onSubmit={handleSubmit}
         className="bg-gray-800 p-8 rounded-lg shadow-lg max-w-md w-full space-y-6 animate-slideIn"
@@ -80,8 +85,15 @@ const LoginForm = ({ onSubmit }: { onSubmit: (email: string, password: string) =
           )}
         </button>
 
-        <p className="text-center text-gray-400">
-          ¿No tienes una cuenta? <a href="#" className="text-blue-400 hover:text-blue-500">Regístrate aquí</a>
+        <p className="text-center p-4 m-3 text-gray-400">
+          ¿No tienes una cuenta? 
+          <button 
+            type="button"
+            onClick={handleRedirectToRegister} 
+            className="text-blue-400 hover:text-blue-500"
+          >
+            Regístrate aquí
+          </button>
         </p>
       </form>
     </div>

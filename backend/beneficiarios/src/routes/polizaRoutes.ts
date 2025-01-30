@@ -16,6 +16,6 @@ router.get("/poliza/:polizaID", getPolizaByID);
 router.get("/validar/:DNI", getPolizasByDNI);
 
 // Ruta para actualizar el estado de una póliza
-router.put("/poliza/:polizaID/estado", updatePolizaEstado);
+router.put("/:polizaID/estado", updatePolizaEstado);
 
 export default router;

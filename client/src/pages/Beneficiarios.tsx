@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import Modal from "../components/Modal";
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+import { useNavigate } from "react-router-dom"; // Importa useNavigate
 
 interface Beneficiario {
   BeneficiarioID: number;
@@ -17,22 +19,22 @@ const MantenerBeneficiarios = () => {
   const [filteredBeneficiarios, setFilteredBeneficiarios] = useState<Beneficiario[]>([]);
   const [searchDNI, setSearchDNI] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newBeneficiario, setNewBeneficiario] = useState({
-    Nombre: "",
-    Apellido: "",
-    DNI: "",
-    Email: "",
-    Telefono: "",
-  });
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedBeneficiario, setSelectedBeneficiario] = useState<Beneficiario | null>(null);
+  const [password, setPassword] = useState(""); // 🔹 Nuevo estado para la contraseña
+
+  const navigate = useNavigate(); // Inicializa useNavigate
 
   useEffect(() => {
     const fetchBeneficiarios = async () => {
       try {
-        const response = await axios.get<Beneficiario[]>("http://localhost:3000/api/beneficiarios");
-        setBeneficiarios(response.data);
-        setFilteredBeneficiarios(response.data);
+        const response = await axios.get("http://localhost:3000/api/beneficiarios");
+        const data = response.data[0]; // Extrae los datos del array anidado
+        setBeneficiarios(data);
+        setFilteredBeneficiarios(data);
       } catch (error) {
         console.error("Error al obtener los beneficiarios:", error);
+        alert("No se pudo cargar la lista de beneficiarios. Inténtalo de nuevo más tarde.");
       }
     };
     fetchBeneficiarios();
@@ -59,27 +61,43 @@ const MantenerBeneficiarios = () => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewBeneficiario({ ...newBeneficiario, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (isEditing && selectedBeneficiario) {
+      setSelectedBeneficiario({ ...selectedBeneficiario, [name]: value });
+    }
   };
 
-  const handleSave = async () => {
+  const handleUpdate = async () => {
+    if (!selectedBeneficiario) return;
+    if (!password) {
+      alert("Por favor, ingrese su contraseña para confirmar la actualización.");
+      return;
+    }
+
+    const { BeneficiarioID, ...datosActualizados } = selectedBeneficiario;
+    console.log("Datos a actualizar:", datosActualizados);
+
     try {
-      if (!newBeneficiario.Nombre || !newBeneficiario.Apellido || !newBeneficiario.DNI || !newBeneficiario.Email || !newBeneficiario.Telefono) {
-        alert("Por favor, completa todos los campos.");
-        return;
-      }
+      const response = await axios.put(
+        `http://localhost:3000/api/beneficiarios/${selectedBeneficiario.BeneficiarioID}`,
+        { ...datosActualizados, Password: password } // 🔹 Enviar la contraseña para la validación
+      );
 
-      const response = await axios.post("http://localhost:3000/api/beneficiarios", newBeneficiario);
+      if (response.status === 200) {
+        alert("Beneficiario actualizado correctamente");
 
-      if (response.status === 201) {
-        alert("Beneficiario agregado correctamente");
+        const updatedBeneficiarios = beneficiarios.map((b) =>
+          b.BeneficiarioID === selectedBeneficiario.BeneficiarioID ? { ...selectedBeneficiario } : b
+        );
+
+        setBeneficiarios(updatedBeneficiarios);
+        setFilteredBeneficiarios(updatedBeneficiarios);
         setIsModalOpen(false);
-        setNewBeneficiario({ Nombre: "", Apellido: "", DNI: "", Email: "", Telefono: "" });
-        setBeneficiarios([...beneficiarios, response.data]);
+        setPassword(""); // 🔹 Limpiar el campo de contraseña después de actualizar
       }
     } catch (error) {
-      console.error("Error al agregar beneficiario:", error);
-      alert("No se pudo agregar el beneficiario.");
+      console.error("Error al actualizar beneficiario:", error);
+      alert("No se pudo actualizar el beneficiario.");
     }
   };
 
@@ -87,6 +105,15 @@ const MantenerBeneficiarios = () => {
     <>
       <Navbar />
       <div className="max-w-6xl mx-auto mt-10 p-8 bg-gray-900 border border-gray-700 rounded-lg shadow-lg text-white">
+        {/* Botón de retroceso */}
+        <button
+          onClick={() => navigate("/dashboard/personal")}
+          className="flex items-center text-gray-400 hover:text-white mb-6"
+        >
+          <ArrowLeftIcon className="w-6 h-6 mr-2" />
+          <span>Volver</span>
+        </button>
+
         <h1 className="text-4xl font-bold text-white text-center mb-8">
           Mantener Beneficiarios
         </h1>
@@ -99,12 +126,6 @@ const MantenerBeneficiarios = () => {
             onChange={handleSearchChange}
             className="w-full px-4 py-2 border border-gray-500 rounded-lg shadow-sm bg-gray-800 text-white placeholder-gray-400 focus:ring focus:ring-red-500 focus:outline-none"
           />
-          <button
-            className="ml-4 bg-red-500 text-white font-bold px-4 py-2 rounded-lg hover:bg-red-600 flex items-center space-x-2"
-            onClick={() => setIsModalOpen(true)}
-          >
-            Agregar Beneficiario
-          </button>
         </div>
 
         <table className="w-full border-collapse border border-gray-700">
@@ -127,10 +148,17 @@ const MantenerBeneficiarios = () => {
                 <td className="border border-gray-700 px-4 py-2">{b.Telefono}</td>
                 <td className="border border-gray-700 px-4 py-2">{b.Email}</td>
                 <td className="border border-gray-700 px-4 py-2 flex justify-center space-x-4">
-                  <button className="text-blue-400 hover:underline" onClick={() => alert(`Editar beneficiario: ${b.BeneficiarioID}`)}>
+                  <button
+                    onClick={() => {
+                      setIsEditing(true);
+                      setSelectedBeneficiario(b);
+                      setIsModalOpen(true);
+                    }}
+                    className="text-blue-400 hover:underline"
+                  >
                     Editar
                   </button>
-                  <button className="text-red-400 hover:underline" onClick={() => handleDelete(b.BeneficiarioID)}>
+                  <button onClick={() => handleDelete(b.BeneficiarioID)} className="text-red-400 hover:underline">
                     Eliminar
                   </button>
                 </td>
@@ -141,22 +169,27 @@ const MantenerBeneficiarios = () => {
 
         {isModalOpen && (
           <Modal onClose={() => setIsModalOpen(false)}>
-            <h2 className="text-xl font-bold text-white mb-4">Agregar Beneficiario</h2>
+            <h2 className="text-xl font-bold text-white mb-4">Editar Beneficiario</h2>
             {["Nombre", "Apellido", "DNI", "Email", "Telefono"].map((field) => (
               <input
                 key={field}
                 type="text"
                 name={field}
                 placeholder={field}
-                className="w-full px-4 py-2 border border-gray-500 rounded-md my-2 bg-gray-800 text-white placeholder-gray-400"
+                className="w-full px-4 py-2 border border-gray-500 rounded-md my-2 bg-gray-800 text-white"
+                value={selectedBeneficiario?.[field as keyof Beneficiario] || ""}
                 onChange={handleInputChange}
               />
             ))}
-            <button
-              onClick={handleSave}
-              className="mt-4 w-full bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg text-white font-semibold transition"
-            >
-              Guardar
+            <input
+              type="password"
+              placeholder="Ingrese su contraseña"
+              className="w-full px-4 py-2 border border-gray-500 rounded-md my-2 bg-gray-800 text-white"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button onClick={handleUpdate} className="mt-4 w-full bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg text-white font-semibold">
+              Actualizar
             </button>
           </Modal>
         )}
