@@ -47,7 +47,7 @@ const Layout = ({ children }: LayoutProps) => {
             {/* Opciones del menú para el Panel de Administrador */}
             {isAdminPanel && (
               <>
-                <NavLink to="/registrar-proveedor" className="...">
+                <NavLink to="/proveedores" className="...">
                   <FiFileText /> Gestión de Proveedores
                 </NavLink>
                 <NavLink to="/dashboard/admin/pagos" className="...">

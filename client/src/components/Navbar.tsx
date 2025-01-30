@@ -21,14 +21,14 @@ const Navbar = () => {
         </span>
       </h1>
       <div className="flex items-center space-x-4">
-        {user?.Rol === 'Administrador' && (
+        {/*user?.Rol === 'Administrador' && (
           <button
             onClick={() => navigate('/usuarios')}
             className="bg-green-600 hover:bg-green-700 px-5 py-2 rounded-lg text-white font-semibold transition shadow-lg"
           >
             Ver Usuarios
           </button>
-        )}
+        )*/}
         <button
           onClick={() => setShowProfile(!showProfile)}
           className="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-white font-semibold transition shadow-lg"
@@ -36,18 +36,31 @@ const Navbar = () => {
           Ver Perfil
         </button>
         {showProfile && (
-          <Modal onClose={() => setShowProfile(false)}>
-            <h2 className="text-xl font-bold text-white mb-2">Perfil de Usuario</h2>
-            <p className="text-gray-300"><span className="font-bold">Nombre:</span> {user?.Nombre} {user?.Apellido}</p>
-            <p className="text-gray-300"><span className="font-bold">Correo:</span> {user?.Email}</p>
-            <p className="text-gray-300"><span className="font-bold">Rol:</span> {user?.Rol}</p>
-            <button 
-              onClick={handleLogout} 
-              className="mt-4 w-full bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg text-white font-semibold transition"
-            >
-              Cerrar sesión
-            </button>
-          </Modal>
+         <Modal onClose={() => setShowProfile(false)}>
+         <div className="bg-white p-6 rounded-lg shadow-lg text-center max-w-sm mx-auto">
+           {/* Botón de Cerrar */}
+           <button 
+             onClick={() => setShowProfile(false)}
+             className="absolute top-4 right-4 bg-black text-red-500 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-500 hover:text-white transition"
+           >
+             ✖
+           </button>
+       
+           {/* Información del Usuario */}
+           <h2 className="text-2xl font-bold text-red-600 mb-4">Perfil de Usuario</h2>
+           <p className="text-gray-700 font-medium">Nombre: <span className="font-normal">{user?.Nombre} {user?.Apellido}</span></p>
+           <p className="text-gray-700 font-medium">Correo: <span className="font-normal">{user?.Email}</span></p>
+           <p className="text-gray-700 font-medium">Rol: <span className="font-normal">{user?.Rol}</span></p>
+       
+           {/* Botón de Cerrar Sesión */}
+           <button 
+             onClick={handleLogout} 
+             className="mt-6 w-full bg-black text-white px-4 py-2 rounded-lg hover:bg-red-600 transition font-semibold"
+           >
+             Cerrar sesión
+           </button>
+         </div>
+       </Modal>
         )}
       </div>
     </nav>
