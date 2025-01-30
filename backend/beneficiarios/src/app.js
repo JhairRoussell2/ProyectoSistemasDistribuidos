@@ -8,6 +8,7 @@ const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const siniestrosRoutes_1 = __importDefault(require("./routes/siniestrosRoutes"));
 const beneficiariosRoutes_1 = __importDefault(require("./routes/beneficiariosRoutes"));
+const polizaRoutes_1 = __importDefault(require("./routes/polizaRoutes"));
 // Configurar variables de entorno
 dotenv_1.default.config();
 // Crear aplicación
@@ -19,6 +20,7 @@ app.use(express_1.default.urlencoded({ extended: true }));
 // Registrar rutas
 app.use("/api/beneficiarios", beneficiariosRoutes_1.default);
 app.use("/api/siniestros", siniestrosRoutes_1.default);
+app.use("/api/polizas", polizaRoutes_1.default);
 // Imprimir rutas registradas en el servidor
 console.log("Rutas registradas en el servidor:");
 const getRoutes = (layer, basePath = "") => {

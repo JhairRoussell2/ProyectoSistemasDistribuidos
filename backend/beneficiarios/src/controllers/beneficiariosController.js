@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateBeneficiario = exports.deleteBeneficiario = exports.createBeneficiario = exports.getBeneficiarios = void 0;
+exports.checkIfNewBeneficiario = exports.updateBeneficiario = exports.deleteBeneficiario = exports.createBeneficiario = exports.getBeneficiarioPorID = exports.getBeneficiarios = void 0;
 const joi_1 = __importDefault(require("joi"));
 const db_1 = __importDefault(require("../config/db"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
 // Esquema de validación
 const schema = joi_1.default.object({
     Nombre: joi_1.default.string().max(100).required(),
@@ -22,14 +23,16 @@ const schema = joi_1.default.object({
     DNI: joi_1.default.string().length(8).required(),
     Email: joi_1.default.string().email().required(),
     Telefono: joi_1.default.string().max(15).required(),
+    Password: joi_1.default.string().min(6).required(),
+    ConfirmPassword: joi_1.default.ref("Password"),
 });
 // Controlador para obtener beneficiarios
 const getBeneficiarios = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log("Intentando conectar con la base de datos...");
-        const [result] = yield db_1.default.query("SELECT * FROM beneficiario");
+        const [result] = yield db_1.default.query("CALL GetBeneficiarios()");
         console.log("Datos obtenidos de la base de datos:", result);
-        if (!result || result.length === 0) {
+        if (!result) {
             console.log("No se encontraron beneficiarios.");
             res.status(404).json({ message: "No se encontraron beneficiarios." });
             return;
@@ -42,6 +45,25 @@ const getBeneficiarios = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.getBeneficiarios = getBeneficiarios;
+const getBeneficiarioPorID = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        // Llamada al procedimiento almacenado para obtener el beneficiario
+        const [result] = yield db_1.default.query("CALL GetBeneficiarioPorID(?)", [id]);
+        if (!result) {
+            res.status(404).json({ message: "Beneficiario no encontrado." });
+            return;
+        }
+        res.status(200).json({
+            message: "Beneficiario encontrado"
+        }); // Devuelve el primer beneficiario encontrado
+    }
+    catch (error) {
+        console.error("Error al obtener beneficiario por ID:", error);
+        next(error);
+    }
+});
+exports.getBeneficiarioPorID = getBeneficiarioPorID;
 // Controlador para crear un beneficiario
 const createBeneficiario = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -52,17 +74,19 @@ const createBeneficiario = (req, res, next) => __awaiter(void 0, void 0, void 0,
             res.status(400).json({ error: error.details[0].message });
             return;
         }
-        const { Nombre, Apellido, DNI, Email, Telefono } = req.body;
-        const [existing] = yield db_1.default.query("SELECT * FROM beneficiario WHERE DNI = ? OR Email = ?", [DNI, Email]);
-        if (existing.length > 0) {
-            res.status(400).json({ error: "El DNI o Email ya están registrados." });
+        const { Nombre, Apellido, DNI, Email, Telefono, Password, ConfirmPassword } = req.body;
+        // Verifica que las contraseñas coincidan
+        if (Password !== ConfirmPassword) {
+            res.status(400).json({ error: 'Las contraseñas no coinciden' });
             return;
         }
-        const [result] = yield db_1.default.query("INSERT INTO beneficiario (Nombre, Apellido, DNI, Email, Telefono) VALUES (?, ?, ?, ?, ?)", [Nombre, Apellido, DNI, Email, Telefono]);
-        console.log("Beneficiario creado con ID:", result.insertId);
+        // Hashear la contraseña antes de guardarla
+        const hashedPassword = yield bcrypt_1.default.hash(Password, 10);
+        // Llamada al procedimiento almacenado para crear el usuario y el beneficiario
+        yield db_1.default.query("CALL sp_RegisterBeneficiario(?, ?, ?, ?, ?, ?)", [Nombre, Apellido, Email, hashedPassword, DNI, Telefono]);
+        console.log("Beneficiario creado exitosamente");
         res.status(201).json({
             message: "Beneficiario creado exitosamente",
-            beneficiarioId: result.insertId,
         });
     }
     catch (error) {
@@ -75,12 +99,13 @@ exports.createBeneficiario = createBeneficiario;
 const deleteBeneficiario = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const [result] = yield db_1.default.query("DELETE FROM beneficiario WHERE BeneficiarioID = ?", [id]);
+        // Llamada al procedimiento almacenado para eliminar el beneficiario
+        const [result] = yield db_1.default.query("CALL DeleteBeneficiario(?)", [id]);
         if (result.affectedRows === 0) {
             res.status(404).json({ message: "Beneficiario no encontrado." });
             return;
         }
-        res.status(200).json({ message: "Beneficiario eliminado exitosamente" });
+        res.status(200).json({ message: "Beneficiario y usuario eliminados exitosamente" });
     }
     catch (error) {
         console.error("Error al eliminar beneficiario:", error);
@@ -97,8 +122,9 @@ const updateBeneficiario = (req, res, next) => __awaiter(void 0, void 0, void 0,
             res.status(400).json({ error: error.details[0].message });
             return;
         }
-        const { Nombre, Apellido, DNI, Email, Telefono } = req.body;
-        const [result] = yield db_1.default.query("UPDATE beneficiario SET Nombre = ?, Apellido = ?, DNI = ?, Email = ?, Telefono = ? WHERE BeneficiarioID = ?", [Nombre, Apellido, DNI, Email, Telefono, id]);
+        const { Nombre, Apellido, DNI, Email, Telefono, Password } = req.body;
+        const hashedPassword = yield bcrypt_1.default.hash(Password, 10);
+        const [result] = yield db_1.default.query("CALL UpdateBeneficiario(?, ?, ?, ?, ?, ?,?)", [id, Nombre, Apellido, DNI, Email, Telefono, hashedPassword]);
         if (result.affectedRows === 0) {
             res.status(404).json({ message: "Beneficiario no encontrado." });
             return;
@@ -111,3 +137,23 @@ const updateBeneficiario = (req, res, next) => __awaiter(void 0, void 0, void 0,
     }
 });
 exports.updateBeneficiario = updateBeneficiario;
+const checkIfNewBeneficiario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { BeneficiarioID } = req.params;
+    try {
+        // Verificar si el beneficiario tiene alguna póliza activa
+        const [rows] = yield db_1.default.query("SELECT COUNT(*) as count FROM poliza WHERE BeneficiarioID = ? AND Estado = 'Activo'", [BeneficiarioID]);
+        if (rows[0].count === 0) {
+            // Si no tiene póliza activa, responder que es nuevo
+            res.status(200).json({ isNew: true });
+        }
+        else {
+            // Si tiene pólizas activas, responder que no es nuevo
+            res.status(200).json({ isNew: false });
+        }
+    }
+    catch (error) {
+        console.error("Error al verificar beneficiario:", error);
+        res.status(500).json({ error: "Error al verificar el beneficiario" });
+    }
+});
+exports.checkIfNewBeneficiario = checkIfNewBeneficiario;

@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import siniestrosRoutes from "./routes/siniestrosRoutes";
 import beneficiariosRoutes from "./routes/beneficiariosRoutes";
+import polizasRoutes from "./routes/polizaRoutes";
 
 // Configurar variables de entorno
 dotenv.config();
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 // Registrar rutas
 app.use("/api/beneficiarios", beneficiariosRoutes);
 app.use("/api/siniestros", siniestrosRoutes);
+app.use("/api/polizas", polizasRoutes);
 
 // Imprimir rutas registradas en el servidor
 console.log("Rutas registradas en el servidor:");

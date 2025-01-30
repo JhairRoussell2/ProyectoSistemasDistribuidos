@@ -28,6 +28,7 @@
     "mysql2": "^3.12.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/mssql": "^9.1.6",
