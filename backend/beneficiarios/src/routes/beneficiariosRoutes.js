@@ -10,4 +10,5 @@ router.get('/', beneficiariosController_1.getBeneficiarios);
 router.post('/', beneficiariosController_1.createBeneficiario);
 router.put('/:id', beneficiariosController_1.updateBeneficiario);
 router.delete('/:id', beneficiariosController_1.deleteBeneficiario);
+router.get("/:BeneficiarioID/check-new", beneficiariosController_1.checkIfNewBeneficiario);
 exports.default = router;
