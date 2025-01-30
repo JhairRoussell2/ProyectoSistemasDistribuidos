@@ -2,7 +2,7 @@ import { useState } from 'react';
 import apiClient from '../services/apiClient';
 
 interface AuthResponse {
-  token: string;
+  // token: string;
   user: {
     UsuarioID: number;
     Nombre: string;
@@ -20,7 +20,7 @@ export const useAuth = () => {
     setLoading(true);
     try {
       const response = await apiClient.post<AuthResponse>('/api/beneficiarios/login', { Email: email, Password: password });
-      localStorage.setItem('token', response.data.token);
+      // localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       setUser(response.data.user);
     } catch (error) {
@@ -39,7 +39,7 @@ export const useAuth = () => {
 
       if (response.data && response.data.message) {
         alert(response.data.message); // Muestra mensaje del backend
-        localStorage.setItem('token', response.data.token);
+        // localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
         setUser(response.data.user);
       } else {

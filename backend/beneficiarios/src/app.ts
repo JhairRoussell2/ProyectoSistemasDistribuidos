@@ -5,6 +5,7 @@ import multer from "multer";
 import cloudinary from "cloudinary";
 import siniestrosRoutes from "./routes/siniestrosRoutes";
 import beneficiariosRoutes from "./routes/beneficiariosRoutes";
+import polizasRoutes from "./routes/polizaRoutes";
 
 // Configurar variables de entorno
 dotenv.config();
@@ -45,6 +46,7 @@ app.use(express.urlencoded({ extended: true }));
 // Rutas
 app.use("/api/beneficiarios", beneficiariosRoutes);
 app.use("/api/siniestros", siniestrosRoutes);
+app.use("/api/polizas",polizasRoutes);
 
 // Ruta para cargar imágenes a Cloudinary
 app.post("/upload", upload.single('image'), async (req: Request, res: Response): Promise<void> => {

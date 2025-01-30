@@ -21,7 +21,7 @@ const Register = () => {
     try {
       await register(userData);
       alert("Registro exitoso");
-      navigate('/'); // Redirigir al usuario después del registro
+      navigate('/login'); // Redirigir al usuario después del registro
     } catch (error) {
       console.error("Error en el registro:", error);
       alert("No se pudo registrar el usuario.");

@@ -19,6 +19,7 @@ const multer_1 = __importDefault(require("multer"));
 const cloudinary_1 = __importDefault(require("cloudinary"));
 const siniestrosRoutes_1 = __importDefault(require("./routes/siniestrosRoutes"));
 const beneficiariosRoutes_1 = __importDefault(require("./routes/beneficiariosRoutes"));
+const polizaRoutes_1 = __importDefault(require("./routes/polizaRoutes"));
 // Configurar variables de entorno
 dotenv_1.default.config();
 // Crear aplicación
@@ -52,6 +53,7 @@ app.use(express_1.default.urlencoded({ extended: true }));
 // Rutas
 app.use("/api/beneficiarios", beneficiariosRoutes_1.default);
 app.use("/api/siniestros", siniestrosRoutes_1.default);
+app.use("/api/polizas", polizaRoutes_1.default);
 // Ruta para cargar imágenes a Cloudinary
 app.post("/upload", upload.single('image'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

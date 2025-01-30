@@ -144,7 +144,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
 
         {/* Link para redirigir al login */}
         <div className="text-center">
-          <p className="text-gray-600">¿Ya tienes cuenta? <Link to="/" className="text-blue-600 hover:text-blue-800">Inicia sesión</Link></p>
+          <p className="text-gray-600">¿Ya tienes cuenta? <Link to="/login" className="text-blue-600 hover:text-blue-800">Inicia sesión</Link></p>
         </div>
       </form>
     </div>
