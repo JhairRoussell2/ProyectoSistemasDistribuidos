@@ -1,5 +1,5 @@
 import { ReactNode, useState } from "react";
-import { FiFileText, FiDollarSign, FiBarChart2, FiShield, FiHome, FiInfo, FiClipboard, FiSettings } from "react-icons/fi";
+import { FiFileText, FiDollarSign, FiBarChart2, FiShield, FiHome, FiInfo, FiClipboard, FiSettings, FiCheckCircle, FiUsers } from "react-icons/fi";
 import { NavLink, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 
@@ -11,9 +11,10 @@ const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // Determina si estamos en el panel de administrador o general
+  // Determina si estamos en el panel de administrador, general o personal
   const isAdminPanel = location.pathname.startsWith("/dashboard/admin");
   const isGeneralPanel = location.pathname.startsWith("/dashboard/general");
+  const isPersonalPanel = location.pathname.startsWith("/dashboard/personal");
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
@@ -50,14 +51,17 @@ const Layout = ({ children }: LayoutProps) => {
                 <NavLink to="/proveedores" className="...">
                   <FiFileText /> Gestión de Proveedores
                 </NavLink>
-                <NavLink to="/dashboard/admin/pagos" className="...">
-                  <FiDollarSign /> Pagos de Indemnización
+                <NavLink to="/dashboard/admin/pagos" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
+                  <FiDollarSign />
+                  <span>Pagos de Indemnización</span>
                 </NavLink>
-                <NavLink to="/dashboard/admin/reportes" className="...">
-                  <FiBarChart2 /> Generación de Reportes
+                <NavLink to="/dashboard/admin/reportes" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
+                  <FiBarChart2 />
+                  <span>Generación de Reportes</span>
                 </NavLink>
-                <NavLink to="/dashboard/admin/seguridad" className="...">
-                  <FiShield /> Seguridad y Auditoría
+                <NavLink to="/dashboard/admin/seguridad" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
+                  <FiShield />
+                  <span>Seguridad y Auditoría</span>
                 </NavLink>
               </>
             )}
@@ -73,9 +77,27 @@ const Layout = ({ children }: LayoutProps) => {
                   <FiClipboard />
                   <span>Registrar Siniestro</span>
                 </NavLink>
-                <NavLink to="/dashboard/general/configuracion" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
+                <NavLink to="/configuracion" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
                   <FiSettings />
                   <span>Configurar Cuenta</span>
+                </NavLink>
+              </>
+            )}
+
+            {/* Opciones específicas para el Panel de Personal */}
+            {isPersonalPanel && (
+              <>
+                <NavLink to="/dashboard/personal/tareas" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
+                  <FiCheckCircle />
+                  <span>Tareas Pendientes</span>
+                </NavLink>
+                <NavLink to="dashboard/personal/Mantener-Beneficiario" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
+                  <FiUsers />
+                  <span>Gestión de Beneficiarios</span>
+                </NavLink>
+                <NavLink to="/dashboard/personal/reportes" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
+                  <FiClipboard />
+                  <span>Reportes de Actividad</span>
                 </NavLink>
               </>
             )}

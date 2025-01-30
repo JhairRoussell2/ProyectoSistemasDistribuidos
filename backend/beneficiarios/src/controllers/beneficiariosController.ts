@@ -2,6 +2,7 @@ import { Request, Response, NextFunction, RequestHandler } from "express";
 import Joi from "joi";
 import pool from "../config/db";
 import bcrypt from "bcrypt";
+import { findUserByEmail } from "../models/email";
 
 // Esquema de validación
 const schema = Joi.object({
@@ -53,6 +54,46 @@ export const getBeneficiarioPorID = async (req: Request, res: Response, next: Ne
   }
 };
 
+export const login = async (req: Request, res: Response): Promise<void> => {
+  const { Email, Password } = req.body;
+
+  try {
+    // Buscar al usuario por su correo electrónico
+    const user = await findUserByEmail(Email);
+
+    // Verificar si el usuario existe
+    if (!user) {
+      res.status(404).json({ error: 'Usuario no encontrado' }); // Usa return aquí
+      return;
+    }
+
+    // Comparar la contraseña proporcionada con la almacenada en la base de datos
+    const isMatch = await bcrypt.compare(Password, user.Password);
+    if (!isMatch) {
+      res.status(401).json({ error: 'Contraseña incorrecta' });
+      return;  // Usa return aquí
+    }
+
+    // Generar un token JWT (si es necesario)
+    // const token = generateToken({ UsuarioID: user.UsuarioID, Rol: user.Rol });
+
+    // Responder con éxito
+    res.status(200).json({
+      message: 'Inicio de sesión exitoso',
+      user: {
+        UsuarioID: user.UsuarioID,
+        Nombre: user.Nombre,
+        Apellido: user.Apellido,
+        Email: user.Email,
+        Rol: user.Rol,
+      },
+    });
+  } catch (error) {
+    console.error('Error en login:', error);
+    res.status(500).json({ error: 'Error al iniciar sesión' });
+  }
+};
+
 
 // Controlador para crear un beneficiario
 export const createBeneficiario: RequestHandler = async (req, res, next): Promise<void> => {
@@ -93,6 +134,33 @@ export const createBeneficiario: RequestHandler = async (req, res, next): Promis
     next(error);
   }
 };
+
+// Controlador para obtener el rol del usuario
+export const getUserRole = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { UsuarioID } = req.params;
+
+    // Consulta directa a la base de datos para obtener el rol del usuario
+    const [rows]: any = await pool.query("SELECT Rol FROM usuario WHERE UsuarioID = ?", [UsuarioID]);
+
+    // Verificar si el usuario existe
+    if (rows.length === 0) {
+      res.status(404).json({ message: "Usuario no encontrado" });
+      return; // Agregar return para evitar que el código continúe ejecutándose
+    }
+
+    const user = rows[0]; // Asumiendo que rows[0] contiene el objeto del usuario
+    console.log(user);
+
+    // Enviar el rol del usuario como respuesta
+    res.status(200).json({ role: user.Rol });
+  } catch (error) {
+    console.error("Error al obtener el rol del usuario:", error);
+    next(error); // Pasa el error al middleware global de errores
+  }
+};
+
+
 
 // Controlador para eliminar un beneficiario
 export const deleteBeneficiario = async (req: Request, res: Response, next: NextFunction) => {
@@ -149,11 +217,10 @@ export const updateBeneficiario = async (req: Request, res: Response, next: Next
 
 export const checkIfNewBeneficiario = async (req: Request, res: Response) => {
   const { BeneficiarioID } = req.params;
-
+  console.log(BeneficiarioID);
   try {
     // Verificar si el beneficiario tiene alguna póliza activa
-    const [rows]: any = await pool.query("SELECT COUNT(*) as count FROM poliza WHERE BeneficiarioID = ? AND Estado = 'Activo'", [BeneficiarioID]);
-    
+    const [rows]: any = await pool.query("select count(*) as count from poliza INNER JOIN beneficiario on beneficiario.BeneficiarioID = poliza.BeneficiarioID WHERE UsuarioID = ?", [BeneficiarioID]);
     if (rows[0].count === 0) {
       // Si no tiene póliza activa, responder que es nuevo
       res.status(200).json({ isNew: true });

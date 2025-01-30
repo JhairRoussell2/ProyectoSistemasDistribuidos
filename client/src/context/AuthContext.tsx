@@ -1,18 +1,40 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import apiClient from '../services/apiClient';
 
-
 interface AuthResponse {
   token: string;
-  user: { UsuarioID: number; Nombre: string; Apellido: string; Email: string; Rol: 'Personal' | 'Administrador' | 'General' };
+  user: { 
+    UsuarioID: number; 
+    Nombre: string; 
+    Apellido: string; 
+    Email: string;
+    Telefono: string;  // Agregar Telefono
+    DNI: string;  // Agregar DNI
+  };
 }
 
 interface AuthContextType {
-  user: { UsuarioID: number; Nombre: string; Apellido: string; Email: string; Rol: 'Personal' | 'Administrador' | 'General' } | null;
+  user: { 
+    UsuarioID: number; 
+    Nombre: string; 
+    Apellido: string; 
+    Email: string;
+    Telefono: string;
+    DNI: string;
+  } | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (userData: { Nombre: string; Apellido: string; Email: string; Password: string; Rol?: string }) => Promise<void>; // ✅ Agregada función register
+  register: (userData: { 
+    Nombre: string; 
+    Apellido: string; 
+    Email: string; 
+    Password: string; 
+    ConfirmPassword: string;
+    Telefono: string;  // Agregar Telefono
+    DNI: string;  // Agregar DNI
+  }) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
+  createPolicy: (BeneficiarioID: number, TipoPoliza: string) => Promise<any>;  // Add createPolicy here
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,11 +44,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    console.log('Token:', token);
     const storedUser = localStorage.getItem('user');
-    console.log('Usuario:', storedUser);
-    if (token && storedUser) {
+    if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
         setIsAuthenticated(true);
@@ -39,13 +58,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await apiClient.post<AuthResponse>('/login', { Email: email, Password: password });
-
-      if (!response.data || !response.data.user) {
-        throw new Error('Respuesta inválida del servidor');
-      }
-
-      localStorage.setItem('token', response.data.token);
+      const response = await apiClient.post<AuthResponse>('/api/beneficiarios/login', { Email: email, Password: password });
       localStorage.setItem('user', JSON.stringify(response.data.user));
       setUser(response.data.user);
       setIsAuthenticated(true);
@@ -55,16 +68,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // ✅ Nueva función register para registrar usuarios
-  const register = async (userData: { Nombre: string; Apellido: string; Email: string; Password: string; Rol?: string }) => {
+  const register = async (userData: { 
+    Nombre: string; 
+    Apellido: string; 
+    Email: string; 
+    Password: string; 
+    ConfirmPassword: string; 
+    Telefono: string; 
+    DNI: string; 
+  }) => {
     try {
-      const response = await apiClient.post<AuthResponse>('/register', userData);
-
-      if (!response.data || !response.data.user) {
-        throw new Error('Error en el registro');
-      }
-
-      localStorage.setItem('token', response.data.token);
+      const response = await apiClient.post<AuthResponse>('/api/beneficiarios', userData);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       setUser(response.data.user);
       setIsAuthenticated(true);
@@ -75,14 +89,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
     setIsAuthenticated(false);
   };
 
+  // Create a new policy function
+  const createPolicy = async (BeneficiarioID: number, TipoPoliza: string) => {
+    try {
+      const response = await apiClient.post('/api/polizas', { BeneficiarioID, TipoPoliza });
+      alert(`Póliza de tipo ${TipoPoliza} creada con éxito.`);
+      return response.data;
+    } catch (error) {
+      console.error('Error al crear la póliza:', error);
+      alert('No se pudo crear la póliza.');
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, login, register, logout, isAuthenticated, createPolicy }}>
       {children}
     </AuthContext.Provider>
   );

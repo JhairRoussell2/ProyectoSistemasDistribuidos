@@ -1,26 +1,43 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import PolizaModel from "../models/polizaModel";
+import pool from "../config/db";
 
-export const createPoliza: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+export const createPoliza = async (req: Request, res: Response): Promise<void> => {
+  const { BeneficiarioID, TipoPoliza } = req.body;
+  console.log("BeneficiarioID:", BeneficiarioID);  // Verificar que el BeneficiarioID es el esperado.
+
   try {
-    const { BeneficiarioID, TipoPoliza } = req.body;
+    // Verificar si el BeneficiarioID existe en la tabla beneficiario
+    const [beneficiarioResult]: any = await pool.query("SELECT * FROM beneficiario WHERE UsuarioID = ?", [BeneficiarioID]);
 
-    if (!BeneficiarioID || !TipoPoliza) {
-      res.status(400).json({ error: "BeneficiarioID y TipoPoliza son requeridos." });
+    console.log("Beneficiario encontrado:", beneficiarioResult);
+
+    // Verificar si no se encontró el beneficiario
+    if (beneficiarioResult.length === 0) {
+      res.status(400).json({ error: "El BeneficiarioID no existe." });
       return;
     }
 
-    // Llamada al modelo para crear la póliza
-    const result = await PolizaModel.createPoliza(BeneficiarioID, TipoPoliza);
+    // Acceder al primer objeto del resultado
+    const beneficiario = beneficiarioResult[0];
+    console.log("Beneficiario:", beneficiario);
 
+    // Llamar al modelo para crear la póliza
+    const result = await PolizaModel.createPoliza(beneficiario.BeneficiarioID, TipoPoliza);
+
+    // Responder con éxito
     res.status(201).json({
       message: "Póliza creada exitosamente",
       polizaID: result.insertId,
     });
   } catch (error) {
-    next(error);
+    console.error('Error al crear la póliza:', error);
+    res.status(500).json({ error: 'Error al crear la póliza' });
   }
 };
+
+
+
 
 export const getPolizas: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -28,7 +45,7 @@ export const getPolizas: RequestHandler = async (req: Request, res: Response, ne
 
     // Llamada al modelo para obtener las pólizas del beneficiario
     const result = await PolizaModel.getPolizas();
-
+    console.log(result);
     if (!result || result.length === 0) {
       res.status(404).json({ message: "No se encontraron pólizas." });
       return;

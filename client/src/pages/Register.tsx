@@ -1,15 +1,16 @@
 import RegisterForm from '../components/RegisterForm';
-import { useAuth } from '../context/AuthContext'; //
+import { useAuth } from '../context/AuthContext'; // Para obtener el contexto de autenticación
 
 import { useNavigate } from 'react-router-dom';
 
-// Definir el tipo de datos que se enviarán en el registro
 interface RegisterData {
   Nombre: string;
   Apellido: string;
   Email: string;
   Password: string;
-  Rol?: string;
+  ConfirmPassword: string;
+  Telefono: string;
+  DNI: string;
 }
 
 const Register = () => {
@@ -20,7 +21,7 @@ const Register = () => {
     try {
       await register(userData);
       alert("Registro exitoso");
-      navigate('/'); // ✅ Redirigir al usuario después del registro
+      navigate('/'); // Redirigir al usuario después del registro
     } catch (error) {
       console.error("Error en el registro:", error);
       alert("No se pudo registrar el usuario.");

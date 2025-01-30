@@ -1,7 +1,10 @@
 import { FiCheckCircle, FiUsers, FiClipboard } from 'react-icons/fi';
 import Navbar from '../components/Navbar';
+import { useNavigate } from 'react-router-dom';
 
 const PersonalDashboard = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="bg-gray-900 min-h-screen text-white">
       <Navbar />
@@ -15,15 +18,18 @@ const PersonalDashboard = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-          {/* Tareas Pendientes */}
+          {/* Validar Poliza */}
           <div className="bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col items-center">
             <FiCheckCircle className="text-blue-400 text-6xl mb-4" />
-            <h2 className="text-2xl font-bold text-blue-400">Tareas Pendientes</h2>
+            <h2 className="text-2xl font-bold text-blue-400">Validar Poliza</h2>
             <p className="text-gray-300 mt-2 text-center">
-              Revisa y completa tus tareas asignadas rápidamente.
+              Revisa y valida las pólizas asignadas.
             </p>
-            <button className="mt-4 bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-white">
-              Ver Tareas
+            <button
+              className="mt-4 bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-white"
+              onClick={() => navigate('/dashboard/personal/validar-poliza')}
+            >
+              Ver Polizas
             </button>
           </div>
 
@@ -34,7 +40,8 @@ const PersonalDashboard = () => {
             <p className="text-gray-300 mt-2 text-center">
               Administra los beneficiarios de siniestros.
             </p>
-            <button className="mt-4 bg-green-600 hover:bg-green-700 px-5 py-2 rounded-lg text-white">
+            <button className="mt-4 bg-green-600 hover:bg-green-700 px-5 py-2 rounded-lg text-white"
+              onClick={() => navigate('/dashboard/personal/Mantener-Beneficiario')}>
               Gestionar Beneficiarios
             </button>
           </div>

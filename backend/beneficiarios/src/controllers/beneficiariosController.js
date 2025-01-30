@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkIfNewBeneficiario = exports.updateBeneficiario = exports.deleteBeneficiario = exports.createBeneficiario = exports.getBeneficiarioPorID = exports.getBeneficiarios = void 0;
+exports.checkIfNewBeneficiario = exports.updateBeneficiario = exports.deleteBeneficiario = exports.getUserRole = exports.createBeneficiario = exports.login = exports.getBeneficiarioPorID = exports.getBeneficiarios = void 0;
 const joi_1 = __importDefault(require("joi"));
 const db_1 = __importDefault(require("../config/db"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const email_1 = require("../models/email");
 // Esquema de validación
 const schema = joi_1.default.object({
     Nombre: joi_1.default.string().max(100).required(),
@@ -64,6 +65,42 @@ const getBeneficiarioPorID = (req, res, next) => __awaiter(void 0, void 0, void 
     }
 });
 exports.getBeneficiarioPorID = getBeneficiarioPorID;
+const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { Email, Password } = req.body;
+    try {
+        // Buscar al usuario por su correo electrónico
+        const user = yield (0, email_1.findUserByEmail)(Email);
+        // Verificar si el usuario existe
+        if (!user) {
+            res.status(404).json({ error: 'Usuario no encontrado' }); // Usa return aquí
+            return;
+        }
+        // Comparar la contraseña proporcionada con la almacenada en la base de datos
+        const isMatch = yield bcrypt_1.default.compare(Password, user.Password);
+        if (!isMatch) {
+            res.status(401).json({ error: 'Contraseña incorrecta' });
+            return; // Usa return aquí
+        }
+        // Generar un token JWT (si es necesario)
+        // const token = generateToken({ UsuarioID: user.UsuarioID, Rol: user.Rol });
+        // Responder con éxito
+        res.status(200).json({
+            message: 'Inicio de sesión exitoso',
+            user: {
+                UsuarioID: user.UsuarioID,
+                Nombre: user.Nombre,
+                Apellido: user.Apellido,
+                Email: user.Email,
+                Rol: user.Rol,
+            },
+        });
+    }
+    catch (error) {
+        console.error('Error en login:', error);
+        res.status(500).json({ error: 'Error al iniciar sesión' });
+    }
+});
+exports.login = login;
 // Controlador para crear un beneficiario
 const createBeneficiario = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -95,6 +132,28 @@ const createBeneficiario = (req, res, next) => __awaiter(void 0, void 0, void 0,
     }
 });
 exports.createBeneficiario = createBeneficiario;
+// Controlador para obtener el rol del usuario
+const getUserRole = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { UsuarioID } = req.params;
+        // Consulta directa a la base de datos para obtener el rol del usuario
+        const [rows] = yield db_1.default.query("SELECT Rol FROM usuario WHERE UsuarioID = ?", [UsuarioID]);
+        // Verificar si el usuario existe
+        if (rows.length === 0) {
+            res.status(404).json({ message: "Usuario no encontrado" });
+            return; // Agregar return para evitar que el código continúe ejecutándose
+        }
+        const user = rows[0]; // Asumiendo que rows[0] contiene el objeto del usuario
+        console.log(user);
+        // Enviar el rol del usuario como respuesta
+        res.status(200).json({ role: user.Rol });
+    }
+    catch (error) {
+        console.error("Error al obtener el rol del usuario:", error);
+        next(error); // Pasa el error al middleware global de errores
+    }
+});
+exports.getUserRole = getUserRole;
 // Controlador para eliminar un beneficiario
 const deleteBeneficiario = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -139,9 +198,10 @@ const updateBeneficiario = (req, res, next) => __awaiter(void 0, void 0, void 0,
 exports.updateBeneficiario = updateBeneficiario;
 const checkIfNewBeneficiario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { BeneficiarioID } = req.params;
+    console.log(BeneficiarioID);
     try {
         // Verificar si el beneficiario tiene alguna póliza activa
-        const [rows] = yield db_1.default.query("SELECT COUNT(*) as count FROM poliza WHERE BeneficiarioID = ? AND Estado = 'Activo'", [BeneficiarioID]);
+        const [rows] = yield db_1.default.query("select count(*) as count from poliza INNER JOIN beneficiario on beneficiario.BeneficiarioID = poliza.BeneficiarioID WHERE UsuarioID = ?", [BeneficiarioID]);
         if (rows[0].count === 0) {
             // Si no tiene póliza activa, responder que es nuevo
             res.status(200).json({ isNew: true });
