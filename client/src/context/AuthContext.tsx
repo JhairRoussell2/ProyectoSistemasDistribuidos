@@ -1,5 +1,9 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import apiClient from '../services/apiClient';
+<<<<<<< HEAD
+=======
+
+>>>>>>> cbb2223a6b1a6586ffe90d1f1f887e1b5f123c75
 
 interface AuthResponse {
   token: string;

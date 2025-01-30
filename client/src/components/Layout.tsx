@@ -48,9 +48,8 @@ const Layout = ({ children }: LayoutProps) => {
             {/* Opciones del menú para el Panel de Administrador */}
             {isAdminPanel && (
               <>
-                <NavLink to="/dashboard/admin" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
-                  <FiFileText />
-                  <span>Gestión de Presupuestos</span>
+                <NavLink to="/proveedores" className="...">
+                  <FiFileText /> Gestión de Proveedores
                 </NavLink>
                 <NavLink to="/dashboard/admin/pagos" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
                   <FiDollarSign />

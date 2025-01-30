@@ -11,14 +11,20 @@ import GeneralDashboard from "./pages/GeneralDashboard";
 import { AuthProvider } from "./context/AuthContext";
 import MantenerBeneficiarios from "./pages/Beneficiarios";
 import ValidarPoliza from "./components/ValidarPoliza";
+import RegistrarProveedor from "./pages/RegistrarProveedor";
+import Proveedores from "./pages/Proveedores";
+import EditarProveedor from "./pages/EditarProveedor";
+import PaginaPrincipal from "./pages/PaginaPrincipal";
+
 
 
 const App = () => {
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
+      <Route path="/" element={<PaginaPrincipal />} />
+      <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard/admin" element={<AdminDashboard />} />
         <Route path="/dashboard/personal" element={<PersonalDashboard />} />
@@ -27,6 +33,9 @@ const App = () => {
         <Route path="/dashboard/personal/Mantener-Beneficiario" element={<MantenerBeneficiarios />} />
         <Route path="/dashboard/personal/validar-poliza" element={<ValidarPoliza />} />
         <Route path="/polizas" element={<Policies />} />
+        <Route path="/proveedores" element={<Proveedores/>} />
+        <Route path="/registrar-proveedor" element={<RegistrarProveedor />} />
+        <Route path="/editar-proveedor/:id" element={<EditarProveedor />} />
         {/* Rutas protegidas */}
         {/* <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
@@ -35,6 +44,7 @@ const App = () => {
           <Route path="/dashboard/general" element={<GeneralDashboard />} />
           <Route path="/registro-siniestro" element={<RegistroSiniestro />} />
         </Route> */}
+
       </Routes>
     </AuthProvider>
   );

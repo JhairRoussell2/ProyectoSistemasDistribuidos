@@ -38,5 +38,12 @@
 }
 
 .read-the-docs {
-  color: #888;
+  color: #000000;
+}
+
+.modal-texture {
+  background: white;
+  background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+  background-size: 150px;
+  background-blend-mode: soft-light;
 }

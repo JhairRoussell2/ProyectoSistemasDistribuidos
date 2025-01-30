@@ -1,9 +1,16 @@
+<<<<<<< HEAD
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Modal from './Modal';
 import apiClient from '../services/apiClient';
 import { FaBell } from 'react-icons/fa'; // Import Bell icon from react-icons
+=======
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import Modal from "./Modal";
+>>>>>>> cbb2223a6b1a6586ffe90d1f1f887e1b5f123c75
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -15,7 +22,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   // Función para verificar si el beneficiario es nuevo
@@ -54,13 +61,17 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gray-800 text-white shadow-lg p-4 flex justify-between items-center relative">
+    <nav className="w-full h-20 bg-gray-900 text-white shadow-lg px-6 flex justify-between items-center fixed top-0 z-50">
+      {/* Logo */}
       <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white drop-shadow-lg">
-        <span className="bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 bg-clip-text text-transparent">
-          Seguro<span className="text-blue-400">Flex</span>
+        <span className="bg-gradient-to-r from-red-400 via-red-500 to-red-600 bg-clip-text text-transparent">
+          Seguro<span className="text-red-300">Flex</span>
         </span>
       </h1>
+
+      {/* Botón de Perfil */}
       <div className="flex items-center space-x-4">
+<<<<<<< HEAD
         {userRole === 'Administrador' && (
           <button
             onClick={() => navigate('/usuarios')}
@@ -69,12 +80,15 @@ const Navbar = () => {
             Ver Usuarios
           </button>
         )}
+=======
+>>>>>>> cbb2223a6b1a6586ffe90d1f1f887e1b5f123c75
         <button
           onClick={() => setShowProfile(!showProfile)}
-          className="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-white font-semibold transition shadow-lg"
+          className="bg-red-600 hover:bg-red-700 px-5 py-2 rounded-lg text-white font-semibold transition shadow-lg"
         >
           Ver Perfil
         </button>
+<<<<<<< HEAD
 
         {/* Bell Icon for notifications */}
         {userRole === 'Beneficiario' && isNewBeneficiario !== null && (
@@ -120,14 +134,42 @@ const Navbar = () => {
             <button 
               onClick={handleLogout} 
               className="mt-4 w-full bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg text-white font-semibold transition"
+=======
+      </div>
+
+      {/* Modal de Perfil - Solo se muestra uno a la vez */}
+      {showProfile && (
+        <Modal onClose={() => setShowProfile(false)}>
+          <div className="p-6 rounded-lg text-center animate-fade-in">
+            <h2 className="text-2xl font-bold text-red-600 mb-4">Perfil de Usuario</h2>
+            <p className="text-gray-700 font-medium">
+              <strong>Nombre:</strong> {user?.Nombre} {user?.Apellido}
+            </p>
+            <p className="text-gray-700 font-medium">
+              <strong>Correo:</strong> {user?.Email}
+            </p>
+            <p className="text-gray-700 font-medium">
+              <strong>Rol:</strong> {user?.Rol}
+            </p>
+
+            {/* Botón de Cerrar Sesión */}
+            <button
+              onClick={handleLogout}
+              className="mt-6 w-full bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition font-semibold"
+>>>>>>> cbb2223a6b1a6586ffe90d1f1f887e1b5f123c75
             >
               Cerrar sesión
             </button>
-          </Modal>
-        )}
-      </div>
+          </div>
+        </Modal>
+      )}
     </nav>
   );
 };
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> cbb2223a6b1a6586ffe90d1f1f887e1b5f123c75
 export default Navbar;

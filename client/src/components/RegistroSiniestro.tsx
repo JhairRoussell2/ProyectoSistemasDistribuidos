@@ -1,41 +1,70 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Importar useNavigate para navegación
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import Navbar from '../components/Navbar';
+import Navbar from "../components/Navbar";
 
-mapboxgl.accessToken = "pk.eyJ1IjoiZGFuaWVscHJ1ZWJhMjMiLCJhIjoiY200YnlpbGV5MDVqeTJ3b3ZsOXp0bXpmbiJ9.bh_ogcw3BioUBy--uuJ0LQ";
+mapboxgl.accessToken =
+  "pk.eyJ1IjoiZGFuaWVscHJ1ZWJhMjMiLCJhIjoiY200YnlpbGV5MDVqeTJ3b3ZsOXp0bXpmbiJ9.bh_ogcw3BioUBy--uuJ0LQ";
+
+// Definir el tipo explícito para el estado 'form'
+type FormState = {
+  tipoSiniestro: string;
+  fechaSiniestro: string;
+  departamento: string;
+  distrito: string;
+  provincia: string;
+  ubicacion: string;
+  descripcion: string;
+  documentos: File[]; // Cambiar 'never[]' a 'File[]'
+};
 
 const RegistroSiniestro = () => {
   const navigate = useNavigate(); // Hook para la navegación
-  const [form, setForm] = useState({
-    tipoSiniestro: "",
+  const [form, setForm] = useState<FormState>({
+    tipoSiniestro: "Accidente", // Valor predeterminado
     fechaSiniestro: "",
     departamento: "",
     distrito: "",
     provincia: "",
     ubicacion: "",
     descripcion: "",
-    documentos: [],
+    documentos: [], // Inicializa 'documentos' como un arreglo vacío de tipo File[]
   });
 
+  const [imageUrl, setImageUrl] = useState<string | null>(null); // Estado para la URL de la imagen
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<mapboxgl.Marker | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  // Manejar cambios en los campos del formulario
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
   };
 
+  // Manejar los archivos seleccionados
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = e.target.files;
+    if (selectedFiles) {
+      setForm((prevForm) => ({
+        ...prevForm,
+        documentos: Array.from(selectedFiles), // Convierte los archivos seleccionados en un arreglo
+      }));
+    }
+  };
+
+  // Configuración y mapa de ubicación
   useEffect(() => {
     if (mapRef.current) return;
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current!,
       style: "mapbox://styles/mapbox/streets-v11",
-      center: [-77.0428, -12.0464],
+      center: [-77.0428, -12.0464], // Coordenadas iniciales
       zoom: 12,
     });
 
@@ -78,11 +107,52 @@ const RegistroSiniestro = () => {
     mapRef.current = map;
   }, []);
 
+  // Enviar formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const tipoSiniestro =
+      form.tipoSiniestro.trim() === "" ? "Accidente" : form.tipoSiniestro;
+    const formData = new FormData();
+    formData.append("tipoSiniestro", tipoSiniestro);
+    formData.append("fechaSiniestro", form.fechaSiniestro);
+    formData.append("departamento", form.departamento);
+    formData.append("distrito", form.distrito);
+    formData.append("provincia", form.provincia);
+    formData.append("ubicacion", form.ubicacion);
+    formData.append("descripcion", form.descripcion);
+
+    // Adjuntar los documentos solo si existen
+    form.documentos.forEach((doc) => {
+      formData.append("image", doc); // Adjuntar los archivos al FormData
+    });
+
     try {
-      const response = await axios.post("http://localhost:3000/api/siniestros", form);
-      alert("Siniestro registrado con éxito: " + response.data.siniestroId);
+      // Enviar la solicitud al servidor para subir el archivo
+      const response = await axios.post(
+        "http://localhost:3000/upload",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      // Extraer la URL de la imagen de la respuesta
+      const imageUrl = response.data.secure_url; // Obtener la URL del archivo subido
+      setImageUrl(imageUrl); // Guardar la URL en el estado
+
+      // Enviar la URL al backend junto con el resto del formulario
+      const secondResponse = await axios.post(
+        "http://localhost:3000/api/siniestros",
+        {
+          ...form,
+          documentos: [imageUrl], // Solo enviar la URL del archivo
+        }
+      );
+
+      alert(
+        "Siniestro registrado con éxito: " + secondResponse.data.siniestroId
+      );
     } catch (error) {
       console.error("Error al registrar el siniestro:", error);
       alert("Ocurrió un error al registrar el siniestro");
@@ -90,17 +160,17 @@ const RegistroSiniestro = () => {
   };
 
   return (
-    <div style={{ backgroundColor: "#1E3A5F", minHeight: "100vh" }}>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-red-100 via-red-200 to-red-300 p-6">
       <Navbar />
-      <div style={{ transform: 'scale(0.80)', transformOrigin: 'top' }}>
-        <div className="max-w-7xl mx-auto mt-10 p-8 bg-gradient-to-br from-red-200 to-red-400 border-4 border-red-600 rounded-lg shadow-lg">
-          <h1 className="text-4xl font-bold text-red-700 text-center mb-8 tracking-wide uppercase">
+      <div className="flex justify-center items-center py-10">
+        <div className="max-w-[90%] lg:max-w-[1200px] w-full bg-white border border-gray-200 rounded-lg shadow-2xl p-12">
+          <h1 className="text-6xl lg:text-5xl font-extrabold text-center mb-10 tracking-wide uppercase bg-gradient-to-r from-red-700 to-red-500 bg-clip-text text-transparent">
             Registrar Siniestro
           </h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-            
+  
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Formulario */}
-            <form onSubmit={handleSubmit} className="space-y-6 flex flex-col">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 gap-4">
                 <input
                   type="text"
@@ -108,7 +178,7 @@ const RegistroSiniestro = () => {
                   placeholder="Tipo de Siniestro"
                   value={form.tipoSiniestro}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none shadow-sm transition-all duration-300 hover:shadow-md"
                   required
                 />
                 <input
@@ -116,7 +186,7 @@ const RegistroSiniestro = () => {
                   name="fechaSiniestro"
                   value={form.fechaSiniestro}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none shadow-sm transition-all duration-300 hover:shadow-md"
                   required
                 />
                 <input
@@ -125,7 +195,7 @@ const RegistroSiniestro = () => {
                   placeholder="Departamento"
                   value={form.departamento}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none shadow-sm transition-all duration-300 hover:shadow-md"
                 />
                 <input
                   type="text"
@@ -133,7 +203,7 @@ const RegistroSiniestro = () => {
                   placeholder="Distrito"
                   value={form.distrito}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none shadow-sm transition-all duration-300 hover:shadow-md"
                 />
                 <input
                   type="text"
@@ -141,7 +211,7 @@ const RegistroSiniestro = () => {
                   placeholder="Provincia"
                   value={form.provincia}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none shadow-sm transition-all duration-300 hover:shadow-md"
                 />
                 <input
                   type="text"
@@ -149,45 +219,83 @@ const RegistroSiniestro = () => {
                   placeholder="Ubicación"
                   value={form.ubicacion}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none shadow-sm transition-all duration-300 hover:shadow-md"
                 />
               </div>
+  
               <textarea
                 name="descripcion"
                 placeholder="Descripción"
                 value={form.descripcion}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-red-400 rounded-lg text-black placeholder-gray-700 focus:ring focus:ring-red-300 focus:outline-none shadow-sm transition duration-300 flex-grow"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none shadow-sm transition-all duration-300 hover:shadow-md"
                 required
               ></textarea>
+  
+              <div>
+                <input
+                  type="file"
+                  name="documentos"
+                  multiple
+                  onChange={handleFileChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-800 focus:ring-2 focus:ring-red-500 focus:outline-none shadow-sm transition-all duration-300 hover:shadow-md"
+                />
+              </div>
+  
+              {/* Botón "Registrar Siniestro" dentro del formulario */}
               <button
                 type="submit"
-                className="w-full bg-red-500 text-white font-bold px-6 py-3 mt-4 rounded-lg hover:bg-red-600 focus:ring focus:ring-red-300 shadow-md transition duration-300"
+                className="bg-gradient-to-r from-red-600 to-red-800 text-white font-bold px-12 py-4 rounded-lg text-lg w-full mt-6"
               >
                 Registrar Siniestro
               </button>
             </form>
-
+  
             {/* Mapa */}
-            <div className="w-full h-[480px] border border-red-400 rounded-lg">
+            <div className="w-full h-[480px] border border-gray-300 rounded-xl shadow-xl overflow-hidden transition-transform hover:scale-105">
               <div ref={mapContainerRef} className="w-full h-full"></div>
-              </div>
+            </div>
           </div>
-        </div>
-      </div>
-          {/* Botón de regreso al dashboard - Debajo del formulario */}
-          <div className="-mt-20 flex justify-center ">
+  
+          {/* Contenedor de botones debajo del mapa */}
+          <div className="flex justify-between w-full mt-6">
+           
+  
+            {/* Botón "Regresar al Dashboard" */}
             <button
               onClick={() => navigate("/dashboard/general")}
-              className="bg-gray-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-gray-700 focus:ring focus:ring-gray-300 shadow-md transition duration-300"
+              className="bg-gray-600 text-white font-bold px-12 py-4 rounded-lg text-lg w-1/2"
             >
               Regresar al Dashboard
             </button>
           </div>
-
         </div>
-      
+      </div>
+  
+      {/* Mostrar URL de la imagen si está disponible */}
+      {imageUrl && (
+        <div className="text-center mt-4">
+          <p>
+            Imagen subida:{" "}
+            <a
+              href={imageUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-red-600 underline hover:text-red-800"
+            >
+              {imageUrl}
+            </a>
+          </p>
+          <img
+            src={imageUrl}
+            alt="Imagen subida"
+            className="mt-4 max-w-xs rounded-lg shadow-md border border-gray-200"
+          />
+        </div>
+      )}
+    </div>
   );
+  
 };
 
 export default RegistroSiniestro;

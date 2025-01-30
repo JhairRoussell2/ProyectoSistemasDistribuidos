@@ -19,4 +19,10 @@ pool.getConnection()
     .then(() => console.log('Conexión exitosa a la base de datos MySQL'))
     .catch((err) => console.error('Error al conectar a la base de datos MySQL:', err));
 
+
+    if (!process.env.DB_HOST || !process.env.DB_USER || !process.env.DB_NAME) {
+        console.error("❌ ERROR: Faltan variables de entorno en el .env");
+        process.exit(1); // Detiene el servidor si faltan variables
+    }
+    
 export default pool;
