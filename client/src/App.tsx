@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import RegistroSiniestro from "./components/RegistroSiniestro";
+import RegistroSiniestro from "./pages/RegistrarSiniestro";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
