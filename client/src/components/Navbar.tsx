@@ -1,16 +1,9 @@
-<<<<<<< HEAD
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Modal from './Modal';
 import apiClient from '../services/apiClient';
 import { FaBell } from 'react-icons/fa'; // Import Bell icon from react-icons
-=======
-import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import Modal from "./Modal";
->>>>>>> cbb2223a6b1a6586ffe90d1f1f887e1b5f123c75
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -71,7 +64,6 @@ const Navbar = () => {
 
       {/* Botón de Perfil */}
       <div className="flex items-center space-x-4">
-<<<<<<< HEAD
         {userRole === 'Administrador' && (
           <button
             onClick={() => navigate('/usuarios')}
@@ -80,15 +72,12 @@ const Navbar = () => {
             Ver Usuarios
           </button>
         )}
-=======
->>>>>>> cbb2223a6b1a6586ffe90d1f1f887e1b5f123c75
         <button
           onClick={() => setShowProfile(!showProfile)}
           className="bg-red-600 hover:bg-red-700 px-5 py-2 rounded-lg text-white font-semibold transition shadow-lg"
         >
           Ver Perfil
         </button>
-<<<<<<< HEAD
 
         {/* Bell Icon for notifications */}
         {userRole === 'Beneficiario' && isNewBeneficiario !== null && (
@@ -134,42 +123,14 @@ const Navbar = () => {
             <button 
               onClick={handleLogout} 
               className="mt-4 w-full bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg text-white font-semibold transition"
-=======
-      </div>
-
-      {/* Modal de Perfil - Solo se muestra uno a la vez */}
-      {showProfile && (
-        <Modal onClose={() => setShowProfile(false)}>
-          <div className="p-6 rounded-lg text-center animate-fade-in">
-            <h2 className="text-2xl font-bold text-red-600 mb-4">Perfil de Usuario</h2>
-            <p className="text-gray-700 font-medium">
-              <strong>Nombre:</strong> {user?.Nombre} {user?.Apellido}
-            </p>
-            <p className="text-gray-700 font-medium">
-              <strong>Correo:</strong> {user?.Email}
-            </p>
-            <p className="text-gray-700 font-medium">
-              <strong>Rol:</strong> {user?.Rol}
-            </p>
-
-            {/* Botón de Cerrar Sesión */}
-            <button
-              onClick={handleLogout}
-              className="mt-6 w-full bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition font-semibold"
->>>>>>> cbb2223a6b1a6586ffe90d1f1f887e1b5f123c75
             >
               Cerrar sesión
             </button>
-          </div>
-        </Modal>
-      )}
+          </Modal>
+        )}
+      </div>
     </nav>
   );
 };
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> cbb2223a6b1a6586ffe90d1f1f887e1b5f123c75
 export default Navbar;
