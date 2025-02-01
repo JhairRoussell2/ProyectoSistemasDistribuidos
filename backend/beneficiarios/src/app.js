@@ -55,7 +55,6 @@ app.use(express_1.default.urlencoded({ extended: true }));
 app.use("/api/beneficiarios", beneficiariosRoutes_1.default);
 app.use("/api/siniestros", siniestrosRoutes_1.default);
 app.use("/api/polizas", polizaRoutes_1.default);
-// Ruta para cargar imágenes a Cloudinary
 app.use("/api/reclamaciones", reclamacionRoutes_1.default); // ✅ Agregando las rutas de reclamaciones
 // ✅ Ruta para cargar imágenes a Cloudinary
 app.post("/upload", upload.single('image'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
