@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";  // Importamos estilos de Toasti
 import { toast, ToastContainer } from "react-toastify";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Navbar from "../components/Navbar";
+import { useAuth } from '../context/AuthContext';  // Importar el contexto de autenticación
 
 mapboxgl.accessToken =
   "pk.eyJ1IjoiZGFuaWVscHJ1ZWJhMjMiLCJhIjoiY200YnlpbGV5MDVqeTJ3b3ZsOXp0bXpmbiJ9.bh_ogcw3BioUBy--uuJ0LQ";
@@ -24,6 +25,7 @@ type FormState = {
 
 const RegistroSiniestro = () => {
   const navigate = useNavigate(); // Hook para la navegación
+  const { user } = useAuth(); // Obtener el usuario del contexto
   const [form, setForm] = useState<FormState>({
     tipoSiniestro: "Accidente", // Valor predeterminado
     fechaSiniestro: "",
@@ -32,13 +34,34 @@ const RegistroSiniestro = () => {
     provincia: "",
     ubicacion: "",
     descripcion: "",
-    documentos: [], // Inicializa 'documentos' como un arreglo vacío de tipo File[]
+    documentos: [] // Inicializa 'documentos' como un arreglo vacío de tipo File[]
   });
 
   const [imageUrl, setImageUrl] = useState<string | null>(null); // Estado para la URL de la imagen
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<mapboxgl.Marker | null>(null);
+
+  // Obtener BeneficiarioID y PolizaID al cargar el componente
+  useEffect(() => {
+    const fetchUsuarioID = async () => {
+      if (!user || !user.UsuarioID) return;
+
+      try {
+        // Obtener el UsuarioID desde el backend o contexto
+        setForm((prevForm) => ({
+          ...prevForm,
+          usuarioID: user.UsuarioID,  // Asignar el UsuarioID al estado
+        }));
+      } catch (error) {
+        console.error("Error al obtener UsuarioID:", error);
+        toast.error("No se pudo obtener el UsuarioID.");
+      }
+    };
+
+    fetchUsuarioID();
+}, [user]);
+
 
   // Manejar cambios en los campos del formulario
   const handleChange = (
@@ -119,7 +142,7 @@ const RegistroSiniestro = () => {
     formData.append("distrito", form.distrito);
     formData.append("provincia", form.provincia);
     formData.append("ubicacion", form.ubicacion);
-    formData.append("descripcion", form.descripcion);
+    formData.append("descripcion", form.descripcion); // Agregar PolizaID
   
     // Inicializa un arreglo vacío para almacenar las URLs de las imágenes
     const imageUrls: string[] = [];
@@ -225,8 +248,6 @@ const RegistroSiniestro = () => {
                 />
               
   
-             
-
               </div>
 
               <textarea

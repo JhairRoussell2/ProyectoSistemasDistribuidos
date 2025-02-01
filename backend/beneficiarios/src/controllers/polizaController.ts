@@ -41,7 +41,7 @@ export const createPoliza = async (req: Request, res: Response): Promise<void> =
 export const getPolizaPorBeneficiarioID = async (req: Request, res: Response) => {
   const { BeneficiarioID } = req.params;
   try {
-    const { rows }: any = await pool.query("SELECT PolizaID FROM poliza WHERE BeneficiarioID = $1", [BeneficiarioID]);
+    const { rows }: any = await pool.query("SELECT polizaid FROM poliza WHERE beneficiarioid = $1", [BeneficiarioID]);
     if (rows.length === 0) {
       res.status(404).json({ message: "Póliza no encontrada." });
       return;
@@ -132,5 +132,38 @@ export const updatePolizaEstado = async (req: Request, res: Response, next: Next
     res.status(200).json({ message: "Estado de la póliza actualizado exitosamente." });
   } catch (error) {
     next(error);
+  }
+};
+
+export const obtenerPolizasPorUsuarioID = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { usuarioID } = req.params;
+
+    // Consultar el beneficiarioID usando el usuarioID
+    const { rows: beneficiarioRows } = await pool.query(
+      "SELECT beneficiarioid FROM beneficiario WHERE usuarioid = $1", [usuarioID]
+    );
+
+    if (beneficiarioRows.length === 0) {
+      res.status(404).json({ error: "Beneficiario no encontrado" });
+      return;
+    }
+
+    const beneficiarioID = beneficiarioRows[0].beneficiarioid;
+
+    // Obtener las pólizas asociadas a este beneficiarioID
+    const { rows: polizasRows } = await pool.query(
+      "SELECT * FROM poliza WHERE beneficiarioid = $1", [beneficiarioID]
+    );
+
+    if (polizasRows.length === 0) {
+      res.status(404).json({ error: "No se encontraron pólizas para este beneficiario" });
+      return;
+    }
+
+    res.status(200).json(polizasRows);
+  } catch (error) {
+    console.error("Error al obtener las pólizas:", error);
+    res.status(500).json({ error: "Hubo un problema al obtener las pólizas" });
   }
 };

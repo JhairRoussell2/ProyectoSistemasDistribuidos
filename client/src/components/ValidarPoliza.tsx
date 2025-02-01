@@ -10,7 +10,6 @@ interface Poliza {
   fechainicio: string;
   fechafin: string;
   estado: string;
-  // otros campos relevantes
 }
 
 const ValidarPoliza = () => {
@@ -23,7 +22,6 @@ const ValidarPoliza = () => {
     const fetchPolizas = async () => {
       try {
         const response = await apiClient.get('/api/polizas');
-        console.log(response.data);  // Verifica los datos aquí
         if (Array.isArray(response.data)) {
           setPolizas(response.data);
         } else if (response.data && typeof response.data === 'object') {
@@ -36,7 +34,6 @@ const ValidarPoliza = () => {
         setError('Error al obtener las pólizas');
       }
     };
-    
 
     fetchPolizas();
   }, []);
@@ -76,9 +73,9 @@ const ValidarPoliza = () => {
     <div className="bg-gray-900 min-h-screen text-white">
       <Navbar />
       <div className="max-w-6xl mx-auto py-10 px-6">
-        <h1 className="text-5xl font-bold text-center text-gray-100 mb-6">
-          Validar Póliza
-        </h1>
+        <h1 className="text-5xl font-bold text-center text-gray-100 mb-6">Validar Póliza</h1>
+        
+        {/* Search Input */}
         <div className="mb-6 flex justify-center space-x-4">
           <input
             type="text"
@@ -94,13 +91,19 @@ const ValidarPoliza = () => {
             Buscar
           </button>
         </div>
+
+        {/* Back to Dashboard Button */}
         <button
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg focus:outline-none mb-6"
           onClick={() => navigate('/dashboard/personal')}
         >
           Volver al Dashboard Personal
         </button>
+
+        {/* Error Message */}
         {error && <p className="text-red-500 text-center mb-6">{error}</p>}
+
+        {/* Polizas Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {polizas.map((poliza) => (
             <div key={poliza.polizaid} className="bg-gray-800 rounded-lg shadow-lg p-6">
@@ -108,14 +111,17 @@ const ValidarPoliza = () => {
               <p className="text-gray-300 mt-2">ID: {poliza.polizaid}</p>
               <p className="text-gray-300 mt-2">Fecha de Inicio: {new Date(poliza.fechainicio).toLocaleDateString()}</p>
               <p className="text-gray-300 mt-2">Fecha de Fin: {new Date(poliza.fechafin).toLocaleDateString()}</p>
-              <p className="text-gray-300 mt-2">estado: {poliza.estado}</p>
-              <button
-                className={`mt-4 px-6 py-2 rounded-lg text-white ${poliza.estado === 'Activa' ? 'bg-gray-600 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
-                onClick={() => handleValidar(poliza.polizaid)}
-                disabled={poliza.estado === 'Activa'}
-              >
-                Validar
-              </button>
+              <p className={`text-2xl mt-2 ${poliza.estado === 'Activa' ? 'text-green-500' : 'text-red-500'}`}>Estado: {poliza.estado}</p>
+              
+              {/* Only show the button if the policy is not active */}
+              {poliza.estado !== 'Activa' && (
+                <button
+                  className="mt-4 px-6 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700"
+                  onClick={() => handleValidar(poliza.polizaid)}
+                >
+                  Validar
+                </button>
+              )}
             </div>
           ))}
         </div>

@@ -50,7 +50,7 @@ exports.createPoliza = createPoliza;
 const getPolizaPorBeneficiarioID = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { BeneficiarioID } = req.params;
     try {
-        const { rows } = yield db_1.default.query("SELECT PolizaID FROM poliza WHERE BeneficiarioID = $1", [BeneficiarioID]);
+        const { rows } = yield db_1.default.query("SELECT polizaid FROM poliza WHERE beneficiarioid = $1", [BeneficiarioID]);
         if (rows.length === 0) {
             res.status(404).json({ message: "Póliza no encontrada." });
             return;

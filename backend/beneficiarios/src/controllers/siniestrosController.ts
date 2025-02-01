@@ -1,17 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import Joi from "joi";
 import pool from "../config/db";
-import multer from 'multer';  // Asegúrate de tener multer instalado
-import cloudinary from "cloudinary";
-
-// Configurar multer para manejar la carga de archivos
-const storage = multer.memoryStorage();
-const upload = multer({ storage }).array("documentos", 5); // Ajusta el número máximo de archivos según lo necesites
+import { send } from "process";
 
 // Esquema de validación
 const schema = Joi.object({
-  BeneficiarioID: Joi.number().required(),  // Asegúrate de permitir este campo
-  PolizaID: Joi.number().required(),
   tipoSiniestro: Joi.string().required(),
   fechaSiniestro: Joi.date().required(),
   departamento: Joi.string().required(),
@@ -20,15 +13,14 @@ const schema = Joi.object({
   ubicacion: Joi.string().required(),
   descripcion: Joi.string().required(),
   documentos: Joi.array().items(Joi.string().uri()).optional(),  // Asegúrate de permitir un array de URLs
+  usuarioID: Joi.number().required(), // Para obtener el BeneficiarioID relacionado
 });
-
 
 // Controlador para registrar un siniestro
 export const registrarSiniestro = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    console.log('Solicitud recibida:', req.body); // Imprimir el cuerpo de la solicitud
+    console.log('Solicitud recibida:', req.body);
 
-    // Validar los datos enviados
     const { error } = schema.validate(req.body);
     if (error) {
       res.status(400).json({ error: error.details[0].message });
@@ -44,8 +36,7 @@ export const registrarSiniestro = async (req: Request, res: Response, next: Next
       ubicacion,
       descripcion,
       documentos = [],
-      BeneficiarioID,
-      PolizaID,
+      usuarioID,
     } = req.body;
 
     console.log({
@@ -57,9 +48,30 @@ export const registrarSiniestro = async (req: Request, res: Response, next: Next
       ubicacion,
       descripcion,
       documentos,
-      BeneficiarioID,
-      PolizaID,
+      usuarioID,
     });
+
+    // Obtener BeneficiarioID y PolizaID desde usuarioID
+    const { rows: beneficiarioRows } = await pool.query(
+      "SELECT beneficiarioid FROM beneficiario WHERE usuarioid = $1", [usuarioID]
+    );
+
+    if (beneficiarioRows.length === 0) {
+      res.status(404).json({ error: "Beneficiario no encontrado." });
+      return;
+    }
+    const BeneficiarioID = beneficiarioRows[0].beneficiarioid;
+    console.log("BeneficiarioID:", BeneficiarioID);
+
+    const { rows: polizaRows } = await pool.query(
+      "SELECT polizaid FROM poliza WHERE beneficiarioid = $1", [BeneficiarioID]
+    );
+
+    if (polizaRows.length === 0) {
+      res.status(404).json({ error: "Póliza no encontrada." });
+      return;
+    }
+    const PolizaID = polizaRows[0].polizaid;
 
     // Verificar si los documentos están en el formato correcto (si existen)
     let documentosUrls: string[] = [];
@@ -78,14 +90,15 @@ export const registrarSiniestro = async (req: Request, res: Response, next: Next
     // Convertir los documentos a JSON válido
     const documentosJson = JSON.stringify(documentosUrls);
 
-    // Llamada a la consulta INSERT directamente en la tabla 'siniestros'
-    const [result]: any = await pool.query(
+    // Llamada a la consulta INSERT directamente en la tabla 'siniestros' con RETURNING
+    const result = await pool.query(
       `INSERT INTO siniestros 
       (beneficiarioid, polizaid, tipo_siniestro, fecha_siniestro, departamento, distrito, provincia, ubicacion, descripcion, documentos)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING siniestroid`,  // Usar RETURNING para obtener el siniestroid
       [
-        BeneficiarioID,            // BeneficiarioID
-        PolizaID,                  // PolizaID
+        BeneficiarioID,            // BeneficiarioID obtenido
+        PolizaID,                  // PolizaID obtenido
         tipoSiniestro,             // Tipo de Siniestro
         fechaSiniestro,            // Fecha del Siniestro
         departamento,              // Departamento
@@ -97,10 +110,17 @@ export const registrarSiniestro = async (req: Request, res: Response, next: Next
       ]
     );
 
+    // Verificar que la consulta INSERT devolvió el siniestroid
+    const siniestroId = result.rows[0].siniestroid;
+    if (!siniestroId) {
+      res.status(500).json({ error: "No se pudo obtener el ID del siniestro." });
+      return;
+    }
+
     // Responder con el ID del siniestro insertado
     res.status(201).json({
       message: "Siniestro registrado con éxito",
-      siniestroId: result.insertId, // Retorna el ID del siniestro recién creado
+      siniestroId,  // Retorna el ID del siniestro recién creado
     });
   } catch (error) {
     console.error("Error al registrar siniestro:", error);
@@ -108,12 +128,6 @@ export const registrarSiniestro = async (req: Request, res: Response, next: Next
   }
 };
 
-
-
-
-
-
-// Controlador para listar todos los siniestros
 export const listarSiniestros = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const [result]: any = await pool.query("SELECT * FROM siniestros");
