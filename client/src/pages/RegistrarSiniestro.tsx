@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import mapboxgl from "mapbox-gl";
+import "react-toastify/dist/ReactToastify.css";  // Importamos estilos de Toastify
+import { toast, ToastContainer } from "react-toastify";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Navbar from "../components/Navbar";
 
@@ -107,55 +109,55 @@ const RegistroSiniestro = () => {
     mapRef.current = map;
   }, []);
 
-  // Enviar formulario
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const tipoSiniestro =
-      form.tipoSiniestro.trim() === "" ? "Accidente" : form.tipoSiniestro;
+    e.preventDefault(); // Prevenir el comportamiento predeterminado de enviar el formulario
+  
     const formData = new FormData();
-    formData.append("tipoSiniestro", tipoSiniestro);
+    formData.append("tipoSiniestro", form.tipoSiniestro);
     formData.append("fechaSiniestro", form.fechaSiniestro);
     formData.append("departamento", form.departamento);
     formData.append("distrito", form.distrito);
     formData.append("provincia", form.provincia);
     formData.append("ubicacion", form.ubicacion);
     formData.append("descripcion", form.descripcion);
-
-    // Adjuntar los documentos solo si existen
-    form.documentos.forEach((doc) => {
-      formData.append("image", doc); // Adjuntar los archivos al FormData
-    });
-
+  
+    // Inicializa un arreglo vacío para almacenar las URLs de las imágenes
+    const imageUrls: string[] = [];
+  
     try {
-      // Enviar la solicitud al servidor para subir el archivo
-      const response = await axios.post(
-        "http://localhost:3000/upload",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-
-      // Extraer la URL de la imagen de la respuesta
-      const imageUrl = response.data.secure_url; // Obtener la URL del archivo subido
-      setImageUrl(imageUrl); // Guardar la URL en el estado
-
-      // Enviar la URL al backend junto con el resto del formulario
+      // Enviar cada archivo individualmente
+      for (let i = 0; i < form.documentos.length; i++) {
+        const file = form.documentos[i];
+  
+        // Crear un nuevo FormData para cada archivo
+        const fileFormData = new FormData();
+        fileFormData.append("image", file); // Agregar el archivo al FormData
+  
+        // Enviar el archivo al servidor
+        const response = await axios.post(
+          "http://localhost:3000/upload",
+          fileFormData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+  
+        // Obtener la URL de la imagen y agregarla al arreglo
+        const imageUrl = response.data.secure_url;
+        imageUrls.push(imageUrl); // Guardar la URL de la imagen
+  
+        // Mostrar la URL (puedes mostrarlo aquí o hacer cualquier otra acción)
+        console.log(`Imagen subida: ${imageUrl}`);
+      }
+  
+      // Enviar la información del siniestro con las URLs de las imágenes
       const secondResponse = await axios.post(
         "http://localhost:3000/api/siniestros",
-        {
-          ...form,
-          documentos: [imageUrl], // Solo enviar la URL del archivo
-        }
+        { ...form, documentos: imageUrls }
       );
-
-      alert(
-        "Siniestro registrado con éxito: " + secondResponse.data.siniestroId
-      );
+  
+      toast.success("¡Siniestro registrado con éxito! ID: " + secondResponse.data.siniestroId); // Notificación de éxito
     } catch (error) {
+      toast.error("Error al registrar el siniestro. Intenta de nuevo."); // Notificación de error
       console.error("Error al registrar el siniestro:", error);
-      alert("Ocurrió un error al registrar el siniestro");
     }
   };
 
@@ -167,7 +169,7 @@ const RegistroSiniestro = () => {
           <h1 className="text-6xl lg:text-5xl font-extrabold text-center mb-10 tracking-wide uppercase bg-gradient-to-r from-red-700 to-red-500 bg-clip-text text-transparent">
             Registrar Siniestro
           </h1>
-  
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Formulario */}
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -189,7 +191,7 @@ const RegistroSiniestro = () => {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none shadow-sm transition-all duration-300 hover:shadow-md"
                   required
                 />
-                <input
+                 <input
                   type="text"
                   name="departamento"
                   placeholder="Departamento"
@@ -221,8 +223,12 @@ const RegistroSiniestro = () => {
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none shadow-sm transition-all duration-300 hover:shadow-md"
                 />
-              </div>
+              
   
+             
+
+              </div>
+
               <textarea
                 name="descripcion"
                 placeholder="Descripción"
@@ -231,7 +237,7 @@ const RegistroSiniestro = () => {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none shadow-sm transition-all duration-300 hover:shadow-md"
                 required
               ></textarea>
-  
+
               <div>
                 <input
                   type="file"
@@ -241,61 +247,56 @@ const RegistroSiniestro = () => {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-800 focus:ring-2 focus:ring-red-500 focus:outline-none shadow-sm transition-all duration-300 hover:shadow-md"
                 />
               </div>
-  
-              {/* Botón "Registrar Siniestro" dentro del formulario */}
+
+              {/* Botón "Registrar Siniestro" */}
               <button
                 type="submit"
-                className="bg-gradient-to-r from-red-600 to-red-800 text-white font-bold px-12 py-4 rounded-lg text-lg w-full mt-6"
+                className="bg-gradient-to-r from-red-600 to-red-800 text-white font-bold px-12 py-4 rounded-lg text-lg w-full mt-6 transition duration-300 ease-in-out transform hover:scale-105 hover:bg-red-700"
               >
                 Registrar Siniestro
               </button>
             </form>
-  
+
             {/* Mapa */}
-            <div className="w-full h-[480px] border border-gray-300 rounded-xl shadow-xl overflow-hidden transition-transform hover:scale-105">
+            <div className="w-full h-[480px] border-2 border-red-500 rounded-xl shadow-xl overflow-hidden transition-transform hover:scale-105">
               <div ref={mapContainerRef} className="w-full h-full"></div>
             </div>
+            <ToastContainer />  {/* Contenedor de notificaciones */}
           </div>
-  
-          {/* Contenedor de botones debajo del mapa */}
-          <div className="flex justify-between w-full mt-6">
-           
-  
-            {/* Botón "Regresar al Dashboard" */}
-            <button
-              onClick={() => navigate("/dashboard/general")}
-              className="bg-gray-600 text-white font-bold px-12 py-4 rounded-lg text-lg w-1/2"
-            >
-              Regresar al Dashboard
-            </button>
-          </div>
+
+          {/* Mostrar imagen subida */}
+          {imageUrl && (
+            <div className="text-center mt-4">
+              <p className="font-semibold text-lg mb-2">Imagen subida:</p>
+              <a
+                href={imageUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-red-600 underline hover:text-red-800"
+              >
+                Ver imagen
+              </a>
+              <img
+                src={imageUrl}
+                alt="Imagen subida"
+                className="mt-4 max-w-xs rounded-lg shadow-md border-2 border-red-500 p-2"
+              />
+            </div>
+          )}
         </div>
       </div>
-  
-      {/* Mostrar URL de la imagen si está disponible */}
-      {imageUrl && (
-        <div className="text-center mt-4">
-          <p>
-            Imagen subida:{" "}
-            <a
-              href={imageUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-red-600 underline hover:text-red-800"
-            >
-              {imageUrl}
-            </a>
-          </p>
-          <img
-            src={imageUrl}
-            alt="Imagen subida"
-            className="mt-4 max-w-xs rounded-lg shadow-md border border-gray-200"
-          />
-        </div>
-      )}
+
+      {/* Contenedor de botones debajo del mapa */}
+      <div className="flex justify-center w-full mt-6">
+        <button
+          onClick={() => navigate("/dashboard/general")}
+          className="bg-gray-600 text-white font-bold px-12 py-4 rounded-lg text-lg w-1/2 transition duration-300 ease-in-out transform hover:scale-105 hover:bg-gray-700"
+        >
+          Regresar al Dashboard
+        </button>
+      </div>
     </div>
   );
-  
 };
 
 export default RegistroSiniestro;
