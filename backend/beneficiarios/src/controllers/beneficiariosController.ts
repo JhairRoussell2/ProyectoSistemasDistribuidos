@@ -21,8 +21,9 @@ const schema = Joi.object({
 export const getBeneficiarios = async (req: Request, res: Response) => {
   try {
     console.log("Intentando conectar con la base de datos...");
-    const { rows } = await pool.query("SELECT * FROM beneficiario");  // Llamada a la función en PostgreSQL
+    const { rows } = await pool.query("SELECT * FROM beneficiario ORDER BY beneficiarioid ASC");  // Agregar ORDER BY para ordenar por beneficiarioid
     console.log("Datos obtenidos de la base de datos:", rows);
+
     if (rows.length === 0) {
       console.log("No se encontraron beneficiarios.");
       res.status(404).json({ message: "No se encontraron beneficiarios." });
@@ -34,6 +35,7 @@ export const getBeneficiarios = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Error al obtener beneficiarios" });
   }
 };
+
 
 export const getBeneficiarioPorUsuarioID = async (req: Request, res: Response) => {
   const { UsuarioID } = req.params;

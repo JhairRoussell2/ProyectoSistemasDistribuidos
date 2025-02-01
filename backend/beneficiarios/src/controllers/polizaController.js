@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePolizaEstado = exports.getPolizasByDNI = exports.getPolizaByID = exports.getPolizas = exports.getPolizaPorBeneficiarioID = exports.createPoliza = void 0;
+exports.obtenerPolizasPorUsuarioID = exports.updatePolizaEstado = exports.getPolizasByDNI = exports.getPolizaByID = exports.getPolizas = exports.getPolizaPorBeneficiarioID = exports.createPoliza = void 0;
 const polizaModel_1 = __importDefault(require("../models/polizaModel"));
 const db_1 = __importDefault(require("../config/db"));
 // Crear póliza
@@ -137,3 +137,27 @@ const updatePolizaEstado = (req, res, next) => __awaiter(void 0, void 0, void 0,
     }
 });
 exports.updatePolizaEstado = updatePolizaEstado;
+const obtenerPolizasPorUsuarioID = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { usuarioID } = req.params;
+        // Consultar el beneficiarioID usando el usuarioID
+        const { rows: beneficiarioRows } = yield db_1.default.query("SELECT beneficiarioid FROM beneficiario WHERE usuarioid = $1", [usuarioID]);
+        if (beneficiarioRows.length === 0) {
+            res.status(404).json({ error: "Beneficiario no encontrado" });
+            return;
+        }
+        const beneficiarioID = beneficiarioRows[0].beneficiarioid;
+        // Obtener las pólizas asociadas a este beneficiarioID
+        const { rows: polizasRows } = yield db_1.default.query("SELECT * FROM poliza WHERE beneficiarioid = $1", [beneficiarioID]);
+        if (polizasRows.length === 0) {
+            res.status(404).json({ error: "No se encontraron pólizas para este beneficiario" });
+            return;
+        }
+        res.status(200).json(polizasRows);
+    }
+    catch (error) {
+        console.error("Error al obtener las pólizas:", error);
+        res.status(500).json({ error: "Hubo un problema al obtener las pólizas" });
+    }
+});
+exports.obtenerPolizasPorUsuarioID = obtenerPolizasPorUsuarioID;

@@ -16,6 +16,8 @@ router.get("/poliza/:polizaID", polizaController_1.getPolizaByID);
 router.get("/validar/:DNI", polizaController_1.getPolizasByDNI);
 // Ruta para obtener el PolizaID de un BeneficiarioID
 router.get("/beneficiario/:BeneficiarioID", polizaController_1.getPolizaPorBeneficiarioID); // Nueva ruta
+// Ruta para obtener las pólizas de un usuario por su ID
+router.get("/usuario/:usuarioID", polizaController_1.obtenerPolizasPorUsuarioID); // Nueva ruta
 // Ruta para actualizar el estado de una póliza
 router.put("/:polizaID/estado", polizaController_1.updatePolizaEstado);
 exports.default = router;
