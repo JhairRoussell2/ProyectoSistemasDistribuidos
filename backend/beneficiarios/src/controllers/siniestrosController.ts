@@ -81,7 +81,7 @@ export const registrarSiniestro = async (req: Request, res: Response, next: Next
     // Llamada a la consulta INSERT directamente en la tabla 'siniestros'
     const [result]: any = await pool.query(
       `INSERT INTO siniestros 
-      (BeneficiarioID, PolizaID, tipo_siniestro, fecha_siniestro, departamento, distrito, provincia, ubicacion, descripcion, documentos)
+      (beneficiarioid, polizaid, tipo_siniestro, fecha_siniestro, departamento, distrito, provincia, ubicacion, descripcion, documentos)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         BeneficiarioID,            // BeneficiarioID
