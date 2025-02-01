@@ -1,28 +1,22 @@
-import mysql from 'mysql2/promise';
-import { config } from 'dotenv';
+import { Pool } from "pg"; // Asegúrate de tener instalado pg-pool
 
-config(); // Cargar las variables de entorno desde el archivo .env
+// Cadena de conexión con SSL
+const connectionString = "postgresql://seguros_user:V26AfZvS1OM4uRVh9LvQEteaW8srKwwh@dpg-cueg03t6l47c739tvcbg-a.oregon-postgres.render.com:5432/seguros?sslmode=require";
 
-// Configuración de conexión
-const dbConfig = {
-    host: process.env.DB_HOST, // Dirección del servidor MySQL
-    user: process.env.DB_USER, // Usuario de la base de datos
-    password: process.env.DB_PASSWORD, // Contraseña del usuario
-    database: process.env.DB_NAME, // Nombre de la base de datos
-    port: parseInt(process.env.DB_PORT || '3306', 10), // Puerto de MySQL (3306 por defecto)
-};
+// Crear el pool de conexiones usando la cadena de conexión completa
+const pool = new Pool({
+  connectionString: connectionString,
+  ssl: {
+    rejectUnauthorized: false,  // Esto permite la conexión si el servidor tiene un certificado auto-firmado (aunque no es lo más seguro en producción)
+  },
+});
 
-// Crear el pool de conexiones
-const pool = mysql.createPool(dbConfig);
+pool.connect()
+  .then(() => {
+    console.log("Conectado a la base de datos PostgreSQL");
+  })
+  .catch((err) => {
+    console.error("Error al conectar a la base de datos PostgreSQL:", err);
+  });
 
-pool.getConnection()
-    .then(() => console.log('Conexión exitosa a la base de datos MySQL'))
-    .catch((err) => console.error('Error al conectar a la base de datos MySQL:', err));
-
-
-    if (!process.env.DB_HOST || !process.env.DB_USER || !process.env.DB_NAME) {
-        console.error("❌ ERROR: Faltan variables de entorno en el .env");
-        process.exit(1); // Detiene el servidor si faltan variables
-    }
-    
 export default pool;
