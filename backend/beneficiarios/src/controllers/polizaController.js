@@ -12,15 +12,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePolizaEstado = exports.getPolizasByDNI = exports.getPolizaByID = exports.getPolizas = exports.createPoliza = void 0;
+exports.updatePolizaEstado = exports.getPolizasByDNI = exports.getPolizaByID = exports.getPolizas = exports.getPolizaPorBeneficiarioID = exports.createPoliza = void 0;
 const polizaModel_1 = __importDefault(require("../models/polizaModel"));
 const db_1 = __importDefault(require("../config/db"));
+// Crear póliza
 const createPoliza = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { BeneficiarioID, TipoPoliza } = req.body;
-    console.log("BeneficiarioID:", BeneficiarioID); // Verificar que el BeneficiarioID es el esperado.
+    console.log("BeneficiarioID:", BeneficiarioID);
     try {
         // Verificar si el BeneficiarioID existe en la tabla beneficiario
-        const [beneficiarioResult] = yield db_1.default.query("SELECT * FROM beneficiario WHERE UsuarioID = ?", [BeneficiarioID]);
+        const { rows: beneficiarioResult } = yield db_1.default.query("SELECT * FROM beneficiario WHERE usuarioid = $1", [BeneficiarioID]);
         console.log("Beneficiario encontrado:", beneficiarioResult);
         // Verificar si no se encontró el beneficiario
         if (beneficiarioResult.length === 0) {
@@ -30,8 +31,9 @@ const createPoliza = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         // Acceder al primer objeto del resultado
         const beneficiario = beneficiarioResult[0];
         console.log("Beneficiario:", beneficiario);
+        console.log(beneficiario.beneficiarioid);
         // Llamar al modelo para crear la póliza
-        const result = yield polizaModel_1.default.createPoliza(beneficiario.BeneficiarioID, TipoPoliza);
+        const result = yield polizaModel_1.default.createPoliza(beneficiario.beneficiarioid, TipoPoliza);
         // Responder con éxito
         res.status(201).json({
             message: "Póliza creada exitosamente",
@@ -44,6 +46,24 @@ const createPoliza = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.createPoliza = createPoliza;
+// Obtener póliza por BeneficiarioID
+const getPolizaPorBeneficiarioID = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { BeneficiarioID } = req.params;
+    try {
+        const { rows } = yield db_1.default.query("SELECT PolizaID FROM poliza WHERE BeneficiarioID = $1", [BeneficiarioID]);
+        if (rows.length === 0) {
+            res.status(404).json({ message: "Póliza no encontrada." });
+            return;
+        }
+        res.status(200).json({ PolizaID: rows[0].PolizaID });
+    }
+    catch (error) {
+        console.error("Error al obtener PolizaID:", error);
+        res.status(500).json({ error: "Error al obtener PolizaID" });
+    }
+});
+exports.getPolizaPorBeneficiarioID = getPolizaPorBeneficiarioID;
+// Obtener todas las pólizas
 const getPolizas = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { beneficiarioID } = req.params;
@@ -61,6 +81,7 @@ const getPolizas = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.getPolizas = getPolizas;
+// Obtener póliza por ID
 const getPolizaByID = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { polizaID } = req.params;
@@ -70,13 +91,14 @@ const getPolizaByID = (req, res, next) => __awaiter(void 0, void 0, void 0, func
             res.status(404).json({ message: "Póliza no encontrada." });
             return;
         }
-        res.status(200).json(result[0]); // Devuelve la póliza encontrada
+        res.status(200).json(result[0]);
     }
     catch (error) {
         next(error);
     }
 });
 exports.getPolizaByID = getPolizaByID;
+// Obtener pólizas por DNI
 const getPolizasByDNI = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { DNI } = req.params;
     try {
@@ -93,6 +115,7 @@ const getPolizasByDNI = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 exports.getPolizasByDNI = getPolizasByDNI;
+// Actualizar estado de póliza
 const updatePolizaEstado = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { polizaID } = req.params;
     const { estado } = req.body; // Recibe el estado para actualizar (por ejemplo: 'Inactiva')

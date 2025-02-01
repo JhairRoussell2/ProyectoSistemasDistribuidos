@@ -15,22 +15,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = __importDefault(require("./app"));
 const db_1 = __importDefault(require("./config/db"));
 const PORT = process.env.PORT || 3000;
-db_1.default.getConnection()
-    .then((connection) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("Conectado a la base de datos MySQL");
+db_1.default.connect()
+    .then((client) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("Conectado a la base de datos PostgreSQL");
     // Consulta para obtener las tablas disponibles
     try {
-        const [tables] = yield connection.query("SHOW TABLES");
+        const result = yield client.query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'");
         console.log("Tablas disponibles en la base de datos:");
-        tables.forEach((table) => {
-            console.log(`- ${Object.values(table)[0]}`); // Mostrar los nombres de las tablas
+        result.rows.forEach((row) => {
+            console.log(`- ${row.table_name}`); // Mostrar los nombres de las tablas
         });
     }
     catch (error) {
         console.error("Error al obtener las tablas:", error);
     }
     finally {
-        connection.release(); // Liberar la conexión al pool
+        client.release(); // Liberar la conexión al pool
     }
     // Iniciar el servidor
     app_1.default.listen(PORT, () => {

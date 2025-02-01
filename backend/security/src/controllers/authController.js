@@ -19,8 +19,16 @@ const userModel_1 = require("../models/userModel");
 // Registro de usuario
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { Nombre, Apellido, Email, Password, Rol } = req.body;
-    const hashedPassword = yield bcrypt_1.default.hash(Password, 10);
     try {
+        // Verificamos si el email ya está en uso
+        const userExists = yield (0, userModel_1.findUserByEmail)(Email);
+        if (userExists) {
+            res.status(400).json({ error: 'El correo electrónico ya está registrado' });
+            return;
+        }
+        // Hasheamos la contraseña antes de guardarla
+        const hashedPassword = yield bcrypt_1.default.hash(Password, 10);
+        // Crear el usuario en la base de datos
         yield (0, userModel_1.createUser)({ Nombre, Apellido, Email, Password: hashedPassword, Rol });
         res.status(201).json({ message: 'Usuario registrado exitosamente' });
     }
@@ -30,7 +38,6 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.register = register;
-// Inicio de sesión
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { Email, Password } = req.body;
     try {

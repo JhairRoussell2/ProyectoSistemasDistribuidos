@@ -1,28 +1,30 @@
-import { useAuth } from '../context/AuthContext';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaLock, FaWhatsapp } from 'react-icons/fa';
+import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
-import { useState } from 'react'; // Nuevo: Manejo de estado
 import logo from "../assets/logo.jpg"; // Asegúrate de incluir tu logo
 
 const Login = () => {
-  const { login } = useAuth();
-  const navigate = useNavigate();
-
-  // Estados para el email, password y errores
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const { login } = useAuth();  // Contexto de autenticación
+  const navigate = useNavigate(); // Navegación entre rutas
+  const [email, setEmail] = useState(''); // Estado para el correo
+  const [password, setPassword] = useState(''); // Estado para la contraseña
+  const [error, setError] = useState(''); // Estado para mensajes de error
+  const [loading, setLoading] = useState(false); // Estado de carga
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault(); // Evita recargar la página
+    e.preventDefault(); // Prevenir recarga de página
+    setLoading(true); // Inicia el estado de carga
 
     try {
-      await login(email, password);
-      navigate('/dashboard'); // Redirige al usuario al Dashboard
+      await login(email, password); // Intenta iniciar sesión
+      navigate('/dashboard'); // Redirige a dashboard si el login es exitoso
     } catch (err) {
-      setError('Credenciales incorrectas. Intenta de nuevo.');
+      setError('Credenciales incorrectas. Intenta de nuevo.'); // Muestra mensaje de error
       console.error('Error en inicio de sesión:', err);
+    } finally {
+      setLoading(false); // Detén el estado de carga
     }
   };
 
@@ -38,34 +40,36 @@ const Login = () => {
 
         {/* Formulario */}
         <form onSubmit={handleLogin} className="space-y-6">
+          {/* Campo de email */}
           <div className="relative">
             <FaEnvelope className="absolute left-4 top-4 text-gray-500" />
             <input
               type="email"
               placeholder="Correo Electrónico"
               value={email}
-              onChange={(e) => setEmail(e.target.value)} // Captura el email
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full pl-12 p-3 border rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-red-500 outline-none"
               required
             />
           </div>
 
+          {/* Campo de contraseña */}
           <div className="relative">
             <FaLock className="absolute left-4 top-4 text-gray-500" />
             <input
               type="password"
               placeholder="Contraseña"
               value={password}
-              onChange={(e) => setPassword(e.target.value)} // Captura la contraseña
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full pl-12 p-3 border rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-red-500 outline-none"
               required
             />
           </div>
 
-          {/* Mensaje de error si falla el login */}
+          {/* Mensaje de error */}
           {error && <p className="text-red-400 text-sm">{error}</p>}
 
-          {/* Enlaces */}
+          {/* Enlaces de ayuda */}
           <div className="flex justify-between text-sm text-gray-400">
             <Link to="/recuperar" className="text-red-400 hover:underline">
               ¿Olvidaste tu contraseña?
@@ -76,8 +80,12 @@ const Login = () => {
           </div>
 
           {/* Botón de inicio de sesión */}
-          <button type="submit" className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-bold text-lg transition-all duration-300">
-            Iniciar Sesión
+          <button 
+            type="submit" 
+            className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-bold text-lg transition-all duration-300"
+            disabled={loading} // Deshabilitar botón si está cargando
+          >
+            {loading ? 'Cargando...' : 'Iniciar Sesión'}
           </button>
         </form>
       </div>

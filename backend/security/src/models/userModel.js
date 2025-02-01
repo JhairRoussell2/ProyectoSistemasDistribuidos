@@ -14,28 +14,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createUser = exports.findUserByEmail = void 0;
 const db_1 = __importDefault(require("../config/db"));
-// Función para llamar al procedimiento almacenado
+// Función para buscar un usuario por su correo electrónico
 const findUserByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const [rows] = yield db_1.default.query('CALL sp_FindUserByEmail(?)', [email]);
-        // En MySQL, los procedimientos almacenados devuelven un array de arrays, por lo que accedemos a `rows[0]`
-        if (rows.length > 0 && rows[0].length > 0) {
-            return rows[0][0]; // Retorna el primer usuario encontrado
+        const { rows } = yield db_1.default.query('SELECT UsuarioID, Nombre, Apellido, Email, Password, Rol FROM usuario WHERE Email = $1 LIMIT 1', [email]);
+        // Si no se encuentra el usuario, retornamos null
+        if (rows.length === 0) {
+            return null;
         }
-        return null;
+        // Retornamos el primer resultado encontrado
+        return rows[0];
     }
     catch (error) {
-        console.error('Error al ejecutar sp_FindUserByEmail:', error);
+        console.error('Error al ejecutar findUserByEmail:', error);
         throw new Error('Error en la base de datos');
     }
 });
 exports.findUserByEmail = findUserByEmail;
+// Función para crear un usuario
 const createUser = (user) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield db_1.default.query('CALL sp_CreateUser(?, ?, ?, ?, ?)', [user.Nombre, user.Apellido, user.Email, user.Password, user.Rol]);
+        // Llamada al procedimiento almacenado para crear el usuario
+        yield db_1.default.query('INSERT INTO usuario (Nombre, Apellido, Email, Password, Rol) VALUES ($1, $2, $3, $4, $5)', [user.Nombre, user.Apellido, user.Email, user.Password, user.Rol]);
     }
     catch (error) {
-        console.error('Error al ejecutar sp_CreateUser:', error);
+        console.error('Error al crear el usuario:', error);
         throw new Error('Error en la base de datos');
     }
 });

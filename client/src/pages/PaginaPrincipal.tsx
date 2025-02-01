@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Car, ShieldCheck, Users, Phone, Star, Smile, CheckCircle, Search } from "lucide-react";
+import { Car, ShieldCheck, Users, Phone, Smile, CheckCircle, Search } from "lucide-react";
 import heroImage from "../assets/hero-seguro.jpg";
 import heroImage2 from "../assets/hero-seguro2.jpg";
 import testimonial1 from "../assets/testimonial1.jpg";
@@ -40,22 +40,22 @@ const PaginaPrincipal = () => {
 
       {/* Hero Section con efecto Parallax */}
       <header
-      className="relative w-full h-[85vh] bg-cover bg-center flex items-center justify-center text-center text-white"
-      style={{
-        backgroundImage: `url(${heroImage})`,
-        backgroundPosition: "center bottom -550px", // Baja un poco la imagen
-        backgroundAttachment: "fixed",
-      }}
-    ><div className="bg-black bg-opacity-60 p-10 rounded-xl shadow-lg animate-fade-in  mt-20">
-    <h2 className="text-6xl font-extrabold flex items-center justify-center gap-3">
-      🚗 <span>Protege tu vehículo con</span> <span className="text-red-500">SegurosFlex</span>
-    </h2>
-    <p className="mt-4 text-lg text-gray-300 flex items-center justify-center gap-2">
-      ✅ Cobertura completa, atención rápida y las mejores tarifas.
-    </p>
-  </div>
-  
-    </header>
+        className="relative w-full h-[85vh] bg-cover bg-center flex items-center justify-center text-center text-white"
+        style={{
+          backgroundImage: `url(${heroImage})`,
+          backgroundPosition: "center bottom -550px", // Baja un poco la imagen
+          backgroundAttachment: "fixed",
+        }}
+      >
+        <div className="bg-black bg-opacity-60 p-10 rounded-xl shadow-lg animate-fade-in mt-20">
+          <h2 className="text-6xl font-extrabold flex items-center justify-center gap-3">
+            🚗 <span>Protege tu vehículo con</span> <span className="text-red-500">SegurosFlex</span>
+          </h2>
+          <p className="mt-4 text-lg text-gray-300 flex items-center justify-center gap-2">
+            ✅ Cobertura completa, atención rápida y las mejores tarifas.
+          </p>
+        </div>
+      </header>
 
       {/* Beneficios con animaciones */}
       <section className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 py-12 px-6">
@@ -85,7 +85,7 @@ const PaginaPrincipal = () => {
               key={index}
               className="bg-white p-6 rounded-lg shadow-lg text-center transform transition-all hover:scale-105"
             >
-              <img src={img} alt={`Testimonio ${index + 1}`} className="rounded-full mx-auto w-20 h-20 mb-4 border-4 border-red-500" />
+              <img src={img} alt={`Testimonio ${index + 1}`} className="rounded-full mx-auto w-20 h-20 mb-4 border-4 border-red-500" loading="lazy" />
               <p className="text-gray-700">
                 {index === 0
                   ? "Gracias a SegurosFlex recibí un auto de reemplazo en menos de 24 horas. 🚘"
@@ -102,84 +102,67 @@ const PaginaPrincipal = () => {
       </section>
 
       {/* Preguntas Frecuentes con botón flotante de WhatsApp */}
-<section className="max-w-5xl mx-auto py-12 text-center bg-gradient-to-br from-white via-gray-100 to-gray-200 rounded-xl shadow-2xl p-10 relative">
-  
-  {/* Título y descripción */}
-  <h3 className="text-5xl font-extrabold text-red-600 mb-6">
-    ❓ Preguntas Frecuentes
-  </h3>
-  <p className="text-lg text-gray-700 mb-6">
-    Resolvemos tus dudas más comunes para que estés 100% seguro. 🚗
-  </p>
+      <section className="max-w-5xl mx-auto py-12 text-center bg-gradient-to-br from-white via-gray-100 to-gray-200 rounded-xl shadow-2xl p-10 relative">
+        <h3 className="text-5xl font-extrabold text-red-600 mb-6">
+          ❓ Preguntas Frecuentes
+        </h3>
+        <p className="text-lg text-gray-700 mb-6">
+          Resolvemos tus dudas más comunes para que estés 100% seguro. 🚗
+        </p>
 
-   {/* Contenedor de imágenes con grid */}
-   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-    {/* Imagen 1 */}
-    <img
-      src={faqImage}
-      alt="FAQ"
-      className="w-full h-auto rounded-lg shadow-lg transition-transform duration-300 hover:scale-105"
-    />
-    
-    {/* Imagen 2 (puedes cambiar esta imagen por otra relacionada) */}
-    <img
-      src={heroImage2}
-      alt="Seguro de Auto"
-      className="w-full h-auto rounded-lg shadow-lg transition-transform duration-300 hover:scale-105"
-    />
-  </div>
+        {/* Contenedor de imágenes con grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <img
+            src={faqImage}
+            alt="FAQ"
+            className="w-full h-auto rounded-lg shadow-lg transition-transform duration-300 hover:scale-105"
+            loading="lazy"
+          />
+          <img
+            src={heroImage2}
+            alt="Seguro de Auto"
+            className="w-full h-auto rounded-lg shadow-lg transition-transform duration-300 hover:scale-105"
+            loading="lazy"
+          />
+        </div>
 
-  {/* Contenedor de preguntas */}
-  <div className="space-y-6">
-  {[
-      {
-        pregunta: "¿Qué cubre el seguro de auto?",
-        respuesta: (
-          <>
-            Nuestro seguro ofrece una cobertura integral que protege tanto a conductores como a terceros ante cualquier imprevisto. Incluye responsabilidad civil por daños a terceros, protección en caso de robo total o parcial, asistencia en accidentes con atención médica y gastos cubiertos, además de auxilio vial disponible las 24 horas con servicios como grúa, cambio de llantas y paso de corriente.
-          </>
-        ),
-      },
-      {
-        pregunta: "¿Cómo hacer un reclamo en caso de accidente o siniestro?",
-        respuesta: (
-          <>
-            Para realizar un reclamo, es necesario comunicarse con nuestra central de atención disponible las 24 horas. Nuestro equipo brindará la orientación necesaria y se encargará de gestionar el proceso de manera eficiente. Un ajustador evaluará la situación y coordinará la reparación del vehículo, la indemnización correspondiente o cualquier otra asistencia cubierta por la póliza. Nos aseguramos de que el proceso sea ágil y sin complicaciones para el asegurado.
-          </>
-        ),
-      },
-      {
-        pregunta: "¿Cuáles son los métodos de pago disponibles?",
-        respuesta: (
-          <>
-            Contamos con diversas opciones de pago para mayor comodidad. Se aceptan tarjetas de crédito y débito con posibilidad de financiamiento, transferencias bancarias, pagos en efectivo en puntos autorizados y débito automático para facilitar la renovación de la póliza sin interrupciones en la cobertura.
-          </>
-        ),
-      },
-    ].map((faq, index) => (
-      <details key={index} className="group bg-white p-5 rounded-xl shadow-md transition-all transform hover:shadow-lg animate-slide-in">
-        <summary className="font-medium cursor-pointer flex justify-between text-gray-900">
-          <span>{faq.pregunta}</span>
-          <span className="text-gray-500 group-hover:rotate-180 transition-transform">▼</span>
-        </summary>
-        <div className="mt-2 text-gray-700">{faq.respuesta}</div>
-      </details>
-    ))}
-  </div>
+        {/* Contenedor de preguntas */}
+        <div className="space-y-6">
+          {[
+            {
+              pregunta: "¿Qué cubre el seguro de auto?",
+              respuesta: "Nuestro seguro ofrece una cobertura integral que protege tanto a conductores como a terceros ante cualquier imprevisto. Incluye responsabilidad civil, protección en caso de robo, y asistencia vial las 24 horas.",
+            },
+            {
+              pregunta: "¿Cómo hacer un reclamo?",
+              respuesta: "Solo contacta nuestra central de atención 24/7. Nos encargamos de gestionar el reclamo de manera rápida y eficiente.",
+            },
+            {
+              pregunta: "¿Cuáles son los métodos de pago?",
+              respuesta: "Aceptamos pagos por tarjeta de crédito/débito, transferencias, pagos en efectivo, y débito automático.",
+            },
+          ].map((faq, index) => (
+            <details key={index} className="group bg-white p-5 rounded-xl shadow-md transition-all transform hover:shadow-lg animate-slide-in">
+              <summary className="font-medium cursor-pointer flex justify-between text-gray-900">
+                <span>{faq.pregunta}</span>
+                <span className="text-gray-500 group-hover:rotate-180 transition-transform">▼</span>
+              </summary>
+              <div className="mt-2 text-gray-700">{faq.respuesta}</div>
+            </details>
+          ))}
+        </div>
 
-  {/* Botón flotante de WhatsApp mejorado */}
-  <a
-    href="https://wa.me/51981089166"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-full shadow-lg flex items-center gap-3 animate-bounce"
-  >
-    <span className="text-2xl">📱</span> 
-    <span className="text-lg">WhatsApp</span>
-  </a>
-</section>
-
-
+        {/* Botón flotante de WhatsApp mejorado */}
+        <a
+          href="https://wa.me/51981089166"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-full shadow-lg flex items-center gap-3 animate-bounce"
+        >
+          <span className="text-2xl">📱</span> 
+          <span className="text-lg">WhatsApp</span>
+        </a>
+      </section>
 
       {/* Footer */}
       <footer className="bg-gray-800 text-white py-6 text-center">

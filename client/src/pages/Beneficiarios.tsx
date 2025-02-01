@@ -6,18 +6,19 @@ import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom"; // Importa useNavigate
 
 interface Beneficiario {
-  BeneficiarioID: number;
-  Nombre: string;
-  Apellido: string;
-  Email: string;
-  Telefono: string;
-  DNI: string;
+  beneficiarioid: number;
+  nombre: string;
+  apellido: string;
+  email: string;
+  telefono: string;
+  dni: string;
+  password: string;
 }
 
 const MantenerBeneficiarios = () => {
   const [beneficiarios, setBeneficiarios] = useState<Beneficiario[]>([]);
   const [filteredBeneficiarios, setFilteredBeneficiarios] = useState<Beneficiario[]>([]);
-  const [searchDNI, setSearchDNI] = useState("");
+  const [searchdni, setSearchdni] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedBeneficiario, setSelectedBeneficiario] = useState<Beneficiario | null>(null);
@@ -29,7 +30,8 @@ const MantenerBeneficiarios = () => {
     const fetchBeneficiarios = async () => {
       try {
         const response = await axios.get("http://localhost:3000/api/beneficiarios");
-        const data = response.data[0]; // Extrae los datos del array anidado
+        const data = response.data;  // Extrae los datos del array anidado
+        console.log(data);
         setBeneficiarios(data);
         setFilteredBeneficiarios(data);
       } catch (error) {
@@ -42,8 +44,8 @@ const MantenerBeneficiarios = () => {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setSearchDNI(value);
-    const filtered = beneficiarios.filter((b) => b.DNI.includes(value));
+    setSearchdni(value);
+    const filtered = beneficiarios.filter((b) => b.dni.includes(value));
     setFilteredBeneficiarios(filtered);
   };
 
@@ -51,7 +53,7 @@ const MantenerBeneficiarios = () => {
     try {
       await axios.delete(`http://localhost:3000/api/beneficiarios/${id}`);
       alert("Beneficiario eliminado correctamente");
-      const updatedList = beneficiarios.filter((b) => b.BeneficiarioID !== id);
+      const updatedList = beneficiarios.filter((b) => b.beneficiarioid !== id);
       setBeneficiarios(updatedList);
       setFilteredBeneficiarios(updatedList);
     } catch (error) {
@@ -69,37 +71,45 @@ const MantenerBeneficiarios = () => {
 
   const handleUpdate = async () => {
     if (!selectedBeneficiario) return;
-    if (!password) {
+    if (!password && !selectedBeneficiario.password) {
       alert("Por favor, ingrese su contraseña para confirmar la actualización.");
       return;
     }
-
-    const { BeneficiarioID, ...datosActualizados } = selectedBeneficiario;
-    console.log("Datos a actualizar:", datosActualizados);
-
+  
+    const { beneficiarioid, ...datosActualizados } = selectedBeneficiario;
+    console.log("Datos a actualizar:", { ...datosActualizados, password });
+  
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/beneficiarios/${selectedBeneficiario.BeneficiarioID}`,
-        { ...datosActualizados, Password: password } // 🔹 Enviar la contraseña para la validación
+        `http://localhost:3000/api/beneficiarios/${selectedBeneficiario.beneficiarioid}`,
+        { 
+          ...datosActualizados, 
+          password: password || selectedBeneficiario.password, // Solo si hay contraseña, enviar
+        }
       );
-
+  
       if (response.status === 200) {
         alert("Beneficiario actualizado correctamente");
-
+  
         const updatedBeneficiarios = beneficiarios.map((b) =>
-          b.BeneficiarioID === selectedBeneficiario.BeneficiarioID ? { ...selectedBeneficiario } : b
+          b.beneficiarioid === selectedBeneficiario.beneficiarioid ? { ...selectedBeneficiario } : b
         );
-
+  
         setBeneficiarios(updatedBeneficiarios);
         setFilteredBeneficiarios(updatedBeneficiarios);
+  
         setIsModalOpen(false);
-        setPassword(""); // 🔹 Limpiar el campo de contraseña después de actualizar
+        setPassword(""); // Clear the password field after updating
       }
     } catch (error) {
       console.error("Error al actualizar beneficiario:", error);
       alert("No se pudo actualizar el beneficiario.");
     }
   };
+  
+  
+  
+  
 
   return (
     <>
@@ -121,8 +131,8 @@ const MantenerBeneficiarios = () => {
         <div className="mb-6 flex justify-between items-center">
           <input
             type="text"
-            placeholder="Buscar por DNI"
-            value={searchDNI}
+            placeholder="Buscar por dni"
+            value={searchdni}
             onChange={handleSearchChange}
             className="w-full px-4 py-2 border border-gray-500 rounded-lg shadow-sm bg-gray-800 text-white placeholder-gray-400 focus:ring focus:ring-red-500 focus:outline-none"
           />
@@ -133,44 +143,49 @@ const MantenerBeneficiarios = () => {
             <tr className="bg-red-500 text-white">
               <th className="border border-gray-700 px-4 py-2">Nombre</th>
               <th className="border border-gray-700 px-4 py-2">Apellido</th>
-              <th className="border border-gray-700 px-4 py-2">DNI</th>
+              <th className="border border-gray-700 px-4 py-2">dni</th>
               <th className="border border-gray-700 px-4 py-2">Teléfono</th>
               <th className="border border-gray-700 px-4 py-2">Email</th>
               <th className="border border-gray-700 px-4 py-2">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {filteredBeneficiarios.map((b) => (
-              <tr key={b.BeneficiarioID} className="text-center bg-gray-800">
-                <td className="border border-gray-700 px-4 py-2">{b.Nombre}</td>
-                <td className="border border-gray-700 px-4 py-2">{b.Apellido}</td>
-                <td className="border border-gray-700 px-4 py-2">{b.DNI}</td>
-                <td className="border border-gray-700 px-4 py-2">{b.Telefono}</td>
-                <td className="border border-gray-700 px-4 py-2">{b.Email}</td>
-                <td className="border border-gray-700 px-4 py-2 flex justify-center space-x-4">
-                  <button
-                    onClick={() => {
-                      setIsEditing(true);
-                      setSelectedBeneficiario(b);
-                      setIsModalOpen(true);
-                    }}
-                    className="text-blue-400 hover:underline"
-                  >
-                    Editar
-                  </button>
-                  <button onClick={() => handleDelete(b.BeneficiarioID)} className="text-red-400 hover:underline">
-                    Eliminar
-                  </button>
-                </td>
-              </tr>
-            ))}
+          {Array.isArray(filteredBeneficiarios) && filteredBeneficiarios.length > 0 ? (
+  filteredBeneficiarios.map((b) => (
+    <tr key={b.beneficiarioid} className="text-center bg-gray-800">
+      <td className="border border-gray-700 px-4 py-2">{b.nombre}</td>
+      <td className="border border-gray-700 px-4 py-2">{b.apellido}</td>
+      <td className="border border-gray-700 px-4 py-2">{b.dni}</td>
+      <td className="border border-gray-700 px-4 py-2">{b.telefono}</td>
+      <td className="border border-gray-700 px-4 py-2">{b.email}</td>
+      <td className="border border-gray-700 px-4 py-2 flex justify-center space-x-4">
+        <button
+          onClick={() => {
+            setIsEditing(true);
+            setSelectedBeneficiario(b);
+            setIsModalOpen(true);
+          }}
+          className="text-blue-400 hover:underline"
+        >
+          Editar
+        </button>
+        <button onClick={() => handleDelete(b.beneficiarioid)} className="text-red-400 hover:underline">
+          Eliminar
+        </button>
+      </td>
+    </tr>
+  ))
+) : (
+  <tr><td colSpan={6} className="text-center">No hay beneficiarios para mostrar</td></tr>
+)}
+
           </tbody>
         </table>
 
         {isModalOpen && (
           <Modal onClose={() => setIsModalOpen(false)}>
             <h2 className="text-xl font-bold text-white mb-4">Editar Beneficiario</h2>
-            {["Nombre", "Apellido", "DNI", "Email", "Telefono"].map((field) => (
+            {["nombre", "apellido", "dni", "email", "telefono"].map((field) => (
               <input
                 key={field}
                 type="text"

@@ -2,13 +2,14 @@ import { Request, Response, NextFunction, RequestHandler } from "express";
 import PolizaModel from "../models/polizaModel";
 import pool from "../config/db";
 
+// Crear póliza
 export const createPoliza = async (req: Request, res: Response): Promise<void> => {
   const { BeneficiarioID, TipoPoliza } = req.body;
-  console.log("BeneficiarioID:", BeneficiarioID);  // Verificar que el BeneficiarioID es el esperado.
+  console.log("BeneficiarioID:", BeneficiarioID);
 
   try {
     // Verificar si el BeneficiarioID existe en la tabla beneficiario
-    const [beneficiarioResult]: any = await pool.query("SELECT * FROM beneficiario WHERE UsuarioID = ?", [BeneficiarioID]);
+    const { rows: beneficiarioResult }: any = await pool.query("SELECT * FROM beneficiario WHERE usuarioid = $1", [BeneficiarioID]);
 
     console.log("Beneficiario encontrado:", beneficiarioResult);
 
@@ -21,9 +22,9 @@ export const createPoliza = async (req: Request, res: Response): Promise<void> =
     // Acceder al primer objeto del resultado
     const beneficiario = beneficiarioResult[0];
     console.log("Beneficiario:", beneficiario);
-
+    console.log(beneficiario.beneficiarioid);
     // Llamar al modelo para crear la póliza
-    const result = await PolizaModel.createPoliza(beneficiario.BeneficiarioID, TipoPoliza);
+    const result = await PolizaModel.createPoliza(beneficiario.beneficiarioid, TipoPoliza);
 
     // Responder con éxito
     res.status(201).json({
@@ -36,9 +37,23 @@ export const createPoliza = async (req: Request, res: Response): Promise<void> =
   }
 };
 
+// Obtener póliza por BeneficiarioID
+export const getPolizaPorBeneficiarioID = async (req: Request, res: Response) => {
+  const { BeneficiarioID } = req.params;
+  try {
+    const { rows }: any = await pool.query("SELECT PolizaID FROM poliza WHERE BeneficiarioID = $1", [BeneficiarioID]);
+    if (rows.length === 0) {
+      res.status(404).json({ message: "Póliza no encontrada." });
+      return;
+    }
+    res.status(200).json({ PolizaID: rows[0].PolizaID });
+  } catch (error) {
+    console.error("Error al obtener PolizaID:", error);
+    res.status(500).json({ error: "Error al obtener PolizaID" });
+  }
+};
 
-
-
+// Obtener todas las pólizas
 export const getPolizas: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { beneficiarioID } = req.params;
@@ -57,6 +72,7 @@ export const getPolizas: RequestHandler = async (req: Request, res: Response, ne
   }
 };
 
+// Obtener póliza por ID
 export const getPolizaByID: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { polizaID } = req.params;
@@ -69,11 +85,13 @@ export const getPolizaByID: RequestHandler = async (req: Request, res: Response,
       return;
     }
 
-    res.status(200).json(result[0]);  // Devuelve la póliza encontrada
+    res.status(200).json(result[0]);
   } catch (error) {
     next(error);
   }
 };
+
+// Obtener pólizas por DNI
 export const getPolizasByDNI = async (req: Request, res: Response, next: NextFunction) => {
   const { DNI } = req.params;
 
@@ -91,6 +109,8 @@ export const getPolizasByDNI = async (req: Request, res: Response, next: NextFun
     next(error);
   }
 };
+
+// Actualizar estado de póliza
 export const updatePolizaEstado = async (req: Request, res: Response, next: NextFunction) => {
   const { polizaID } = req.params;
   const { estado } = req.body;  // Recibe el estado para actualizar (por ejemplo: 'Inactiva')

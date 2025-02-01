@@ -10,19 +10,24 @@ const upload = multer({ storage }).array("documentos", 5); // Ajusta el número 
 
 // Esquema de validación
 const schema = Joi.object({
-  tipoSiniestro: Joi.string().max(50).required(),
+  BeneficiarioID: Joi.number().required(),  // Asegúrate de permitir este campo
+  PolizaID: Joi.number().required(),
+  tipoSiniestro: Joi.string().required(),
   fechaSiniestro: Joi.date().required(),
-  departamento: Joi.string().max(100).required(),
-  distrito: Joi.string().max(100).required(),
-  provincia: Joi.string().max(100).required(),
-  ubicacion: Joi.string().max(255).required(),
+  departamento: Joi.string().required(),
+  distrito: Joi.string().required(),
+  provincia: Joi.string().required(),
+  ubicacion: Joi.string().required(),
   descripcion: Joi.string().required(),
-  documentos: Joi.array().items(Joi.string().uri()).optional(), // Se permite un array de URLs
+  documentos: Joi.array().items(Joi.string().uri()).optional(),  // Asegúrate de permitir un array de URLs
 });
+
 
 // Controlador para registrar un siniestro
 export const registrarSiniestro = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
+    console.log('Solicitud recibida:', req.body); // Imprimir el cuerpo de la solicitud
+
     // Validar los datos enviados
     const { error } = schema.validate(req.body);
     if (error) {
@@ -39,54 +44,74 @@ export const registrarSiniestro = async (req: Request, res: Response, next: Next
       ubicacion,
       descripcion,
       documentos = [],
+      BeneficiarioID,
+      PolizaID,
     } = req.body;
 
-    // Define 'documentosUrls' as an array of strings
-    let documentosUrls: string[] = []; // Cambiado para tener el tipo string[]
+    console.log({
+      tipoSiniestro,
+      fechaSiniestro,
+      departamento,
+      distrito,
+      provincia,
+      ubicacion,
+      descripcion,
+      documentos,
+      BeneficiarioID,
+      PolizaID,
+    });
 
-       // Verificar si los documentos están en el formato correcto (si existen)
-       if (documentos.length > 0) {
-        // Verificar que cada documento sea una URL válida
-        for (let i = 0; i < documentos.length; i++) {
-          const isValidUrl = Joi.string().uri().validate(documentos[i]);
-          if (isValidUrl.error) {
-            res.status(400).json({ error: `El documento en la posición ${i + 1} no es una URL válida` });
-            return;
-          }
-  
-          // Agregar cada URL al array 'documentosUrls'
-          documentosUrls.push(documentos[i]);
+    // Verificar si los documentos están en el formato correcto (si existen)
+    let documentosUrls: string[] = [];
+
+    if (documentos.length > 0) {
+      for (let i = 0; i < documentos.length; i++) {
+        const isValidUrl = Joi.string().uri().validate(documentos[i]);
+        if (isValidUrl.error) {
+          res.status(400).json({ error: `El documento en la posición ${i + 1} no es una URL válida` });
+          return;
         }
+        documentosUrls.push(documentos[i]);
       }
-        
-       
-    // Insertar en la base de datos
+    }
+
+    // Convertir los documentos a JSON válido
+    const documentosJson = JSON.stringify(documentosUrls);
+
+    // Llamada a la consulta INSERT directamente en la tabla 'siniestros'
     const [result]: any = await pool.query(
       `INSERT INTO siniestros 
-      (tipo_siniestro, fecha_siniestro, departamento, distrito, provincia, ubicacion, descripcion, documentos)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      (BeneficiarioID, PolizaID, tipo_siniestro, fecha_siniestro, departamento, distrito, provincia, ubicacion, descripcion, documentos)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
-        tipoSiniestro,
-        fechaSiniestro,
-        departamento,
-        distrito,
-        provincia,
-        ubicacion,
-        descripcion,
-        JSON.stringify(documentosUrls), // Guardar los documentos como JSON con URLs
+        BeneficiarioID,            // BeneficiarioID
+        PolizaID,                  // PolizaID
+        tipoSiniestro,             // Tipo de Siniestro
+        fechaSiniestro,            // Fecha del Siniestro
+        departamento,              // Departamento
+        distrito,                  // Distrito
+        provincia,                 // Provincia
+        ubicacion,                 // Ubicación
+        descripcion,               // Descripción
+        documentosJson,            // Documentos en formato JSON
       ]
     );
 
-    // Enviar respuesta
+    // Responder con el ID del siniestro insertado
     res.status(201).json({
       message: "Siniestro registrado con éxito",
-      siniestroId: result.insertId,
+      siniestroId: result.insertId, // Retorna el ID del siniestro recién creado
     });
   } catch (error) {
     console.error("Error al registrar siniestro:", error);
     next(error);
   }
 };
+
+
+
+
+
 
 // Controlador para listar todos los siniestros
 export const listarSiniestros = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

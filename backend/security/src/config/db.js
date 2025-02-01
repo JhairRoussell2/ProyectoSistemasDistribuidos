@@ -1,18 +1,20 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const promise_1 = __importDefault(require("mysql2/promise"));
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config(); // Carga el archivo .env
-const pool = promise_1.default.createPool({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'SistemaFlexDB',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+const pg_1 = require("pg"); // Asegúrate de tener instalado pg-pool
+// Cadena de conexión con SSL
+const connectionString = "postgresql://seguros_user:V26AfZvS1OM4uRVh9LvQEteaW8srKwwh@dpg-cueg03t6l47c739tvcbg-a.oregon-postgres.render.com:5432/seguros?sslmode=require";
+// Crear el pool de conexiones usando la cadena de conexión completa
+const pool = new pg_1.Pool({
+    connectionString: connectionString,
+    ssl: {
+        rejectUnauthorized: false, // Esto permite la conexión si el servidor tiene un certificado auto-firmado (aunque no es lo más seguro en producción)
+    },
+});
+pool.connect()
+    .then(() => {
+    console.log("Conectado a la base de datos PostgreSQL");
+})
+    .catch((err) => {
+    console.error("Error al conectar a la base de datos PostgreSQL:", err);
 });
 exports.default = pool;

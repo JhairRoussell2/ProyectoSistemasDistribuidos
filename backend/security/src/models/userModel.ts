@@ -1,5 +1,4 @@
 import pool from '../config/db';
-import { RowDataPacket } from 'mysql2/promise';
 
 // Definimos la interfaz para el usuario
 export interface User {
@@ -11,32 +10,37 @@ export interface User {
   Rol: 'Personal' | 'Administrador' | 'Beneficiario';
 }
 
-// Función para llamar al procedimiento almacenado
+// Función para buscar un usuario por su correo electrónico
 export const findUserByEmail = async (email: string): Promise<User | null> => {
   try {
-    const [rows] = await pool.query<(User & RowDataPacket)[]>(
-      'CALL sp_FindUserByEmail(?)', 
+    const { rows } = await pool.query(
+      'SELECT UsuarioID, Nombre, Apellido, Email, Password, Rol FROM usuario WHERE Email = $1 LIMIT 1',
       [email]
     );
 
-    // En MySQL, los procedimientos almacenados devuelven un array de arrays, por lo que accedemos a `rows[0]`
-    if (rows.length > 0 && rows[0].length > 0) {
-      return rows[0][0]; // Retorna el primer usuario encontrado
+    // Si no se encuentra el usuario, retornamos null
+    if (rows.length === 0) {
+      return null;
     }
-    return null;
+
+    // Retornamos el primer resultado encontrado
+    return rows[0];
   } catch (error) {
-    console.error('Error al ejecutar sp_FindUserByEmail:', error);
+    console.error('Error al ejecutar findUserByEmail:', error);
     throw new Error('Error en la base de datos');
   }
 };
+
+// Función para crear un usuario
 export const createUser = async (user: User): Promise<void> => {
   try {
+    // Llamada al procedimiento almacenado para crear el usuario
     await pool.query(
-      'CALL sp_CreateUser(?, ?, ?, ?, ?)',
+      'INSERT INTO usuario (Nombre, Apellido, Email, Password, Rol) VALUES ($1, $2, $3, $4, $5)',
       [user.Nombre, user.Apellido, user.Email, user.Password, user.Rol]
     );
   } catch (error) {
-    console.error('Error al ejecutar sp_CreateUser:', error);
+    console.error('Error al crear el usuario:', error);
     throw new Error('Error en la base de datos');
   }
-}
+};

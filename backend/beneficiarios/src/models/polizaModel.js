@@ -25,8 +25,8 @@ class PolizaModel {
                 fechaFin.setFullYear(fechaFin.getFullYear() + 1); // Sumar 1 año
                 const FechaFin = fechaFin.toISOString().split("T")[0]; // Fecha dentro de 1 año (YYYY-MM-DD)
                 // Crear la póliza en la base de datos
-                const [result] = yield db_1.default.query("INSERT INTO poliza (BeneficiarioID, TipoPoliza, FechaInicio, FechaFin) VALUES (?, ?, ?, ?)", [BeneficiarioID, TipoPoliza, FechaInicio, FechaFin]);
-                return result;
+                const { rows } = yield db_1.default.query("INSERT INTO poliza (beneficiarioid, tipopoliza, fechainicio, fechaFin) VALUES ($1, $2, $3, $4) RETURNING polizaid", [BeneficiarioID, TipoPoliza, FechaInicio, FechaFin]);
+                return rows[0]; // Retorna el resultado de la inserción (PolizaID)
             }
             catch (error) {
                 throw new Error(`Error al crear la póliza: ${error.message}`);
@@ -37,8 +37,8 @@ class PolizaModel {
     getPolizas() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const [result] = yield db_1.default.query("SELECT * FROM poliza");
-                return result;
+                const { rows } = yield db_1.default.query("SELECT * FROM poliza");
+                return rows;
             }
             catch (error) {
                 throw new Error(`Error al obtener pólizas: ${error.message}`);
@@ -49,8 +49,8 @@ class PolizaModel {
     getPolizasByDNI(DNI) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const [result] = yield db_1.default.query(`SELECT * FROM poliza WHERE BeneficiarioID IN (SELECT BeneficiarioID FROM beneficiario WHERE DNI = ?)`, [DNI]);
-                return result;
+                const { rows } = yield db_1.default.query(`SELECT * FROM poliza WHERE beneficiarioid IN (SELECT beneficiarioid FROM beneficiario WHERE dni = $1)`, [DNI]);
+                return rows;
             }
             catch (error) {
                 throw new Error(`Error al obtener pólizas por DNI: ${error.message}`);
@@ -61,19 +61,23 @@ class PolizaModel {
     getPolizaByID(polizaID) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const [result] = yield db_1.default.query("SELECT * FROM poliza WHERE PolizaID = ?", [polizaID]);
-                return result;
+                const { rows } = yield db_1.default.query("SELECT * FROM poliza WHERE polizaid = $1", [polizaID]);
+                return rows;
             }
             catch (error) {
                 throw new Error(`Error al obtener la póliza: ${error.message}`);
             }
         });
     }
+    // Actualizar el estado de una póliza
     updatePolizaEstado(polizaID, estado) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const [result] = yield db_1.default.query("UPDATE poliza SET Estado = ? WHERE PolizaID = ?", [estado, polizaID]);
-                return result;
+                const { rowCount } = yield db_1.default.query("UPDATE poliza SET estado = $1 WHERE polizaid = $2", [estado, polizaID]);
+                if (rowCount === 0) {
+                    throw new Error("No se encontró la póliza para actualizar");
+                }
+                return { message: "Estado de la póliza actualizado exitosamente." };
             }
             catch (error) {
                 throw new Error(`Error al actualizar la póliza: ${error.message}`);

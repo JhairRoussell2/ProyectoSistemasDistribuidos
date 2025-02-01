@@ -1,5 +1,12 @@
 import express from "express";
-import { createPoliza, getPolizas, getPolizaByID, getPolizasByDNI, updatePolizaEstado } from "../controllers/polizaController";
+import {
+  createPoliza,
+  getPolizas,
+  getPolizaByID,
+  getPolizasByDNI,
+  updatePolizaEstado,
+  getPolizaPorBeneficiarioID, // Importamos la función que maneja esta ruta
+} from "../controllers/polizaController";
 
 const router = express.Router();
 
@@ -14,6 +21,9 @@ router.get("/poliza/:polizaID", getPolizaByID);
 
 // Ruta para obtener las pólizas de un beneficiario por su DNI
 router.get("/validar/:DNI", getPolizasByDNI);
+
+// Ruta para obtener el PolizaID de un BeneficiarioID
+router.get("/beneficiario/:BeneficiarioID", getPolizaPorBeneficiarioID); // Nueva ruta
 
 // Ruta para actualizar el estado de una póliza
 router.put("/:polizaID/estado", updatePolizaEstado);
