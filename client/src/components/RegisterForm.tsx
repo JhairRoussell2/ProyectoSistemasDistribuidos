@@ -1,15 +1,14 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom'; // Importa Link para redirigir al login
+import { Link } from 'react-router-dom';
 
-// Definir el tipo correcto de datos de registro
 interface RegisterData {
-  Nombre: string;
-  Apellido: string;
-  Email: string;
-  Telefono: string;
-  DNI: string;
-  Password: string;
-  ConfirmPassword: string;
+  nombre: string;  // Cambio de "Nombre" a "nombre"
+  apellido: string;  // Cambio de "Apellido" a "apellido"
+  email: string;
+  telefono: string;
+  dni: string;
+  password: string;  // Cambio de "Password" a "password"
+  confirmPassword: string;  // Cambio de "ConfirmPassword" a "confirmPassword"
 }
 
 interface RegisterFormProps {
@@ -18,13 +17,13 @@ interface RegisterFormProps {
 
 const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
   const [formData, setFormData] = useState<RegisterData>({
-    Nombre: '',
-    Apellido: '',
-    Email: '',
-    Telefono: '',
-    DNI: '',
-    Password: '',
-    ConfirmPassword: '',
+    nombre: '',  // Cambio de "Nombre" a "nombre"
+    apellido: '',  // Cambio de "Apellido" a "apellido"
+    email: '',
+    telefono: '',
+    dni: '',
+    password: '',  // Cambio de "Password" a "password"
+    confirmPassword: '',  // Cambio de "ConfirmPassword" a "confirmPassword"
   });
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -40,7 +39,6 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
     setMessage(null);
 
     try {
-      // Simula el envío de datos
       await onSubmit(formData);
       setMessage("¡Registro exitoso!"); // Mensaje de éxito
     } catch (error) {
@@ -52,25 +50,22 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 to-black">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-gray-900 p-8 rounded-lg shadow-lg w-96 space-y-6"
-      >
+      <form onSubmit={handleSubmit} className="bg-gray-900 p-8 rounded-lg shadow-lg w-96 space-y-6">
         <h2 className="text-3xl font-semibold text-center text-red-500">Crear Cuenta</h2>
-        
+
         {message && (
           <div className={`text-center p-2 rounded-lg ${message.includes("error") ? 'bg-red-500' : 'bg-green-500'} text-white`}>
             {message}
           </div>
         )}
-        
+
         {/* Campos de entrada */}
         <div>
           <input
-            name="Nombre"
+            name="nombre"  // Asegúrate de usar 'nombre' en minúsculas
             type="text"
             placeholder="Nombre"
-            value={formData.Nombre}
+            value={formData.nombre}
             onChange={handleChange}
             className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
             required
@@ -79,10 +74,10 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
 
         <div>
           <input
-            name="Apellido"
+            name="apellido"  // Asegúrate de usar 'apellido' en minúsculas
             type="text"
             placeholder="Apellido"
-            value={formData.Apellido}
+            value={formData.apellido}
             onChange={handleChange}
             className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
             required
@@ -91,10 +86,10 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
 
         <div>
           <input
-            name="Email"
+            name="email"
             type="email"
             placeholder="Correo Electrónico"
-            value={formData.Email}
+            value={formData.email}
             onChange={handleChange}
             className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
             required
@@ -103,10 +98,10 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
 
         <div>
           <input
-            name="Telefono"
+            name="telefono"
             type="text"
             placeholder="Teléfono"
-            value={formData.Telefono}
+            value={formData.telefono}
             onChange={handleChange}
             className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
             required
@@ -115,10 +110,10 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
 
         <div>
           <input
-            name="DNI"
+            name="dni"
             type="text"
             placeholder="DNI"
-            value={formData.DNI}
+            value={formData.dni}
             onChange={handleChange}
             className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
             required
@@ -127,10 +122,10 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
 
         <div>
           <input
-            name="Password"
+            name="password"  // Asegúrate de usar 'password' en minúsculas
             type="password"
             placeholder="Contraseña"
-            value={formData.Password}
+            value={formData.password}
             onChange={handleChange}
             className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
             required
@@ -139,10 +134,10 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
 
         <div>
           <input
-            name="ConfirmPassword"
+            name="confirmPassword"  // Asegúrate de usar 'confirmPassword' en minúsculas
             type="password"
             placeholder="Confirmar Contraseña"
-            value={formData.ConfirmPassword}
+            value={formData.confirmPassword}
             onChange={handleChange}
             className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
             required
@@ -157,7 +152,6 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
           {loading ? 'Cargando...' : 'Registrarse'}
         </button>
 
-        {/* Link para redirigir al login */}
         <div className="text-center">
           <p className="text-gray-600">¿Ya tienes cuenta? <Link to="/login" className="text-red-600 hover:text-red-800">Inicia sesión</Link></p>
         </div>
