@@ -70,7 +70,7 @@ const Login = () => {
             <Link to="/recuperar" className="text-red-400 hover:underline">
               ¿Olvidaste tu contraseña?
             </Link>
-            <Link to="/registro" className="text-blue-400 hover:underline">
+            <Link to="/register" className="text-blue-400 hover:underline">
               Regístrate aquí
             </Link>
           </div>

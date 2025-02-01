@@ -19,6 +19,7 @@ const multer_1 = __importDefault(require("multer"));
 const cloudinary_1 = __importDefault(require("cloudinary"));
 const siniestrosRoutes_1 = __importDefault(require("./routes/siniestrosRoutes"));
 const beneficiariosRoutes_1 = __importDefault(require("./routes/beneficiariosRoutes"));
+const reclamacionRoutes_1 = __importDefault(require("./routes/reclamacionRoutes")); // ✅ Agregar las rutas de reclamación
 // Configurar variables de entorno
 dotenv_1.default.config();
 // Crear aplicación
@@ -49,10 +50,11 @@ cloudinary_1.default.v2.config({
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
-// Rutas
+// ✅ Agregar Rutas de la API
 app.use("/api/beneficiarios", beneficiariosRoutes_1.default);
 app.use("/api/siniestros", siniestrosRoutes_1.default);
-// Ruta para cargar imágenes a Cloudinary
+app.use("/api/reclamaciones", reclamacionRoutes_1.default); // ✅ Agregando las rutas de reclamaciones
+// ✅ Ruta para cargar imágenes a Cloudinary
 app.post("/upload", upload.single('image'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (!req.file) {
@@ -64,10 +66,9 @@ app.post("/upload", upload.single('image'), (req, res) => __awaiter(void 0, void
             folder: "Siniestros"
         });
         // Enviar la URL del archivo subido a Cloudinary como respuesta
-        res.status(200).json(result); // Devolver la respuesta con la URL del archivo subido
+        res.status(200).json(result);
     }
     catch (error) {
-        // En caso de error, se maneja adecuadamente
         res.status(400).send("Error al cargar el archivo.");
     }
 }));
