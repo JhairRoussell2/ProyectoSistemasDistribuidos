@@ -2,6 +2,7 @@ import { ReactNode, useState } from "react";
 import { FiFileText, FiDollarSign, FiBarChart2, FiShield, FiHome, FiInfo, FiClipboard, FiSettings, FiCheckCircle, FiUsers } from "react-icons/fi";
 import { NavLink, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
+import GenerateReport from "../components/GenerateReport";
 
 interface LayoutProps {
   children: ReactNode;
@@ -15,6 +16,8 @@ const Layout = ({ children }: LayoutProps) => {
   const isAdminPanel = location.pathname.startsWith("/dashboard/admin");
   const isGeneralPanel = location.pathname.startsWith("/dashboard/general");
   const isPersonalPanel = location.pathname.startsWith("/dashboard/personal");
+
+  
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
@@ -87,18 +90,15 @@ const Layout = ({ children }: LayoutProps) => {
             {/* Opciones específicas para el Panel de Personal */}
             {isPersonalPanel && (
               <>
-                <NavLink to="/dashboard/personal/tareas" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
+                <NavLink to="/dashboard/personal/validar-poliza" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
                   <FiCheckCircle />
-                  <span>Tareas Pendientes</span>
+                  <span>Validar Polizas</span>
                 </NavLink>
-                <NavLink to="dashboard/personal/Mantener-Beneficiario" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
+                <NavLink to="/dashboard/personal/Mantener-Beneficiario" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
                   <FiUsers />
                   <span>Gestión de Beneficiarios</span>
                 </NavLink>
-                <NavLink to="/dashboard/personal/reportes" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
-                  <FiClipboard />
-                  <span>Reportes de Actividad</span>
-                </NavLink>
+                <GenerateReport />
               </>
             )}
           </nav>

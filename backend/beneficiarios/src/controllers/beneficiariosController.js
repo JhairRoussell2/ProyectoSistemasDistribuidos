@@ -32,7 +32,7 @@ const schema = joi_1.default.object({
 const getBeneficiarios = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log("Intentando conectar con la base de datos...");
-        const { rows } = yield db_1.default.query("SELECT * FROM beneficiario"); // Llamada a la función en PostgreSQL
+        const { rows } = yield db_1.default.query("SELECT * FROM beneficiario ORDER BY beneficiarioid ASC"); // Agregar ORDER BY para ordenar por beneficiarioid
         console.log("Datos obtenidos de la base de datos:", rows);
         if (rows.length === 0) {
             console.log("No se encontraron beneficiarios.");

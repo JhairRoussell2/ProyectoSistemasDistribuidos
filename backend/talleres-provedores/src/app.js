@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const siniestrosRoutes_1 = __importDefault(require("./routes/siniestrosRoutes"));
+//import siniestrosRoutes from "./routes/tallerRoutes";// para talleres proximamente 
 const proveedoresRoutes_1 = __importDefault(require("./routes/proveedoresRoutes"));
 // Configurar variables de entorno
 dotenv_1.default.config();
@@ -18,7 +18,6 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 // Registrar rutas
 app.use("/api/proveedores", proveedoresRoutes_1.default);
-app.use("/api/siniestros", siniestrosRoutes_1.default);
 // Imprimir rutas registradas en el servidor
 console.log("Rutas registradas en el servidor:");
 const getRoutes = (layer, basePath = "") => {

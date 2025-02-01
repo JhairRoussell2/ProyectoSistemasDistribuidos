@@ -5,7 +5,8 @@ import {
   getPolizaByID,
   getPolizasByDNI,
   updatePolizaEstado,
-  getPolizaPorBeneficiarioID, // Importamos la función que maneja esta ruta
+  getPolizaPorBeneficiarioID,
+  obtenerPolizasPorUsuarioID // Importamos la función que maneja esta ruta
 } from "../controllers/polizaController";
 
 const router = express.Router();
@@ -24,6 +25,9 @@ router.get("/validar/:DNI", getPolizasByDNI);
 
 // Ruta para obtener el PolizaID de un BeneficiarioID
 router.get("/beneficiario/:BeneficiarioID", getPolizaPorBeneficiarioID); // Nueva ruta
+
+// Ruta para obtener las pólizas de un usuario por su ID
+router.get("/usuario/:usuarioID", obtenerPolizasPorUsuarioID); // Nueva ruta
 
 // Ruta para actualizar el estado de una póliza
 router.put("/:polizaID/estado", updatePolizaEstado);
