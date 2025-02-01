@@ -4,7 +4,7 @@ import Alert from "../components/Alert";
 import { Edit3, Save, ArrowLeft } from "lucide-react";
 import Navbar from "../components/Navbar"; // Importar el Navbar
 
-const API_PROVEEDORES_URL = import.meta.env.VITE_API_PROVEEDORES_URL || "http://localhost:5000/api/proveedores";
+const API_PROVEEDORES_URL = import.meta.env.VITE_API_PROVEEDORES_URL || "http://localhost:5001/api/proveedores";
 
 const EditarProveedor = () => {
   const { id } = useParams();
@@ -12,15 +12,16 @@ const EditarProveedor = () => {
   const [alert, setAlert] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   const [form, setForm] = useState({
-    Nombre_Proveedor: "",
-    Dirección: "",
-    Teléfono_Proveedor: "",
-    Correo_Electrónico: "",
-    Tipo_Proveedor: "Distribuidor",
-    Estado_Proveedor: "Activo",
-    Valoración: "",
-    Notas: "",
+    nombre_proveedor: "",
+    direccion: "",
+    telefono_proveedor: "",
+    correo_electronico: "",
+    tipo_proveedor: "distribuidor",  // Usar minúsculas aquí también
+    estado_proveedor: "activo", // Lo mismo para estado
+    valoracion: "",
+    notas: "",
   });
+  
 
   useEffect(() => {
     fetchProveedor();
@@ -81,9 +82,9 @@ const EditarProveedor = () => {
             <label className="text-sm font-semibold">Nombre del Proveedor</label>
             <input
               type="text"
-              name="Nombre_Proveedor"
+              name="nombre_proveedor"
               placeholder="Ejemplo: Proveedor Global S.A."
-              value={form.Nombre_Proveedor}
+              value={form.nombre_proveedor}
               onChange={handleChange}
               className="w-full border p-2 rounded-lg mt-1"
               required
@@ -94,9 +95,9 @@ const EditarProveedor = () => {
             <label className="text-sm font-semibold">Dirección</label>
             <input
               type="text"
-              name="Dirección"
+              name="direccion"
               placeholder="Ejemplo: Av. Principal 123, Lima"
-              value={form.Dirección}
+              value={form.direccion}
               onChange={handleChange}
               className="w-full border p-2 rounded-lg mt-1"
             />
@@ -106,9 +107,9 @@ const EditarProveedor = () => {
             <label className="text-sm font-semibold">Teléfono</label>
             <input
               type="text"
-              name="Teléfono_Proveedor"
+              name="telefono_proveedor"
               placeholder="Ejemplo: +51 987 654 321"
-              value={form.Teléfono_Proveedor}
+              value={form.telefono_proveedor}
               onChange={handleChange}
               className="w-full border p-2 rounded-lg mt-1"
             />
@@ -118,9 +119,9 @@ const EditarProveedor = () => {
             <label className="text-sm font-semibold">Correo Electrónico</label>
             <input
               type="email"
-              name="Correo_Electrónico"
+              name="correo_electronico"
               placeholder="Ejemplo: contacto@proveedor.com"
-              value={form.Correo_Electrónico}
+              value={form.correo_electronico}
               onChange={handleChange}
               className="w-full border p-2 rounded-lg mt-1"
               required
@@ -130,8 +131,8 @@ const EditarProveedor = () => {
           <div>
             <label className="text-sm font-semibold">Tipo de Proveedor</label>
             <select
-              name="Tipo_Proveedor"
-              value={form.Tipo_Proveedor}
+              name="tipo_proveedor"
+              value={form.tipo_proveedor}
               onChange={handleChange}
               className="w-full border p-2 rounded-lg mt-1"
             >
@@ -145,8 +146,8 @@ const EditarProveedor = () => {
           <div>
             <label className="text-sm font-semibold">Estado del Proveedor</label>
             <select
-              name="Estado_Proveedor"
-              value={form.Estado_Proveedor}
+              name="estado_proveedor"
+              value={form.estado_proveedor}
               onChange={handleChange}
               className="w-full border p-2 rounded-lg mt-1"
             >
@@ -159,9 +160,9 @@ const EditarProveedor = () => {
             <label className="text-sm font-semibold">Valoración (0 - 10)</label>
             <input
               type="number"
-              name="Valoración"
+              name="valoracion"
               placeholder="Ejemplo: 8.5"
-              value={form.Valoración}
+              value={form.valoracion}
               onChange={handleChange}
               className="w-full border p-2 rounded-lg mt-1"
               min="0"
@@ -172,9 +173,9 @@ const EditarProveedor = () => {
           <div className="col-span-2">
             <label className="text-sm font-semibold">Notas</label>
             <textarea
-              name="Notas"
+              name="notas"
               placeholder="Ejemplo: Entrega rápida y atención personalizada"
-              value={form.Notas}
+              value={form.notas}
               onChange={handleChange}
               className="w-full border p-2 rounded-lg mt-1"
               rows={3}

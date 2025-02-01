@@ -1,55 +1,34 @@
-import express from "express";
-import cors from "cors";
-import proveedoresRoutes from "./routes/proveedoresRoutes";
+import app from "./app";
 import pool from "./config/db";
 
-const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
-// Middleware para permitir JSON y CORS
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+pool.connect()
+  .then(async (client) => {
+    console.log("Conectado a la base de datos PostgreSQL");
 
-// Rutas
-app.use("/api/proveedores", proveedoresRoutes);
+    // Consulta para obtener las tablas disponibles
+    try {
+      const result = await client.query(
+        "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"
+      );
 
-// ✅ Verificar conexión a MySQL antes de iniciar el servidor
-const verificarConexionDB = async () => {
-  try {
-    console.log("🔄 Conectando a la base de datos...");
-    
-    // Prueba la conexión con MySQL ejecutando SHOW TABLES
-    const [tables]: any = await pool.query("SHOW TABLES");
-    
-    console.log("✅ Conectado a la base de datos MySQL");
-    console.log("📌 Tablas disponibles en la base de datos:");
-    tables.forEach((table: any) => {
-      console.log(`   - ${Object.values(table)[0]}`);
+      console.log("Tablas disponibles en la base de datos:");
+      result.rows.forEach((row: any) => {
+        console.log(`- ${row.table_name}`); // Mostrar los nombres de las tablas
+      });
+    } catch (error) {
+      console.error("Error al obtener las tablas:", error);
+    } finally {
+      client.release(); // Liberar la conexión al pool
+    }
+
+    // Iniciar el servidor
+    app.listen(PORT, () => {
+      console.log(`Servidor corriendo en http://localhost:${PORT}`);
     });
-    
-    return true;
-  } catch (error) {
-    console.error("❌ Error al conectar a la base de datos:", error);
-    return false;
-  }
-};
-
-// ✅ Iniciar servidor solo si la base de datos está disponible
-const iniciarServidor = async () => {
-  const conexionExitosa = await verificarConexionDB();
-  
-  if (!conexionExitosa) {
-    console.error("❌ No se pudo conectar a la base de datos. Verifica tu configuración.");
-    process.exit(1); // Detiene la ejecución si la DB no responde
-  }
-
-  app.listen(PORT, () => {
-    console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+  })
+  .catch((err) => {
+    console.error("Error al conectar a la base de datos:", err);
   });
-};
 
-// Iniciar el servidor
-iniciarServidor();
-
-export default app;

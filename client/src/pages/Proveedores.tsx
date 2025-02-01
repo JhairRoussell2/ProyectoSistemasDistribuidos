@@ -5,10 +5,10 @@ import Alert from "../components/Alert";
 import Modal from "../components/Modal";
 import Navbar from "../components/Navbar"; // Importar el Navbar
 
-const API_PROVEEDORES_URL = import.meta.env.VITE_API_PROVEEDORES_URL || "http://localhost:5000/api/proveedores";
+const API_PROVEEDORES_URL = import.meta.env.VITE_API_PROVEEDORES_URL || "http://localhost:5001/api/proveedores";
 
 const Proveedores = () => {
-  const [proveedores, setProveedores] = useState([]);
+  const [proveedores, setProveedores] = useState<any[]>([]);
   const [alert, setAlert] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -22,7 +22,8 @@ const Proveedores = () => {
     try {
       const response = await fetch(API_PROVEEDORES_URL);
       const data = await response.json();
-      setProveedores(data[0]); // MySQL devuelve arrays anidados
+      setProveedores(data); // MySQL devuelve arrays anidados
+      
     } catch (error) {
       setAlert({ type: "error", message: "Error al obtener proveedores" });
     }
@@ -73,14 +74,14 @@ const Proveedores = () => {
           </thead>
           <tbody>
             {proveedores.map((prov: any) => (
-              <tr key={prov.ID_Proveedor} className="border-t hover:bg-gray-50 transition">
-                <td className="p-3">{prov.Nombre_Proveedor}</td>
-                <td className="p-3">{prov.Teléfono_Proveedor}</td>
-                <td className="p-3">{prov.Correo_Electrónico}</td>
-                <td className="p-3">{prov.Valoración}</td>
+              <tr key={prov.id_proveedor} className="border-t hover:bg-gray-50 transition">
+                <td className="p-3">{prov.nombre_proveedor}</td>
+                <td className="p-3">{prov.telefono_proveedor}</td>
+                <td className="p-3">{prov.correo_electronico}</td>
+                <td className="p-3">{prov.valoracion}</td>
                 <td className="p-3 flex gap-2">
                   <button 
-                    onClick={() => navigate(`/editar-proveedor/${prov.ID_Proveedor}`)} 
+                    onClick={() => navigate(`/editar-proveedor/${prov.id_proveedor}`)} 
                     className="flex items-center gap-1 bg-yellow-500 text-white px-3 py-2 rounded-lg shadow-md hover:bg-yellow-600 transition"
                   >
                     <Pencil size={16} />
@@ -88,7 +89,7 @@ const Proveedores = () => {
                   </button>
                   <button 
                     onClick={() => {
-                      setSelectedId(prov.ID_Proveedor);
+                      setSelectedId(prov.id_proveedor);
                       setModalOpen(true);
                     }} 
                     className="flex items-center gap-1 bg-red-500 text-white px-3 py-2 rounded-lg shadow-md hover:bg-red-600 transition"

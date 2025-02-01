@@ -18,26 +18,28 @@ class ProveedoresController {
     getProveedores(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const [rows] = yield db_1.default.query("CALL GetAllProveedores()");
-                res.json(rows);
+                // Llamada a la función 'getallproveedores' que devuelve todos los proveedores
+                const result = yield db_1.default.query("SELECT * FROM public.getallproveedores()");
+                res.json(result.rows); // Acceder correctamente a 'rows'
             }
             catch (error) {
                 res.status(500).json({ message: "Error al obtener los proveedores", error });
             }
         });
     }
+    // Obtener proveedor por ID
     getProveedorById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
             try {
-                const [result] = yield db_1.default.query("CALL GetProveedorById(?)", [id]);
-                // MySQL devuelve los resultados en un array anidado cuando se usa CALL
-                const rows = result[0];
-                if (rows.length > 0) {
-                    res.json(rows[0]); // Retorna el primer resultado
+                // Llamada a la función 'getproveedorbyid' para obtener el proveedor por su ID
+                const result = yield db_1.default.query("SELECT * FROM public.getproveedorbyid($1)", [id]);
+                // Si no se encuentra el proveedor
+                if (result.rows.length === 0) {
+                    res.status(404).json({ message: "Proveedor no encontrado" });
                 }
                 else {
-                    res.status(404).json({ message: "Proveedor no encontrado" });
+                    res.json(result.rows[0]); // Retorna el primer resultado
                 }
             }
             catch (error) {
@@ -48,9 +50,19 @@ class ProveedoresController {
     // Crear un nuevo proveedor
     createProveedor(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { Nombre_Proveedor, Dirección, Teléfono_Proveedor, Correo_Electrónico, Tipo_Proveedor, Estado_Proveedor, Valoración, Notas } = req.body;
+            const { nombre_proveedor, direccion, telefono_proveedor, correo_electronico, tipo_proveedor, estado_proveedor, valoracion, notas } = req.body;
             try {
-                yield db_1.default.query("CALL CreateProveedor(?, ?, ?, ?, ?, ?, ?, ?)", [Nombre_Proveedor, Dirección, Teléfono_Proveedor, Correo_Electrónico, Tipo_Proveedor, Estado_Proveedor, Valoración, Notas]);
+                // Llamada a la función 'createproveedor' para crear un nuevo proveedor
+                yield db_1.default.query("SELECT public.createproveedor($1, $2, $3, $4, $5, $6, $7, $8)", [
+                    nombre_proveedor,
+                    direccion,
+                    telefono_proveedor,
+                    correo_electronico,
+                    tipo_proveedor,
+                    estado_proveedor,
+                    valoracion,
+                    notas
+                ]);
                 res.json({ message: "Proveedor creado correctamente" });
             }
             catch (error) {
@@ -62,9 +74,20 @@ class ProveedoresController {
     updateProveedor(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const { Nombre_Proveedor, Dirección, Teléfono_Proveedor, Correo_Electrónico, Tipo_Proveedor, Estado_Proveedor, Valoración, Notas } = req.body;
+            const { nombre_proveedor, direccion, telefono_proveedor, correo_electronico, tipo_proveedor, estado_proveedor, valoracion, notas } = req.body;
             try {
-                yield db_1.default.query("CALL UpdateProveedor(?, ?, ?, ?, ?, ?, ?, ?, ?)", [id, Nombre_Proveedor, Dirección, Teléfono_Proveedor, Correo_Electrónico, Tipo_Proveedor, Estado_Proveedor, Valoración, Notas]);
+                // Llamada a la función 'updateproveedor' para actualizar los datos del proveedor
+                yield db_1.default.query("SELECT public.updateproveedor($1, $2, $3, $4, $5, $6, $7, $8, $9)", [
+                    id, // El ID del proveedor que se está actualizando
+                    nombre_proveedor,
+                    direccion,
+                    telefono_proveedor,
+                    correo_electronico,
+                    tipo_proveedor,
+                    estado_proveedor,
+                    valoracion,
+                    notas
+                ]);
                 res.json({ message: "Proveedor actualizado correctamente" });
             }
             catch (error) {
@@ -77,7 +100,8 @@ class ProveedoresController {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
             try {
-                yield db_1.default.query("CALL DeleteProveedor(?)", [id]);
+                // Llamada a la función 'deleteproveedor' para eliminar un proveedor
+                yield db_1.default.query("SELECT public.deleteproveedor($1)", [id]);
                 res.json({ message: "Proveedor eliminado correctamente" });
             }
             catch (error) {

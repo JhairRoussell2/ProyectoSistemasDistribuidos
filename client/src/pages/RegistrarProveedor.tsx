@@ -3,21 +3,21 @@ import { useNavigate } from "react-router-dom";
 import { CheckCircle, MapPin, Mail, Phone, User, Star } from "lucide-react";
 import Alert from "../components/Alert";
 import Navbar from "../components/Navbar"; // Importar el Navbar
-const API_PROVEEDORES_URL = import.meta.env.VITE_API_PROVEEDORES_URL || "http://localhost:5000/api/proveedores";
+const API_PROVEEDORES_URL = import.meta.env.VITE_API_PROVEEDORES_URL || "http://localhost:5001/api/proveedores";
 
 const RegistrarProveedor = () => {
   const navigate = useNavigate();
   const [alert, setAlert] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   const [form, setForm] = useState({
-    Nombre_Proveedor: "",
-    Dirección: "",
-    Teléfono_Proveedor: "",
-    Correo_Electrónico: "",
-    Tipo_Proveedor: "Distribuidor",
-    Estado_Proveedor: "Activo",
-    Valoración: "",
-    Notas: "",
+    nombre_proveedor: "",
+    direccion: "",
+    telefono_proveedor: "",
+    correo_electronico: "",
+    tipo_proveedor: "Distribuidor",
+    estado_proveedor: "Activo",
+    valoracion: "",
+    notas: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -62,9 +62,9 @@ const RegistrarProveedor = () => {
               <User className="absolute left-3 top-3 text-gray-400" />
               <input
                 type="text"
-                name="Nombre_Proveedor"
+                name="nombre_proveedor"
                 placeholder="Proveedor Global S.A."
-                value={form.Nombre_Proveedor}
+                value={form.nombre_proveedor}
                 onChange={handleChange}
                 className="w-full pl-10 px-4 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-400 bg-red-50"
                 required
@@ -79,9 +79,9 @@ const RegistrarProveedor = () => {
               <MapPin className="absolute left-3 top-3 text-gray-400" />
               <input
                 type="text"
-                name="Dirección"
+                name="direccion"
                 placeholder="Av. Principal 123, Lima"
-                value={form.Dirección}
+                value={form.direccion}
                 onChange={handleChange}
                 className="w-full pl-10 px-4 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-400 bg-red-50"
               />
@@ -95,9 +95,9 @@ const RegistrarProveedor = () => {
               <Phone className="absolute left-3 top-3 text-gray-400" />
               <input
                 type="tel"
-                name="Teléfono_Proveedor"
+                name="telefono_proveedor"
                 placeholder="+51 987 654 321"
-                value={form.Teléfono_Proveedor}
+                value={form.telefono_proveedor}
                 onChange={handleChange}
                 className="w-full pl-10 px-4 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-400 bg-red-50"
               />
@@ -111,9 +111,9 @@ const RegistrarProveedor = () => {
               <Mail className="absolute left-3 top-3 text-gray-400" />
               <input
                 type="email"
-                name="Correo_Electrónico"
+                name="correo_electronico"
                 placeholder="contacto@proveedor.com"
-                value={form.Correo_Electrónico}
+                value={form.correo_electronico}
                 onChange={handleChange}
                 className="w-full pl-10 px-4 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-400 bg-red-50"
                 required
@@ -125,8 +125,8 @@ const RegistrarProveedor = () => {
           <div>
             <label className="block text-gray-700 font-semibold">Tipo de Proveedor</label>
             <select
-              name="Tipo_Proveedor"
-              value={form.Tipo_Proveedor}
+              name="tipo_proveedor"
+              value={form.tipo_proveedor}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-red-300 rounded-lg bg-red-50"
             >
@@ -141,8 +141,8 @@ const RegistrarProveedor = () => {
           <div>
             <label className="block text-gray-700 font-semibold">Estado del Proveedor</label>
             <select
-              name="Estado_Proveedor"
-              value={form.Estado_Proveedor}
+              name="estado_proveedor"
+              value={form.estado_proveedor}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-red-300 rounded-lg bg-red-50"
             >
@@ -158,11 +158,11 @@ const RegistrarProveedor = () => {
               <Star className="absolute left-3 top-3 text-gray-400" />
               <input
                 type="number"
-                name="Valoración"
+                name="valoracion"
                 placeholder="10"
                 min="0"
                 max="10"
-                value={form.Valoración}
+                value={form.valoracion}
                 onChange={handleChange}
                 className="w-full pl-10 px-4 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-400 bg-red-50"
               />
@@ -173,9 +173,9 @@ const RegistrarProveedor = () => {
           <div className="col-span-2">
             <label className="block text-gray-700 font-semibold">Notas</label>
             <textarea
-              name="Notas"
+              name="notas"
               placeholder="Entrega rápida y atención personalizada"
-              value={form.Notas}
+              value={form.notas}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-400 bg-red-50"
               rows={3}
