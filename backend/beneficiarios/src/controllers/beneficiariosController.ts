@@ -12,8 +12,7 @@ const schema = Joi.object({
   email: Joi.string().email().required(),
   telefono: Joi.string().max(15).required(),
   password: Joi.string().min(6).required(),
-  ConfirmPassword: Joi.ref("Password"),
-  usuarioid: Joi.number().integer().required()
+  confirmPassword: Joi.ref("password")
   // Elimina la validación de UsuarioID, ya que es generado en la base de datos
 });
 
@@ -133,23 +132,22 @@ export const createBeneficiario: RequestHandler = async (req, res, next): Promis
       return;
     }
 
-    const { Nombre, Apellido, DNI, Email, Telefono, Password, ConfirmPassword } = req.body;
+    const { nombre, apellido, dni, email, telefono, password, confirmPassword } = req.body;
 
     // Verifica que las contraseñas coincidan
-    if (Password !== ConfirmPassword) {
+    if (password !== confirmPassword) {
       res.status(400).json({ error: 'Las contraseñas no coinciden' });
       return;
     }
 
     // Hashear la contraseña antes de guardarla
-    const hashedPassword = await bcrypt.hash(Password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Llamada al procedimiento almacenado para crear el usuario y el beneficiario
     const result = await pool.query(
       "SELECT public.sp_registerbeneficiario($1, $2, $3, $4, $5, $6)",
-      [Nombre, Apellido, Email, hashedPassword, DNI, Telefono]
+      [nombre, apellido, email, hashedPassword, dni, telefono]
     );
-
 
     console.log("Beneficiario creado exitosamente");
 
@@ -162,6 +160,7 @@ export const createBeneficiario: RequestHandler = async (req, res, next): Promis
     next(error);
   }
 };
+
 
 // Controlador para obtener el rol del usuario
 export const getUserRole = async (req: Request, res: Response, next: NextFunction) => {

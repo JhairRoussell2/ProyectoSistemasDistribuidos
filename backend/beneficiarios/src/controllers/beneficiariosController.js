@@ -25,8 +25,7 @@ const schema = joi_1.default.object({
     email: joi_1.default.string().email().required(),
     telefono: joi_1.default.string().max(15).required(),
     password: joi_1.default.string().min(6).required(),
-    ConfirmPassword: joi_1.default.ref("Password"),
-    usuarioid: joi_1.default.number().integer().required()
+    confirmPassword: joi_1.default.ref("password")
     // Elimina la validación de UsuarioID, ya que es generado en la base de datos
 });
 // Controlador para obtener beneficiarios
@@ -136,16 +135,16 @@ const createBeneficiario = (req, res, next) => __awaiter(void 0, void 0, void 0,
             res.status(400).json({ error: error.details[0].message });
             return;
         }
-        const { Nombre, Apellido, DNI, Email, Telefono, Password, ConfirmPassword } = req.body;
+        const { nombre, apellido, dni, email, telefono, password, confirmPassword } = req.body;
         // Verifica que las contraseñas coincidan
-        if (Password !== ConfirmPassword) {
+        if (password !== confirmPassword) {
             res.status(400).json({ error: 'Las contraseñas no coinciden' });
             return;
         }
         // Hashear la contraseña antes de guardarla
-        const hashedPassword = yield bcrypt_1.default.hash(Password, 10);
+        const hashedPassword = yield bcrypt_1.default.hash(password, 10);
         // Llamada al procedimiento almacenado para crear el usuario y el beneficiario
-        const result = yield db_1.default.query("SELECT public.sp_registerbeneficiario($1, $2, $3, $4, $5, $6)", [Nombre, Apellido, Email, hashedPassword, DNI, Telefono]);
+        const result = yield db_1.default.query("SELECT public.sp_registerbeneficiario($1, $2, $3, $4, $5, $6)", [nombre, apellido, email, hashedPassword, dni, telefono]);
         console.log("Beneficiario creado exitosamente");
         res.status(201).json({
             message: "Beneficiario creado exitosamente",

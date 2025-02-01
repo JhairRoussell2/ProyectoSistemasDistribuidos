@@ -71,7 +71,7 @@ const registrarSiniestro = (req, res, next) => __awaiter(void 0, void 0, void 0,
         const documentosJson = JSON.stringify(documentosUrls);
         // Llamada a la consulta INSERT directamente en la tabla 'siniestros'
         const [result] = yield db_1.default.query(`INSERT INTO siniestros 
-      (BeneficiarioID, PolizaID, tipo_siniestro, fecha_siniestro, departamento, distrito, provincia, ubicacion, descripcion, documentos)
+      (beneficiarioid, polizaid, tipo_siniestro, fecha_siniestro, departamento, distrito, provincia, ubicacion, descripcion, documentos)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [
             BeneficiarioID, // BeneficiarioID
             PolizaID, // PolizaID
