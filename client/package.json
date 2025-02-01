@@ -31,11 +31,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
-<<<<<<< HEAD:package.json
-    "@tailwindcss/vite": "^4.0.0",
-=======
     "@tailwindcss/vite": "^4.0.1",
->>>>>>> 2ca978c84ed250a23094941c493e2e58b2aed943:client/package.json
     "@types/mapbox-gl": "^3.4.1",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",

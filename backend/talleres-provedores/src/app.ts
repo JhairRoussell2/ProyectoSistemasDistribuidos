@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import siniestrosRoutes from "./routes/siniestrosRoutes";// para talleres proximamente 
+//import siniestrosRoutes from "./routes/tallerRoutes";// para talleres proximamente 
 import beneficiariosRoutes from "./routes/proveedoresRoutes";
 
 // Configurar variables de entorno
@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Registrar rutas
 app.use("/api/proveedores", beneficiariosRoutes);
-app.use("/api/siniestros", siniestrosRoutes);
+
 
 // Imprimir rutas registradas en el servidor
 console.log("Rutas registradas en el servidor:");

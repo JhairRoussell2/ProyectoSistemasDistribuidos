@@ -4,10 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const siniestrosController_1 = require("../controllers/siniestrosController");
+const reclamacionController_1 = require("../controllers/reclamacionController");
 const router = express_1.default.Router();
-// Ruta para registrar un siniestro
-router.post("/", siniestrosController_1.registrarSiniestro);
-// Ruta para listar todos los siniestros
-router.get("/", siniestrosController_1.listarSiniestros);
+// Definir las rutas
+router.get("/siniestros/:UsuarioID", reclamacionController_1.obtenerSiniestrosBeneficiario);
+router.post("/", reclamacionController_1.registrarReclamacion);
+router.post("/documento", reclamacionController_1.subirDocumentoReclamacion);
 exports.default = router;

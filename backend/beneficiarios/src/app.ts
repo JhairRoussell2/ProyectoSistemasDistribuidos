@@ -6,6 +6,7 @@ import cloudinary from "cloudinary";
 import siniestrosRoutes from "./routes/siniestrosRoutes";
 import beneficiariosRoutes from "./routes/beneficiariosRoutes";
 import polizasRoutes from "./routes/polizaRoutes";
+import reclamacionRoutes from "./routes/reclamacionRoutes"; // ✅ Agregar las rutas de reclamación
 
 // Configurar variables de entorno
 dotenv.config();
@@ -43,12 +44,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Rutas
+// ✅ Agregar Rutas de la API
 app.use("/api/beneficiarios", beneficiariosRoutes);
 app.use("/api/siniestros", siniestrosRoutes);
 app.use("/api/polizas",polizasRoutes);
+app.use("/api/reclamaciones", reclamacionRoutes); // ✅ Agregando las rutas de reclamaciones
 
-// Ruta para cargar imágenes a Cloudinary
+// ✅ Ruta para cargar imágenes a Cloudinary
 app.post("/upload", upload.single('image'), async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.file) {
@@ -62,9 +64,8 @@ app.post("/upload", upload.single('image'), async (req: Request, res: Response):
     });
 
     // Enviar la URL del archivo subido a Cloudinary como respuesta
-    res.status(200).json(result);  // Devolver la respuesta con la URL del archivo subido
+    res.status(200).json(result);  
   } catch (error) {
-    // En caso de error, se maneja adecuadamente
     res.status(400).send("Error al cargar el archivo.");
   }
 });
