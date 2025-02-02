@@ -7,7 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Navbar from "../components/Navbar";
 import { useAuth } from '../context/AuthContext';  // Importar el contexto de autenticación
-
+import Assistant from "../components/Assistant"; // Importa el componente Assistant
 mapboxgl.accessToken =
   "pk.eyJ1IjoiZGFuaWVscHJ1ZWJhMjMiLCJhIjoiY200YnlpbGV5MDVqeTJ3b3ZsOXp0bXpmbiJ9.bh_ogcw3BioUBy--uuJ0LQ";
 
@@ -62,6 +62,16 @@ const RegistroSiniestro = () => {
     fetchUsuarioID();
 }, [user]);
 
+// Los tres mensajes
+const messages = [
+  "Lamentamos lo sucedido :c ",
+  "Recuerda que trataremos de atenderte lo antes posible <3",
+  "Con nosotros tu inversion esta segura :D"
+];
+
+// Los tiempos en milisegundos para cada mensaje
+const delays = [2000, 3000, 4000]; // 2, 3, y 4 segundos
+const finalDelay = 5000; // El mensaje desaparecerá después de 5 segundos
 
   // Manejar cambios en los campos del formulario
   const handleChange = (
@@ -316,8 +326,17 @@ const RegistroSiniestro = () => {
           Regresar al Dashboard
         </button>
       </div>
-    </div>
+    {/* Integración del Asistente con tres mensajes y tiempos personalizados */}
+<Assistant 
+  messages={messages} 
+  delays={delays} 
+  finalDelay={finalDelay} 
+/>
+   
+ </div>
+ 
   );
+  
 };
 
 export default RegistroSiniestro;
