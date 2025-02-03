@@ -7,7 +7,7 @@ class ProveedoresController {
     try {
       // Llamada a la función 'getallproveedores' que devuelve todos los proveedores
       const result = await pool.query("SELECT * FROM public.getallproveedores()");
-      res.json(result.rows);  // Acceder correctamente a 'rows'
+      res.json((result as any).rows);  // Acceder correctamente a 'rows'
     } catch (error) {
       res.status(500).json({ message: "Error al obtener los proveedores", error });
     }
@@ -21,10 +21,10 @@ class ProveedoresController {
       const result = await pool.query("SELECT * FROM public.getproveedorbyid($1)", [id]);
 
       // Si no se encuentra el proveedor
-      if (result.rows.length === 0) {
+      if ((result as any).rows.length === 0) {
         res.status(404).json({ message: "Proveedor no encontrado" });
       } else {
-        res.json(result.rows[0]);  // Retorna el primer resultado
+        res.json((result as any).rows[0]);  // Retorna el primer resultado
       }
     } catch (error) {
       res.status(500).json({ message: "Error al obtener el proveedor", error });
@@ -33,11 +33,25 @@ class ProveedoresController {
 
   // Crear un nuevo proveedor
   public async createProveedor(req: Request, res: Response): Promise<void> {
-    const { nombre_proveedor, direccion, telefono_proveedor, correo_electronico, tipo_proveedor, estado_proveedor, valoracion, notas } = req.body;
+    const { 
+      nombre_proveedor, 
+      direccion, 
+      telefono_proveedor, 
+      correo_electronico, 
+      tipo_proveedor, 
+      estado_proveedor, 
+      valoracion, 
+      notas, 
+      documentos 
+    } = req.body;
+
+    // Convertir 'documentos' a JSON si es necesario (asegurarse de que el tipo de datos sea el correcto)
+    const documentosJson = JSON.stringify(documentos);  // Asegúrate de que 'documentos' esté en formato JSON
+
     try {
       // Llamada a la función 'createproveedor' para crear un nuevo proveedor
       await pool.query(
-        "SELECT public.createproveedor($1, $2, $3, $4, $5, $6, $7, $8)",
+        "SELECT public.createproveedor($1, $2, $3, $4, $5, $6, $7, $8, $9)",
         [
           nombre_proveedor, 
           direccion, 
@@ -46,7 +60,8 @@ class ProveedoresController {
           tipo_proveedor, 
           estado_proveedor, 
           valoracion, 
-          notas
+          notas,
+          documentosJson  // Pasamos los documentos como JSON
         ]
       );
       res.json({ message: "Proveedor creado correctamente" });
@@ -58,11 +73,25 @@ class ProveedoresController {
   // Actualizar un proveedor
   public async updateProveedor(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
-    const { nombre_proveedor, direccion, telefono_proveedor, correo_electronico, tipo_proveedor, estado_proveedor, valoracion, notas } = req.body;
+    const { 
+      nombre_proveedor, 
+      direccion, 
+      telefono_proveedor, 
+      correo_electronico, 
+      tipo_proveedor, 
+      estado_proveedor, 
+      valoracion, 
+      notas, 
+      documentos 
+    } = req.body;
+
+    // Convertir 'documentos' a JSON si es necesario
+    const documentosJson = JSON.stringify(documentos);  // Asegúrate de que 'documentos' esté en formato JSON
+
     try {
       // Llamada a la función 'updateproveedor' para actualizar los datos del proveedor
       await pool.query(
-        "SELECT public.updateproveedor($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+        "SELECT public.updateproveedor($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
         [
           id, // El ID del proveedor que se está actualizando
           nombre_proveedor, 
@@ -72,7 +101,8 @@ class ProveedoresController {
           tipo_proveedor, 
           estado_proveedor, 
           valoracion, 
-          notas
+          notas,
+          documentosJson  // Actualizamos los documentos con el nuevo valor en formato JSON
         ]
       );
       res.json({ message: "Proveedor actualizado correctamente" });

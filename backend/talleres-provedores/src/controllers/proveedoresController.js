@@ -50,10 +50,12 @@ class ProveedoresController {
     // Crear un nuevo proveedor
     createProveedor(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { nombre_proveedor, direccion, telefono_proveedor, correo_electronico, tipo_proveedor, estado_proveedor, valoracion, notas } = req.body;
+            const { nombre_proveedor, direccion, telefono_proveedor, correo_electronico, tipo_proveedor, estado_proveedor, valoracion, notas, documentos } = req.body;
+            // Convertir 'documentos' a JSON si es necesario (asegurarse de que el tipo de datos sea el correcto)
+            const documentosJson = JSON.stringify(documentos); // Asegúrate de que 'documentos' esté en formato JSON
             try {
                 // Llamada a la función 'createproveedor' para crear un nuevo proveedor
-                yield db_1.default.query("SELECT public.createproveedor($1, $2, $3, $4, $5, $6, $7, $8)", [
+                yield db_1.default.query("SELECT public.createproveedor($1, $2, $3, $4, $5, $6, $7, $8, $9)", [
                     nombre_proveedor,
                     direccion,
                     telefono_proveedor,
@@ -61,7 +63,8 @@ class ProveedoresController {
                     tipo_proveedor,
                     estado_proveedor,
                     valoracion,
-                    notas
+                    notas,
+                    documentosJson // Pasamos los documentos como JSON
                 ]);
                 res.json({ message: "Proveedor creado correctamente" });
             }
@@ -74,10 +77,12 @@ class ProveedoresController {
     updateProveedor(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const { nombre_proveedor, direccion, telefono_proveedor, correo_electronico, tipo_proveedor, estado_proveedor, valoracion, notas } = req.body;
+            const { nombre_proveedor, direccion, telefono_proveedor, correo_electronico, tipo_proveedor, estado_proveedor, valoracion, notas, documentos } = req.body;
+            // Convertir 'documentos' a JSON si es necesario
+            const documentosJson = JSON.stringify(documentos); // Asegúrate de que 'documentos' esté en formato JSON
             try {
                 // Llamada a la función 'updateproveedor' para actualizar los datos del proveedor
-                yield db_1.default.query("SELECT public.updateproveedor($1, $2, $3, $4, $5, $6, $7, $8, $9)", [
+                yield db_1.default.query("SELECT public.updateproveedor($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)", [
                     id, // El ID del proveedor que se está actualizando
                     nombre_proveedor,
                     direccion,
@@ -86,7 +91,8 @@ class ProveedoresController {
                     tipo_proveedor,
                     estado_proveedor,
                     valoracion,
-                    notas
+                    notas,
+                    documentosJson // Actualizamos los documentos con el nuevo valor en formato JSON
                 ]);
                 res.json({ message: "Proveedor actualizado correctamente" });
             }
