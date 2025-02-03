@@ -7,7 +7,6 @@ import siniestrosRoutes from "./routes/siniestrosRoutes";
 import beneficiariosRoutes from "./routes/beneficiariosRoutes";
 import polizasRoutes from "./routes/polizaRoutes";
 import reclamacionRoutes from "./routes/reclamacionRoutes"; // ✅ Agregar las rutas de reclamación
-import { subirDocumentoReclamacion } from "./controllers/docReclamacionController"; // ✅ Nueva función para documentos de reclamaciones
 
 // Configurar variables de entorno
 dotenv.config();

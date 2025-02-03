@@ -5,7 +5,7 @@ import {
   obtenerReclamacionesPorUsuario, 
   obtenerSiniestrosBeneficiario 
 } from "../controllers/reclamacionController";
-import { subirDocumentoReclamacion } from "../controllers/docReclamacionController";
+
 
 // 📌 Configurar Multer para manejar archivos en memoria
 const storage = multer.memoryStorage();
@@ -17,6 +17,6 @@ const router = express.Router();
 router.post("/", registrarReclamacion);
 router.get("/:usuarioid", obtenerReclamacionesPorUsuario);
 router.get("/siniestros/:usuarioid", obtenerSiniestrosBeneficiario);
-router.post("/documento", upload, subirDocumentoReclamacion); // ✅ Agregar Multer antes del controlador
+//router.post("/documento", upload, subirDocumentoReclamacion); // ✅ Agregar Multer antes del controlador
 
 export default router;
