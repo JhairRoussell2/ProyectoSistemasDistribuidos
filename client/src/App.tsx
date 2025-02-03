@@ -15,6 +15,8 @@ import RegistrarProveedor from "./pages/RegistrarProveedor";
 import Proveedores from "./pages/Proveedores";
 import EditarProveedor from "./pages/EditarProveedor";
 import PaginaPrincipal from "./pages/PaginaPrincipal";
+import RegistrarReclamacion from "./pages/RegistrarReclamacion"; // ✅ Importa la página
+
 
 
 
@@ -36,6 +38,7 @@ const App = () => {
         <Route path="/proveedores" element={<Proveedores/>} />
         <Route path="/registrar-proveedor" element={<RegistrarProveedor />} />
         <Route path="/editar-proveedor/:id" element={<EditarProveedor />} />
+        <Route path="/registrar-reclamacion" element={<RegistrarReclamacion />} />
         {/* Rutas protegidas */}
         {/* <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
