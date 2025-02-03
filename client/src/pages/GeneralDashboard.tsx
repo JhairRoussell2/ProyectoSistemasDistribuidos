@@ -1,6 +1,7 @@
-import { FiInfo, FiClipboard, FiSettings, FiHome } from "react-icons/fi";
+import React from "react";
 import { Bar, Pie } from "react-chartjs-2";
 import Layout from "../components/Layout";
+import Assistant from "../components/Assistant"; // Importa el componente Assistant
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -49,6 +50,17 @@ const GeneralDashboard = () => {
     ],
   };
 
+  // Los tres mensajes
+  const messages = [
+    "¡Hola! Bienvenido al Panel General.",
+    "Estamos felices de que nos hayas escogido <3",
+    "Recuerda que siempre estaremos para ti "
+  ];
+
+  // Los tiempos en milisegundos para cada mensaje
+  const delays = [2000, 3000, 4000]; // 2, 3, y 4 segundos
+  const finalDelay = 5000; // El mensaje desaparecerá después de 5 segundos
+
   return (
     <Layout>
       <div className="max-w-6xl mx-auto py-10 px-6">
@@ -75,6 +87,13 @@ const GeneralDashboard = () => {
             <Pie data={pieData} />
           </div>
         </div>
+
+        {/* Integración del Asistente con tres mensajes y tiempos personalizados */}
+        <Assistant 
+          messages={messages} 
+          delays={delays} 
+          finalDelay={finalDelay} 
+        />
       </div>
     </Layout>
   );

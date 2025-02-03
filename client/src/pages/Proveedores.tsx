@@ -5,6 +5,7 @@ import Alert from "../components/Alert";
 import Modal from "../components/Modal";
 import Navbar from "../components/Navbar"; // Importar el Navbar
 
+
 const API_PROVEEDORES_URL = import.meta.env.VITE_API_PROVEEDORES_URL || "http://localhost:5001/api/proveedores";
 
 const Proveedores = () => {
