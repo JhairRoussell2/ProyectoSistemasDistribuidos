@@ -80,9 +80,9 @@ const Layout = ({ children }: LayoutProps) => {
                   <FiClipboard />
                   <span>Registrar Siniestro</span>
                 </NavLink>
-                <NavLink to="/configuracion" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
-                  <FiSettings />
-                  <span>Configurar Cuenta</span>
+                <NavLink to="/registrar-reclamacion" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
+                  <FiFileText />
+                  <span>Registrar Reclamación</span>
                 </NavLink>
               </>
             )}

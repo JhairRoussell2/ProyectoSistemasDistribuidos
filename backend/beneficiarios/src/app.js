@@ -25,7 +25,16 @@ const reclamacionRoutes_1 = __importDefault(require("./routes/reclamacionRoutes"
 dotenv_1.default.config();
 // Crear aplicación
 const app = (0, express_1.default)();
-// Definir los tipos de archivos permitidos (imágenes y PDF)
+// Middlewares
+app.use((0, cors_1.default)());
+app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: true }));
+// ✅ Agregar Rutas de la API
+app.use("/api/beneficiarios", beneficiariosRoutes_1.default);
+app.use("/api/siniestros", siniestrosRoutes_1.default);
+app.use("/api/polizas", polizaRoutes_1.default);
+app.use("/api/reclamaciones", reclamacionRoutes_1.default);
+// ✅ Ruta para cargar imágenes a Cloudinary (SOLO para siniestros)
 const fileFilter = (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif|pdf/;
     const mimeType = allowedTypes.test(file.mimetype);
@@ -36,28 +45,16 @@ const fileFilter = (req, file, cb) => {
         cb(new Error("Tipo de archivo no permitido. Solo imágenes y PDFs."), false); // Rechazar el archivo
     }
 };
-// Configurar Multer para cargar archivos
 const upload = (0, multer_1.default)({
-    dest: 'uploads/', // Directorio temporal
-    fileFilter: fileFilter
+    dest: "uploads/", // Directorio temporal
+    fileFilter: fileFilter,
 });
-// Configurar Cloudinary
 cloudinary_1.default.v2.config({
     cloud_name: process.env.CLOUD_NAME,
     api_key: process.env.API_KEY,
-    api_secret: process.env.API_SECRET
+    api_secret: process.env.API_SECRET,
 });
-// Middlewares
-app.use((0, cors_1.default)());
-app.use(express_1.default.json());
-app.use(express_1.default.urlencoded({ extended: true }));
-// ✅ Agregar Rutas de la API
-app.use("/api/beneficiarios", beneficiariosRoutes_1.default);
-app.use("/api/siniestros", siniestrosRoutes_1.default);
-app.use("/api/polizas", polizaRoutes_1.default);
-app.use("/api/reclamaciones", reclamacionRoutes_1.default); // ✅ Agregando las rutas de reclamaciones
-// ✅ Ruta para cargar imágenes a Cloudinary
-app.post("/upload", upload.single('image'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("/upload", upload.single("image"), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (!req.file) {
             res.status(400).send("No file uploaded.");
@@ -65,7 +62,7 @@ app.post("/upload", upload.single('image'), (req, res) => __awaiter(void 0, void
         }
         // Subir el archivo a Cloudinary
         const result = yield cloudinary_1.default.v2.uploader.upload(req.file.path, {
-            folder: "Siniestros"
+            folder: "Siniestros",
         });
         // Enviar la URL del archivo subido a Cloudinary como respuesta
         res.status(200).json(result);

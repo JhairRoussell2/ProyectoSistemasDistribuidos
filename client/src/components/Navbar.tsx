@@ -115,18 +115,45 @@ const Navbar = () => {
         )}
 
         {showProfile && (
-          <Modal onClose={() => setShowProfile(false)}>
-            <h2 className="text-xl font-bold text-white mb-2">Perfil de Usuario</h2>
-            <p className="text-gray-300"><span className="font-bold">Nombre:</span> {user?.Nombre} {user?.Apellido}</p>
-            <p className="text-gray-300"><span className="font-bold">Correo:</span> {user?.Email}</p>
-            <p className="text-gray-300"><span className="font-bold">Rol:</span> {userRole}</p>
-            <button 
-              onClick={handleLogout} 
-              className="mt-4 w-full bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg text-white font-semibold transition"
-            >
-              Cerrar sesión
-            </button>
-          </Modal>
+        <Modal onClose={() => setShowProfile(false)}>
+        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 w-96 max-w-full">
+          {/* ✅ Título con nueva fuente e ícono */}
+          <h2
+            className="text-2xl font-semibold text-gray-900 mb-4 border-b pb-2 text-center uppercase tracking-wide flex items-center justify-center gap-3"
+            style={{ fontFamily: "'Playfair Display', serif" }} // 📌 Aplicar la fuente aquí
+          >
+            <i className="fas fa-user-circle text-red-600 text-2xl"></i> {/* 📌 Ícono de usuario */}
+            Perfil de Usuario
+          </h2>
+      
+          {/* ✅ Información del usuario */}
+          <div className="bg-gray-50 p-5 rounded-lg shadow-sm border border-gray-300 space-y-3">
+            <p className="text-gray-700 text-[16px] leading-7">
+              <span className="font-semibold text-red-700">Nombre:</span> {user?.Nombre} {user?.Apellido}
+            </p>
+            <p className="text-gray-700 text-[16px] leading-7">
+              <span className="font-semibold text-red-700">Correo:</span> {user?.Email}
+            </p>
+            <p className="text-gray-700 text-[16px] leading-7">
+              <span className="font-semibold text-red-700">Rol:</span> {userRole}
+            </p>
+          </div>
+      
+          {/* ✅ Botón refinado */}
+          <button 
+            onClick={handleLogout} 
+            className="mt-6 w-full bg-gray-900 hover:bg-gray-700 px-4 py-3 rounded-lg text-white font-medium tracking-wide transition duration-300 shadow-md"
+          >
+            Cerrar sesión
+          </button>
+        </div>
+      </Modal>
+      
+      
+      
+      
+
+        
         )}
       </div>
     </nav>
