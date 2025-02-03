@@ -1,53 +1,63 @@
-import { FiCheckCircle, FiUsers, FiClipboard } from 'react-icons/fi';
-import { useNavigate } from 'react-router-dom';
-import ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
-import apiClient from '../services/apiClient';
-import Layout from '../components/Layout'; // Asegúrate de importar Layout
+import { useEffect, useState } from "react";
+import { FiCheckCircle, FiUsers, FiClipboard } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
+import apiClient from "../services/apiClient";
+import { Bar, Doughnut } from "react-chartjs-2";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from "chart.js";
+import Layout from "../components/Layout";
+
+// Registrar los componentes de Chart.js
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
 const PersonalDashboard = () => {
+  const [beneficiariosData, setBeneficiariosData] = useState([]);
+  const [polizasData, setPolizasData] = useState([]);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  // Función para generar el reporte de beneficiarios
+  useEffect(() => {
+    const fetchBeneficiarios = async () => {
+      try {
+        const response = await apiClient.get("/api/beneficiarios");
+        setBeneficiariosData(response.data);
+      } catch (error) {
+        setError("Error al obtener los beneficiarios");
+      }
+    };
+
+    const fetchPolizas = async () => {
+      try {
+        const response = await apiClient.get("/api/polizas");
+        setPolizasData(response.data);
+      } catch (error) {
+        setError("Error al obtener las pólizas");
+      }
+    };
+
+    fetchBeneficiarios();
+    fetchPolizas();
+  }, []);
+
+  // Generar el reporte de beneficiarios en Excel
   const generateBeneficiaryReport = async () => {
     try {
-      const response = await apiClient.get('/api/beneficiarios');
+      const response = await apiClient.get("/api/beneficiarios");
       const beneficiarios = response.data;
 
       const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet('Beneficiarios');
+      const worksheet = workbook.addWorksheet("Beneficiarios");
 
       // Definir las columnas para el reporte con nombres personalizados
       worksheet.columns = [
-        { header: 'ID Beneficiario', key: 'beneficiarioid' },
-        { header: 'Nombre', key: 'nombre' },
-        { header: 'Apellido', key: 'apellido' },
-        { header: 'Email', key: 'email' },
-        { header: 'Teléfono', key: 'telefono' },
-        { header: 'DNI', key: 'dni' },
+        { header: "ID Beneficiario", key: "beneficiarioid" },
+        { header: "Nombre", key: "nombre" },
+        { header: "Apellido", key: "apellido" },
+        { header: "Email", key: "email" },
+        { header: "Teléfono", key: "telefono" },
+        { header: "DNI", key: "dni" },
       ];
-
-      // Personalizar los encabezados (headers)
-      worksheet.getRow(1).eachCell((cell) => {
-        // Color de fondo del header
-        cell.fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: 'FF4CAF50' }, // color de fondo, en formato ARGB
-        };
-
-        // Color de texto
-        cell.font = {
-          color: { argb: 'FFFFFFFF' }, // color de la fuente (blanco)
-          bold: true, // poner el texto en negrita
-        };
-
-        // Alineación del texto (opcional)
-        cell.alignment = {
-          vertical: 'middle',
-          horizontal: 'center',
-        };
-      });
 
       // Agregar datos a las filas
       beneficiarios.forEach((beneficiario: any) => {
@@ -56,69 +66,94 @@ const PersonalDashboard = () => {
 
       // Escribir el archivo en formato Excel
       const buffer = await workbook.xlsx.writeBuffer();
-      saveAs(new Blob([buffer]), 'Reporte_Beneficiarios.xlsx');
-
+      saveAs(new Blob([buffer]), "Reporte_Beneficiarios.xlsx");
     } catch (error) {
-      console.error('Error generando el reporte:', error);
+      console.error("Error generando el reporte:", error);
     }
+  };
+
+  // Precios predeterminados para cada tipo de póliza
+  const policyPrices = {
+    Básica: 10,  // S/10
+    Normal: 25,  // S/25
+    Premium: 50, // S/50
+  };
+
+  // Datos para el gráfico de barras de pólizas por tipo y precio
+  const polizaChartData = {
+    labels: ["Póliza Básica", "Póliza Normal", "Póliza Premium"],
+    datasets: [
+      {
+        label: "Costo Total de Pólizas por Tipo",
+        data: [
+          polizasData.filter((p: any) => p.tipopoliza === "Básica").length * policyPrices.Básica,
+          polizasData.filter((p: any) => p.tipopoliza === "Normal").length * policyPrices.Normal,
+          polizasData.filter((p: any) => p.tipopoliza === "Premium").length * policyPrices.Premium,
+        ],
+        backgroundColor: ["#4CAF50", "#2196F3", "#FFC107"],
+      },
+    ],
+  };
+
+  // Datos para el gráfico Doughnut de total de beneficiarios
+  const totalBeneficiariosData = {
+    labels: ["Total de Beneficiarios"],
+    datasets: [
+      {
+        label: "Total de Beneficiarios",
+        data: [beneficiariosData.length],
+        backgroundColor: ["#FF6384"],
+      },
+    ],
   };
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto py-10 px-6 mt-24">
-        <h1 className="text-5xl font-extrabold text-center text-gray-100 mb-6">
-          Panel de Personal
-        </h1>
-        <p className="text-lg text-gray-300 text-center mb-8">
+      <div className="max-w-6xl mx-auto py-10 px-6 mt-auto">
+        <h1 className="text-5xl font-extrabold text-center text-white mb-4 shadow-md">Panel de Personal</h1>
+        <p className="text-lg text-gray-300 text-center mb-8 max-w-2xl mx-auto">
           Administra las tareas asignadas y colabora en la gestión de siniestros.
         </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Validar Poliza */}
-          <div className="bg-gradient-to-r from-blue-500 to-teal-500 rounded-lg shadow-lg p-6 flex flex-col items-center transform transition-all duration-300 hover:scale-105">
-            <FiCheckCircle className="text-yellow-400 text-6xl mb-4" />
-            <h2 className="text-2xl font-bold text-yellow-400">Validar Poliza</h2>
-            <p className="text-gray-300 mt-2 text-center">
-              Revisa y valida las pólizas asignadas.
-            </p>
-            <button
-              className="mt-4 bg-yellow-500 hover:bg-yellow-600 px-5 py-2 rounded-lg text-white transition duration-300 ease-in-out"
-              onClick={() => navigate('/dashboard/personal/validar-poliza')}
-            >
-              Ver Polizas
-            </button>
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Gráfico de Distribución de Pólizas por Tipo y Precio */}
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Costo Total de Pólizas por Tipo</h2>
+            <Bar
+              data={polizaChartData}
+              options={{
+                responsive: true,
+                plugins: {
+                  title: {
+                    display: true,
+                    text: "Distribución del Costo de Pólizas",
+                  },
+                  legend: {
+                    position: "top",
+                  },
+                },
+              }}
+            />
           </div>
 
-          {/* Gestión de Beneficiarios */}
-          <div className="bg-gradient-to-r from-green-600 to-teal-600 rounded-lg shadow-lg p-6 flex flex-col items-center transform transition-all duration-300 hover:scale-105">
-            <FiUsers className="text-yellow-400 text-6xl mb-4" />
-            <h2 className="text-2xl font-bold text-yellow-400">Gestión de Beneficiarios</h2>
-            <p className="text-gray-300 mt-2 text-center">
-              Administra los beneficiarios de siniestros.
-            </p>
-            <button
-              className="mt-4 bg-yellow-500 hover:bg-yellow-600 px-5 py-2 rounded-lg text-white transition duration-300 ease-in-out"
-              onClick={() => navigate('/dashboard/personal/Mantener-Beneficiario')}
-            >
-              Gestionar Beneficiarios
-            </button>
+          {/* Gráfico Doughnut de Total de Beneficiarios */}
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Total de Beneficiarios</h2>
+            <Doughnut
+              data={totalBeneficiariosData}
+              options={{
+                responsive: true,
+                plugins: {
+                  title: {
+                    display: true,
+                    text: "Total de Beneficiarios en el Sistema",
+                  },
+                  legend: {
+                    position: "top",
+                  },
+                },
+              }}
+            />
           </div>
-
-          {/* Reportes de Actividad */}
-          <div className="bg-gradient-to-r from-orange-600 to-red-600 rounded-lg shadow-lg p-6 flex flex-col items-center transform transition-all duration-300 hover:scale-105">
-            <FiClipboard className="text-yellow-400 text-6xl mb-4" />
-            <h2 className="text-2xl font-bold text-yellow-400">Reportes de Actividad</h2>
-            <p className="text-gray-300 mt-2 text-center">
-              Revisa los reportes de tu actividad laboral.
-            </p>
-            <button
-              className="mt-4 bg-yellow-500 hover:bg-yellow-600 px-5 py-2 rounded-lg text-white transition duration-300 ease-in-out"
-              onClick={generateBeneficiaryReport}
-            >
-              Generar Reporte de Beneficiarios
-            </button>
-          </div>
-
         </div>
       </div>
     </Layout>

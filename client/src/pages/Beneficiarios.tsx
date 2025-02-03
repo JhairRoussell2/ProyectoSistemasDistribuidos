@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Modal from "../components/Modal";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom"; // Importa useNavigate
+import GenerateReport from "../components/GenerateReport"; // Asegúrate de importar el componente
 
 interface Beneficiario {
   beneficiarioid: number;
@@ -75,10 +76,10 @@ const MantenerBeneficiarios = () => {
       alert("Por favor, ingrese su contraseña para confirmar la actualización.");
       return;
     }
-  
+
     const { beneficiarioid, ...datosActualizados } = selectedBeneficiario;
     console.log("Datos a actualizar:", { ...datosActualizados, password });
-  
+
     try {
       const response = await axios.put(
         `http://localhost:3000/api/beneficiarios/${selectedBeneficiario.beneficiarioid}`,
@@ -87,17 +88,17 @@ const MantenerBeneficiarios = () => {
           password: password || selectedBeneficiario.password, // Solo si hay contraseña, enviar
         }
       );
-  
+
       if (response.status === 200) {
         alert("Beneficiario actualizado correctamente");
-  
+
         const updatedBeneficiarios = beneficiarios.map((b) =>
           b.beneficiarioid === selectedBeneficiario.beneficiarioid ? { ...selectedBeneficiario } : b
         );
-  
+
         setBeneficiarios(updatedBeneficiarios);
         setFilteredBeneficiarios(updatedBeneficiarios);
-  
+
         setIsModalOpen(false);
         setPassword(""); // Clear the password field after updating
       }
@@ -106,15 +107,11 @@ const MantenerBeneficiarios = () => {
       alert("No se pudo actualizar el beneficiario.");
     }
   };
-  
-  
-  
-  
 
   return (
     <>
       <Navbar />
-      <div className="max-w-6xl mx-auto mt-10 p-8 bg-gray-900 border border-gray-700 rounded-lg shadow-lg text-white">
+      <div className="max-w-6xl mx-auto mt-16 p-8 bg-gray-900 border border-gray-700 rounded-lg shadow-lg text-white">
         {/* Botón de retroceso */}
         <button
           onClick={() => navigate("/dashboard/personal")}
@@ -128,6 +125,12 @@ const MantenerBeneficiarios = () => {
           Mantener Beneficiarios
         </h1>
 
+        {/* Aquí agregamos el botón para generar el reporte */}
+        <div className="mb-6 flex justify-between items-center">
+          <GenerateReport /> {/* Este es el botón para generar el reporte */}
+        </div>
+
+        {/* Campo de búsqueda */}
         <div className="mb-6 flex justify-between items-center">
           <input
             type="text"
@@ -138,47 +141,47 @@ const MantenerBeneficiarios = () => {
           />
         </div>
 
-        <table className="w-full border-collapse border border-gray-700">
+        {/* Tabla de beneficiarios */}
+        <table className="min-w-full table-auto border-collapse border border-gray-700">
           <thead>
             <tr className="bg-red-500 text-white">
-              <th className="border border-gray-700 px-4 py-2">Nombre</th>
-              <th className="border border-gray-700 px-4 py-2">Apellido</th>
-              <th className="border border-gray-700 px-4 py-2">dni</th>
-              <th className="border border-gray-700 px-4 py-2">Teléfono</th>
-              <th className="border border-gray-700 px-4 py-2">Email</th>
-              <th className="border border-gray-700 px-4 py-2">Acciones</th>
+              <th className="border border-gray-700 px-6 py-3 text-left">Nombre</th>
+              <th className="border border-gray-700 px-6 py-3 text-left">Apellido</th>
+              <th className="border border-gray-700 px-6 py-3 text-left">dni</th>
+              <th className="border border-gray-700 px-6 py-3 text-left">Teléfono</th>
+              <th className="border border-gray-700 px-6 py-3 text-left">Email</th>
+              <th className="border border-gray-700 px-6 py-3 text-left">Acciones</th>
             </tr>
           </thead>
           <tbody>
-          {Array.isArray(filteredBeneficiarios) && filteredBeneficiarios.length > 0 ? (
-  filteredBeneficiarios.map((b) => (
-    <tr key={b.beneficiarioid} className="text-center bg-gray-800">
-      <td className="border border-gray-700 px-4 py-2">{b.nombre}</td>
-      <td className="border border-gray-700 px-4 py-2">{b.apellido}</td>
-      <td className="border border-gray-700 px-4 py-2">{b.dni}</td>
-      <td className="border border-gray-700 px-4 py-2">{b.telefono}</td>
-      <td className="border border-gray-700 px-4 py-2">{b.email}</td>
-      <td className="border border-gray-700 px-4 py-2 flex justify-center space-x-4">
-        <button
-          onClick={() => {
-            setIsEditing(true);
-            setSelectedBeneficiario(b);
-            setIsModalOpen(true);
-          }}
-          className="text-blue-400 hover:underline"
-        >
-          Editar
-        </button>
-        <button onClick={() => handleDelete(b.beneficiarioid)} className="text-red-400 hover:underline">
-          Eliminar
-        </button>
-      </td>
-    </tr>
-  ))
-) : (
-  <tr><td colSpan={6} className="text-center">No hay beneficiarios para mostrar</td></tr>
-)}
-
+            {Array.isArray(filteredBeneficiarios) && filteredBeneficiarios.length > 0 ? (
+              filteredBeneficiarios.map((b) => (
+                <tr key={b.beneficiarioid} className="text-center bg-gray-800 hover:bg-gray-700">
+                  <td className="border border-gray-700 px-6 py-3">{b.nombre}</td>
+                  <td className="border border-gray-700 px-6 py-3">{b.apellido}</td>
+                  <td className="border border-gray-700 px-6 py-3">{b.dni}</td>
+                  <td className="border border-gray-700 px-6 py-3">{b.telefono}</td>
+                  <td className="border border-gray-700 px-6 py-3">{b.email}</td>
+                  <td className="border border-gray-700 px-6 py-3 flex justify-center space-x-4">
+                    <button
+                      onClick={() => {
+                        setIsEditing(true);
+                        setSelectedBeneficiario(b);
+                        setIsModalOpen(true);
+                      }}
+                      className="text-blue-400 hover:underline"
+                    >
+                      Editar
+                    </button>
+                    <button onClick={() => handleDelete(b.beneficiarioid)} className="text-red-400 hover:underline">
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr><td colSpan={6} className="text-center">No hay beneficiarios para mostrar</td></tr>
+            )}
           </tbody>
         </table>
 

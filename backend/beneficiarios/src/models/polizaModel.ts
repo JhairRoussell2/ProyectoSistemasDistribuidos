@@ -29,7 +29,7 @@ class PolizaModel {
   // Obtener todas las pólizas
   async getPolizas(): Promise<any> {
     try {
-      const { rows } = await pool.query("SELECT * FROM poliza");
+      const { rows } = await pool.query("SELECT * FROM poliza ORDER BY polizaid ASC");
       return rows;
     } catch (error) {
       throw new Error(`Error al obtener pólizas: ${(error as any).message}`);

@@ -37,7 +37,7 @@ class PolizaModel {
     getPolizas() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { rows } = yield db_1.default.query("SELECT * FROM poliza");
+                const { rows } = yield db_1.default.query("SELECT * FROM poliza ORDER BY polizaid ASC");
                 return rows;
             }
             catch (error) {

@@ -2,7 +2,6 @@ import { ReactNode, useState } from "react";
 import { FiFileText, FiDollarSign, FiBarChart2, FiShield, FiHome, FiInfo, FiClipboard, FiSettings, FiCheckCircle, FiUsers } from "react-icons/fi";
 import { NavLink, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
-import GenerateReport from "../components/GenerateReport";
 
 interface LayoutProps {
   children: ReactNode;
@@ -23,7 +22,7 @@ const Layout = ({ children }: LayoutProps) => {
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
       <Navbar />
 
-      <div className="flex flex-1">
+      <div className="flex flex-1 mt-16"> {/* Add margin-top to avoid navbar collision */}
         {/* Botón para colapsar el sidebar en móviles */}
         <button
           className="absolute top-16 left-4 bg-gray-800 p-2 rounded-lg md:hidden"
@@ -35,24 +34,23 @@ const Layout = ({ children }: LayoutProps) => {
         {/* Sidebar */}
         <aside className={`${sidebarOpen ? "w-64" : "w-0"} bg-gray-800 p-6 transition-all duration-300`}>
           <nav className="space-y-4">
-            {/* Enlace al Dashboard General */}
-            <NavLink
-              to="/dashboard/general"
-              className={({ isActive }) =>
-                `flex items-center space-x-2 p-2 rounded-lg transition-all duration-300 ${
-                  isActive ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-gray-700 hover:text-white"
-                }`
-              }
-            >
-              <FiHome />
-              <span>Panel General</span>
-            </NavLink>
-
             {/* Opciones del menú para el Panel de Administrador */}
             {isAdminPanel && (
-              <>
-                <NavLink to="/proveedores" className="...">
-                  <FiFileText /> Gestión de Proveedores
+                  <>
+                    <NavLink
+                  to="/dashboard/admin"
+                  className={({ isActive }) =>
+                    `flex items-center space-x-2 p-2 rounded-lg transition-all duration-300 ${
+                      isActive ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-gray-700 hover:text-white"
+                    }`
+                  }
+                >
+                  <FiHome />
+                  <span>Panel General</span>
+                </NavLink>
+                <NavLink to="/proveedores" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
+                  <FiFileText />
+                  <span>Gestión de Proveedores</span>
                 </NavLink>
                 <NavLink to="/dashboard/admin/pagos" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
                   <FiDollarSign />
@@ -72,6 +70,17 @@ const Layout = ({ children }: LayoutProps) => {
             {/* Opciones específicas para el Panel General */}
             {isGeneralPanel && (
               <>
+                  <NavLink
+                  to="/dashboard/general"
+                  className={({ isActive }) =>
+                    `flex items-center space-x-2 p-2 rounded-lg transition-all duration-300 ${
+                      isActive ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-gray-700 hover:text-white"
+                    }`
+                  }
+                >
+                  <FiHome />
+                  <span>Panel General</span>
+                </NavLink>
                 <NavLink to="/dashboard/general/info" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
                   <FiInfo />
                   <span>Ver Información</span>
@@ -90,6 +99,17 @@ const Layout = ({ children }: LayoutProps) => {
             {/* Opciones específicas para el Panel de Personal */}
             {isPersonalPanel && (
               <>
+                  <NavLink
+                  to="/dashboard/personal"
+                  className={({ isActive }) =>
+                    `flex items-center space-x-2 p-2 rounded-lg transition-all duration-300 ${
+                      isActive ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-gray-700 hover:text-white"
+                    }`
+                  }
+                >
+                  <FiHome />
+                  <span>Panel General</span>
+                </NavLink>
                 <NavLink to="/dashboard/personal/validar-poliza" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
                   <FiCheckCircle />
                   <span>Validar Polizas</span>
@@ -98,7 +118,6 @@ const Layout = ({ children }: LayoutProps) => {
                   <FiUsers />
                   <span>Gestión de Beneficiarios</span>
                 </NavLink>
-                <GenerateReport />
               </>
             )}
           </nav>
