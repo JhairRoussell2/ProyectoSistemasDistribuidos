@@ -1,27 +1,35 @@
+
 @import "tailwindcss";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color-scheme: light dark;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --background-color: white;
+  --text-color: black;
+  --button-bg: #ac2020;
+  --button-text: white;
+}
+
+.dark {
+  --background-color: #242424;
+  --text-color: rgba(255, 255, 255, 0.87);
+  --button-bg: #1a1a1a;
+  --button-text: white;
 }
 
 body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  background-color: #242424;
-  color: rgba(255, 255, 255, 0.87);
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
 }
 
-/* 🔹 Solo aplica estilos generales a botones SIN Tailwind */
 button:not([class]) {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -29,29 +37,13 @@ button:not([class]) {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
-  color: white;
+  background-color: var(--button-bg);
+  color: var(--button-text);
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: all 0.3s;
 }
 
 button:not([class]):hover {
   border-color: #646cff;
 }
 
-button:not([class]):focus,
-button:not([class]):focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-/* 🔹 Asegurar color de botones Tailwind */
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-
-  button:not([class]) {
-    background-color: #ac2020;
-  }
-}
