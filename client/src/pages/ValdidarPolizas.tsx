@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../services/apiClient';
 import Navbar from '../components/Navbar';
-import { FaSearch, FaCheckCircle, FaTimesCircle, FaArrowLeft } from 'react-icons/fa';
+import { FaSearch, FaCheckCircle, FaTimesCircle, FaArrowLeft, FaSpinner } from 'react-icons/fa';
 
 interface Poliza {
   polizaid: number;
@@ -17,6 +17,8 @@ const ValidarPoliza = () => {
   const [polizas, setPolizas] = useState<Poliza[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [searchDNI, setSearchDNI] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,6 +59,8 @@ const ValidarPoliza = () => {
   };
 
   const handleValidar = async (polizaID: number) => {
+    setIsLoading(true);
+    setSuccessMessage(null);
     try {
       await apiClient.put(`/api/polizas/${polizaID}/estado`, { estado: 'Activa' });
       setPolizas((prevPolizas) =>
@@ -64,9 +68,14 @@ const ValidarPoliza = () => {
           poliza.polizaid === polizaID ? { ...poliza, estado: 'Activa' } : poliza
         )
       );
+      setSuccessMessage('Se ha validado con éxito la póliza');
     } catch (error) {
       console.error('Error al validar la póliza:', error);
       alert('No se pudo validar la póliza.');
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 5000); // Spinner duration
     }
   };
 
@@ -77,8 +86,7 @@ const ValidarPoliza = () => {
       {/* Fondo con matices sutiles */}
       <div className="absolute inset-0 bg-red-100 opacity-90"></div>
 
-
-      <div className="relative max-w-6xl mx-auto py-12 px-6 mt-16 bg-white shadow-2xl rounded-xl border border-gray-200">
+      <div className={`relative max-w-6xl mx-auto py-12 px-6 mt-16 bg-white shadow-2xl rounded-xl border border-gray-200 ${isLoading ? 'filter blur-sm' : ''}`}>
         <h1 className="text-5xl font-extrabold text-center text-gray-900 mb-8">
           Validar <span className="text-red-600">Póliza</span>
         </h1>
@@ -169,9 +177,31 @@ const ValidarPoliza = () => {
           </table>
         </div>
       </div>
+
+      {/* Spinner y mensaje de validación */}
+      {isLoading && (
+        <>
+          <div className="fixed inset-0 bg-white bg-opacity-50 z-40"></div>
+          <div className="fixed inset-0 flex justify-center items-center z-50">
+            <div className="bg-white p-8 rounded-lg shadow-lg flex flex-col items-center">
+              <FaSpinner className="animate-spin text-4xl text-red-600 mb-4" />
+              <p className="text-lg text-gray-700">Validando...</p>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Mensaje de éxito */}
+      {successMessage && !isLoading && (
+        <div className="fixed inset-0 flex justify-center items-center z-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg flex flex-col items-center">
+            <FaCheckCircle className="text-4xl text-green-600 mb-4" />
+            <p className="text-lg text-gray-700">{successMessage}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
-
 
 export default ValidarPoliza;
