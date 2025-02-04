@@ -47,3 +47,21 @@
   background-size: 150px;
   background-blend-mode: soft-light;
 }
+
+@keyframes moving-gradient {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+.animate-moving-gradient {
+  background-size: 400% 400%;
+  animation: moving-gradient 10s infinite linear;
+}
+

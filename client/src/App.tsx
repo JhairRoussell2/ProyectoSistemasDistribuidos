@@ -10,13 +10,14 @@ import GeneralDashboard from "./pages/GeneralDashboard";
 // import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import MantenerBeneficiarios from "./pages/Beneficiarios";
-import ValidarPoliza from "./components/ValidarPoliza";
+import ValidarPolizas from "./pages/ValdidarPolizas";
 import RegistrarProveedor from "./pages/RegistrarProveedor";
 import Proveedores from "./pages/Proveedores";
 import EditarProveedor from "./pages/EditarProveedor";
 import PaginaPrincipal from "./pages/PaginaPrincipal";
 import RegistrarReclamacion from "./pages/RegistrarReclamacion"; // ✅ Importa la página
-
+import ForgotPassword from "./pages/Recuperar";
+import ResetPassword from "./pages/Resetear";
 
 
 
@@ -33,12 +34,14 @@ const App = () => {
         <Route path="/dashboard/general" element={<GeneralDashboard />} />
         <Route path="/registro-siniestro" element={<RegistroSiniestro />} />
         <Route path="/dashboard/personal/Mantener-Beneficiario" element={<MantenerBeneficiarios />} />
-        <Route path="/dashboard/personal/validar-poliza" element={<ValidarPoliza />} />
+        <Route path="/dashboard/personal/validar-poliza" element={<ValidarPolizas />} />
         <Route path="/polizas" element={<Policies />} />
         <Route path="/proveedores" element={<Proveedores/>} />
         <Route path="/registrar-proveedor" element={<RegistrarProveedor />} />
         <Route path="/editar-proveedor/:id" element={<EditarProveedor />} />
         <Route path="/registrar-reclamacion" element={<RegistrarReclamacion />} />
+        <Route path="/recuperar" element={<ForgotPassword />} />
+        <Route path="/reset/:token" element={<ResetPassword />} />        
         {/* Rutas protegidas */}
         {/* <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />

@@ -72,35 +72,43 @@ const MantenerBeneficiarios = () => {
 
   const handleUpdate = async () => {
     if (!selectedBeneficiario) return;
-    if (!password && !selectedBeneficiario.password) {
+    if (!password) {
       alert("Por favor, ingrese su contraseña para confirmar la actualización.");
       return;
     }
-
-    const { beneficiarioid, ...datosActualizados } = selectedBeneficiario;
-    console.log("Datos a actualizar:", { ...datosActualizados, password });
-
+  
+    const datosActualizados = {
+      nombre: selectedBeneficiario.nombre,
+      apellido: selectedBeneficiario.apellido,
+      dni: selectedBeneficiario.dni,
+      email: selectedBeneficiario.email,
+      telefono: selectedBeneficiario.telefono,
+      password, // Se usa solo para verificar identidad
+    };
+  
+    console.log("Datos a actualizar:", datosActualizados); // Verifica en la consola que solo se envíen estos datos
+  
     try {
       const response = await axios.put(
         `http://localhost:3000/api/beneficiarios/${selectedBeneficiario.beneficiarioid}`,
-        { 
-          ...datosActualizados, 
-          password: password || selectedBeneficiario.password, 
-        }
+        datosActualizados,
+        { headers: { "Content-Type": "application/json" } }
       );
-
+  
       if (response.status === 200) {
-        alert("Beneficiario actualizado correctamente");
 
+        alert("Beneficiario actualizado correctamente");
         const updatedBeneficiarios = beneficiarios.map((b) =>
-          b.beneficiarioid === selectedBeneficiario.beneficiarioid ? { ...selectedBeneficiario } : b
-        );
+          b.beneficiarioid === selectedBeneficiario.beneficiarioid
+            ? { ...selectedBeneficiario }
+            : b
+        );    
 
         setBeneficiarios(updatedBeneficiarios);
         setFilteredBeneficiarios(updatedBeneficiarios);
 
         setIsModalOpen(false);
-        setPassword(""); 
+        setPassword(""); // Limpiar el campo de contraseña
       }
     } catch (error) {
       console.error("Error al actualizar beneficiario:", error);
