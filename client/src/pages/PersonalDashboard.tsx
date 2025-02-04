@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FiCheckCircle, FiUsers, FiClipboard } from "react-icons/fi";
+import { FiUsers } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
@@ -8,7 +8,6 @@ import { Bar, Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from "chart.js";
 import Layout from "../components/Layout";
 
-// Registrar los componentes de Chart.js
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
 const PersonalDashboard = () => {
@@ -40,7 +39,6 @@ const PersonalDashboard = () => {
     fetchPolizas();
   }, []);
 
-  // Generar el reporte de beneficiarios en Excel
   const generateBeneficiaryReport = async () => {
     try {
       const response = await apiClient.get("/api/beneficiarios");
@@ -49,7 +47,6 @@ const PersonalDashboard = () => {
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet("Beneficiarios");
 
-      // Definir las columnas para el reporte con nombres personalizados
       worksheet.columns = [
         { header: "ID Beneficiario", key: "beneficiarioid" },
         { header: "Nombre", key: "nombre" },
@@ -59,12 +56,10 @@ const PersonalDashboard = () => {
         { header: "DNI", key: "dni" },
       ];
 
-      // Agregar datos a las filas
       beneficiarios.forEach((beneficiario: any) => {
         worksheet.addRow(beneficiario);
       });
 
-      // Escribir el archivo en formato Excel
       const buffer = await workbook.xlsx.writeBuffer();
       saveAs(new Blob([buffer]), "Reporte_Beneficiarios.xlsx");
     } catch (error) {
@@ -72,14 +67,12 @@ const PersonalDashboard = () => {
     }
   };
 
-  // Precios predeterminados para cada tipo de póliza
   const policyPrices = {
-    Básica: 10,  // S/10
-    Normal: 25,  // S/25
-    Premium: 50, // S/50
+    Básica: 10,
+    Normal: 25,
+    Premium: 50,
   };
 
-  // Datos para el gráfico de barras de pólizas por tipo y precio
   const polizaChartData = {
     labels: ["Póliza Básica", "Póliza Normal", "Póliza Premium"],
     datasets: [
@@ -95,7 +88,6 @@ const PersonalDashboard = () => {
     ],
   };
 
-  // Datos para el gráfico Doughnut de total de beneficiarios
   const totalBeneficiariosData = {
     labels: ["Total de Beneficiarios"],
     datasets: [
@@ -110,13 +102,21 @@ const PersonalDashboard = () => {
   return (
     <Layout>
       <div className="max-w-6xl mx-auto py-10 px-6 mt-auto">
-        <h1 className="text-5xl font-extrabold text-center text-white mb-4 shadow-md">Panel de Personal</h1>
-        <p className="text-lg text-gray-300 text-center mb-8 max-w-2xl mx-auto">
-          Administra las tareas asignadas y colabora en la gestión de siniestros.
-        </p>
+        
+        {/* Panel de Personal con fondo negro y texto blanco */}
+        <div className="bg-black p-6 rounded-lg shadow-lg mb-8">
+          <h1 className="text-5xl font-bold text-center text-white mb-6">
+            <FiUsers className="inline-block mr-2 text-yellow-400" />
+            Panel de Personal
+          </h1>
+          <p className="text-lg text-gray-300 text-center">
+            Administra las tareas asignadas y colabora en la gestión de siniestros.
+          </p>
+        </div>
+
         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Gráfico de Distribución de Pólizas por Tipo y Precio */}
-          <div className="bg-white p-6 rounded-lg shadow-lg">
+          <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Costo Total de Pólizas por Tipo</h2>
             <Bar
               data={polizaChartData}
@@ -136,7 +136,7 @@ const PersonalDashboard = () => {
           </div>
 
           {/* Gráfico Doughnut de Total de Beneficiarios */}
-          <div className="bg-white p-6 rounded-lg shadow-lg">
+          <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Total de Beneficiarios</h2>
             <Doughnut
               data={totalBeneficiariosData}
