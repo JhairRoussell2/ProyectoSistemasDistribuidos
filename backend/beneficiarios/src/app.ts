@@ -7,6 +7,7 @@ import siniestrosRoutes from "./routes/siniestrosRoutes";
 import beneficiariosRoutes from "./routes/beneficiariosRoutes";
 import polizasRoutes from "./routes/polizaRoutes";
 import reclamacionRoutes from "./routes/reclamacionRoutes"; // ✅ Agregar las rutas de reclamación
+import pagosRoutes from "./routes/pagosRoutes"; // ✅ Agregar las rutas de pagos
 
 // Configurar variables de entorno
 dotenv.config();
@@ -24,6 +25,7 @@ app.use("/api/beneficiarios", beneficiariosRoutes);
 app.use("/api/siniestros", siniestrosRoutes);
 app.use("/api/polizas", polizasRoutes);
 app.use("/api/reclamaciones", reclamacionRoutes);
+app.use('/api/pagos', pagosRoutes);
 
 // ✅ Ruta para cargar imágenes a Cloudinary (SOLO para siniestros)
 const fileFilter = (req: any, file: any, cb: any) => {
