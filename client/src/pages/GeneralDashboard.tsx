@@ -2,6 +2,7 @@ import React from "react";
 import { Bar, Pie } from "react-chartjs-2";
 import Layout from "../components/Layout";
 import Assistant from "../components/Assistant"; // Importa el componente Assistant
+import { FaTachometerAlt } from "react-icons/fa"; // Importa un ícono
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -64,29 +65,34 @@ const GeneralDashboard = () => {
   return (
     <Layout>
       <div className="max-w-6xl mx-auto py-10 px-6">
-        <h1 className="text-5xl font-bold text-center text-gray-100 mb-6">
-          Panel General
-        </h1>
-        <p className="text-lg text-gray-400 text-center mb-8">
-          Accede a información relevante y mantente actualizado con las funciones básicas del sistema.
-        </p>
+        {/* Panel General con fondo negro y texto blanco */}
+        <div className="bg-black p-6 rounded-lg shadow-lg mb-8">
+          <h1 className="text-5xl font-bold text-center text-white mb-6">
+            <FaTachometerAlt className="inline-block mr-2 text-yellow-400" />
+            Panel General
+          </h1>
+          <p className="text-lg text-gray-300 text-center mb-8">
+            Accede a información relevante y mantente actualizado con las funciones básicas del sistema.
+          </p>
+        </div>
 
         {/* Sección de gráficos */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gray-800 rounded-lg shadow-lg p-6">
-            <h2 className="text-xl font-bold text-center text-white mb-4">
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h2 className="text-xl font-bold text-center text-gray-900 mb-4">
               Estado de Siniestros
             </h2>
             <Bar data={barData} />
           </div>
 
-          <div className="bg-gray-800 rounded-lg shadow-lg p-6">
-            <h2 className="text-xl font-bold text-center text-white mb-4">
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h2 className="text-xl font-bold text-center text-gray-900 mb-4">
               Estado de Vehículos
             </h2>
             <Pie data={pieData} />
           </div>
         </div>
+
 
         {/* Integración del Asistente con tres mensajes y tiempos personalizados */}
         <Assistant 

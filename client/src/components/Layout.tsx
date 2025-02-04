@@ -16,10 +16,8 @@ const Layout = ({ children }: LayoutProps) => {
   const isGeneralPanel = location.pathname.startsWith("/dashboard/general");
   const isPersonalPanel = location.pathname.startsWith("/dashboard/personal");
 
-  
-
   return (
-    <div className="flex flex-col min-h-screen bg-gray-900 text-white">
+    <div className="flex flex-col min-h-screen bg-white text-black">
       <Navbar />
 
       <div className="flex flex-1 mt-16"> {/* Add margin-top to avoid navbar collision */}
