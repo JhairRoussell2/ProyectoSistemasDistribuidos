@@ -260,26 +260,41 @@ const EditarProveedor = () => {
               />
             </div>
 
-            {/* DOCUMENTOS EXISTENTES */}
-            <div className="col-span-2">
-              <label className="block text-gray-700 font-semibold">Documentos Existentes</label>
-              <div className="grid grid-cols-2 gap-4">
-                {form.documentos_existentes.map((doc, index) => (
-                  <div key={index} className="relative">
-                    <a href={doc} target="_blank" rel="noopener noreferrer" className="text-blue-500">
-                      Ver Documento
-                    </a>
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteDocument(doc)}
-                      className="absolute top-0 right-0 text-red-500"
-                    >
-                      <Trash size={16} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
+<div className="col-span-2">
+  <label className="block text-gray-700 font-semibold">Documentos Existentes</label>
+  <div className="grid grid-cols-2 gap-4">
+    {form.documentos_existentes.map((doc, index) => (
+      <div key={index} className="relative">
+        {doc.match(/\.(jpeg|jpg|png)$/) ? (
+          <div className="flex items-center gap-2">
+            <img src={doc} alt={`Documento ${index + 1}`} className="w-20 h-20 object-cover" />
+            <button
+              type="button"
+              onClick={() => handleDeleteDocument(doc)}
+              className="absolute top-0 right-0 text-red-500"
+            >
+              <Trash size={16} />
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <a href={doc} target="_blank" rel="noopener noreferrer" className="text-blue-500">
+              Ver Documento
+            </a>
+            <button
+              type="button"
+              onClick={() => handleDeleteDocument(doc)}
+              className="absolute top-0 right-0 text-red-500"
+            >
+              <Trash size={16} />
+            </button>
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+</div>
+
 
             {/* SELECCIONAR ARCHIVOS */}
             <div className="col-span-2">
