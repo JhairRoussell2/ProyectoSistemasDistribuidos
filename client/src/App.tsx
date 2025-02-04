@@ -16,7 +16,8 @@ import Proveedores from "./pages/Proveedores";
 import EditarProveedor from "./pages/EditarProveedor";
 import PaginaPrincipal from "./pages/PaginaPrincipal";
 import RegistrarReclamacion from "./pages/RegistrarReclamacion"; // ✅ Importa la página
-
+import ForgotPassword from "./pages/Recuperar";
+import ResetPassword from "./pages/Resetear";
 
 
 
@@ -39,6 +40,8 @@ const App = () => {
         <Route path="/registrar-proveedor" element={<RegistrarProveedor />} />
         <Route path="/editar-proveedor/:id" element={<EditarProveedor />} />
         <Route path="/registrar-reclamacion" element={<RegistrarReclamacion />} />
+        <Route path="/recuperar" element={<ForgotPassword />} />
+        <Route path="/reset/:token" element={<ResetPassword />} />        
         {/* Rutas protegidas */}
         {/* <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
