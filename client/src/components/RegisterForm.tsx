@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import { User, Mail, Phone, Lock, CheckCircle, IdCard } from "lucide-react"; // Íconos
 interface RegisterData {
   nombre: string;  // Cambio de "Nombre" a "nombre"
   apellido: string;  // Cambio de "Apellido" a "apellido"
@@ -49,115 +49,152 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 to-black">
-      <form onSubmit={handleSubmit} className="bg-gray-900 p-8 rounded-lg shadow-lg w-96 space-y-6">
-        <h2 className="text-3xl font-semibold text-center text-red-500">Crear Cuenta</h2>
-
+<div className="flex justify-center items-center min-h-screen w-full bg-gradient-to-r from-red-100 via-red-200 to-red-300 p-6">
+<form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-xl w-full max-w-lg border border-red-300">
+        <h2 className="text-4xl font-bold text-center text-red-700 mb-4">🔐 Crear Cuenta</h2>
+        <p className="text-gray-600 text-center mb-6">Completa los datos para registrarte.</p>
+  
         {message && (
           <div className={`text-center p-2 rounded-lg ${message.includes("error") ? 'bg-red-500' : 'bg-green-500'} text-white`}>
             {message}
           </div>
         )}
-
+  
         {/* Campos de entrada */}
         <div>
-          <input
-            name="nombre"  // Asegúrate de usar 'nombre' en minúsculas
-            type="text"
-            placeholder="Nombre"
-            value={formData.nombre}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
-            required
-          />
+          <label className="block text-gray-700 font-semibold">Nombre</label>
+          <div className="relative">
+            <User className="absolute left-3 top-3 text-gray-400" />
+            <input
+              name="nombre"
+              type="text"
+              placeholder="Tu Nombre"
+              value={formData.nombre}
+              onChange={handleChange}
+              className="w-full pl-10 p-3 rounded-md border border-red-300 bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400"
+              required
+            />
+          </div>
         </div>
-
+  
         <div>
-          <input
-            name="apellido"  // Asegúrate de usar 'apellido' en minúsculas
-            type="text"
-            placeholder="Apellido"
-            value={formData.apellido}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
-            required
-          />
+          <label className="block text-gray-700 font-semibold">Apellido</label>
+          <div className="relative">
+            <User className="absolute left-3 top-3 text-gray-400" />
+            <input
+              name="apellido"
+              type="text"
+              placeholder="Tu Apellido"
+              value={formData.apellido}
+              onChange={handleChange}
+              className="w-full pl-10 p-3 rounded-md border border-red-300 bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400"
+              required
+            />
+          </div>
         </div>
-
+  
         <div>
-          <input
-            name="email"
-            type="email"
-            placeholder="Correo Electrónico"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
-            required
-          />
+          <label className="block text-gray-700 font-semibold">Correo Electrónico</label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-3 text-gray-400" />
+            <input
+              name="email"
+              type="email"
+              placeholder="ejemplo@correo.com"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full pl-10 p-3 rounded-md border border-red-300 bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400"
+              required
+            />
+          </div>
         </div>
-
+  
         <div>
-          <input
-            name="telefono"
-            type="text"
-            placeholder="Teléfono"
-            value={formData.telefono}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
-            required
-          />
+          <label className="block text-gray-700 font-semibold">Teléfono</label>
+          <div className="relative">
+            <Phone className="absolute left-3 top-3 text-gray-400" />
+            <input
+              name="telefono"
+              type="text"
+              placeholder="+51 987 654 321"
+              value={formData.telefono}
+              onChange={handleChange}
+              className="w-full pl-10 p-3 rounded-md border border-red-300 bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400"
+              required
+            />
+          </div>
         </div>
-
+  
         <div>
-          <input
-            name="dni"
-            type="text"
-            placeholder="DNI"
-            value={formData.dni}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
-            required
-          />
+          <label className="block text-gray-700 font-semibold">DNI</label>
+          <div className="relative">
+            <IdCard className="absolute left-3 top-3 text-gray-400" />
+            <input
+              name="dni"
+              type="text"
+              placeholder="12345678"
+              value={formData.dni}
+              onChange={handleChange}
+              className="w-full pl-10 p-3 rounded-md border border-red-300 bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400"
+              required
+            />
+          </div>
         </div>
-
+  
         <div>
-          <input
-            name="password"  // Asegúrate de usar 'password' en minúsculas
-            type="password"
-            placeholder="Contraseña"
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
-            required
-          />
+          <label className="block text-gray-700 font-semibold">Contraseña</label>
+          <div className="relative">
+            <Lock className="absolute left-3 top-3 text-gray-400" />
+            <input
+              name="password"
+              type="password"
+              placeholder="********"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full pl-10 p-3 rounded-md border border-red-300 bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400"
+              required
+            />
+          </div>
         </div>
-
+  
         <div>
-          <input
-            name="confirmPassword"  // Asegúrate de usar 'confirmPassword' en minúsculas
-            type="password"
-            placeholder="Confirmar Contraseña"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
-            required
-          />
+          <label className="block text-gray-700 font-semibold">Confirmar Contraseña</label>
+          <div className="relative">
+            <Lock className="absolute left-3 top-3 text-gray-400" />
+            <input
+              name="confirmPassword"
+              type="password"
+              placeholder="********"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className="w-full pl-10 p-3 rounded-md border border-red-300 bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400"
+              required
+            />
+          </div>
         </div>
-
+  
         <button
           type="submit"
-          className="w-full bg-red-600 p-3 rounded-lg text-white font-semibold hover:bg-red-700 disabled:bg-gray-400"
+          className="w-full bg-red-500 p-3 rounded-md text-white font-semibold hover:bg-red-600 transition duration-300 flex items-center justify-center gap-2 mt-3"
           disabled={loading}
         >
+          <CheckCircle size={18} />
           {loading ? 'Cargando...' : 'Registrarse'}
         </button>
-
-        <div className="text-center">
-          <p className="text-gray-600">¿Ya tienes cuenta? <Link to="/login" className="text-red-600 hover:text-red-800">Inicia sesión</Link></p>
+  
+        <div className="text-center mt-4">
+          <p className="text-gray-600">
+            ¿Ya tienes cuenta?{" "}
+            <Link to="/login" className="font-semibold text-red-600 hover:text-red-800 transition">
+              Inicia sesión
+            </Link>
+          </p>
         </div>
       </form>
     </div>
   );
+  
+  
 };
 
 export default RegisterForm;
