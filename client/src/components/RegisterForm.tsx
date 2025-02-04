@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { User, Mail, Phone, Lock, CheckCircle, IdCard } from "lucide-react"; // Íconos
+
 interface RegisterData {
-  nombre: string;  // Cambio de "Nombre" a "nombre"
-  apellido: string;  // Cambio de "Apellido" a "apellido"
+  nombre: string;
+  apellido: string;
   email: string;
   telefono: string;
   dni: string;
-  password: string;  // Cambio de "Password" a "password"
-  confirmPassword: string;  // Cambio de "ConfirmPassword" a "confirmPassword"
+  password: string;
+  confirmPassword: string;
 }
 
 interface RegisterFormProps {
@@ -17,13 +18,13 @@ interface RegisterFormProps {
 
 const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
   const [formData, setFormData] = useState<RegisterData>({
-    nombre: '',  // Cambio de "Nombre" a "nombre"
-    apellido: '',  // Cambio de "Apellido" a "apellido"
+    nombre: '',
+    apellido: '',
     email: '',
     telefono: '',
     dni: '',
-    password: '',  // Cambio de "Password" a "password"
-    confirmPassword: '',  // Cambio de "ConfirmPassword" a "confirmPassword"
+    password: '',
+    confirmPassword: '',
   });
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -49,17 +50,17 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
   };
 
   return (
-<div className="flex justify-center items-center min-h-screen w-full bg-gradient-to-r from-red-100 via-red-200 to-red-300 p-6">
-<form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-xl w-full max-w-lg border border-red-300">
+    <div className="flex justify-center items-center min-h-screen w-full bg-gradient-to-r from-red-100 via-red-200 to-red-300 p-6">
+      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-xl w-full max-w-lg border border-red-300">
         <h2 className="text-4xl font-bold text-center text-red-700 mb-4">🔐 Crear Cuenta</h2>
         <p className="text-gray-600 text-center mb-6">Completa los datos para registrarte.</p>
-  
+
         {message && (
           <div className={`text-center p-2 rounded-lg ${message.includes("error") ? 'bg-red-500' : 'bg-green-500'} text-white`}>
             {message}
           </div>
         )}
-  
+
         {/* Campos de entrada */}
         <div>
           <label className="block text-gray-700 font-semibold">Nombre</label>
@@ -76,7 +77,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
             />
           </div>
         </div>
-  
+
         <div>
           <label className="block text-gray-700 font-semibold">Apellido</label>
           <div className="relative">
@@ -92,7 +93,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
             />
           </div>
         </div>
-  
+
         <div>
           <label className="block text-gray-700 font-semibold">Correo Electrónico</label>
           <div className="relative">
@@ -108,7 +109,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
             />
           </div>
         </div>
-  
+
         <div>
           <label className="block text-gray-700 font-semibold">Teléfono</label>
           <div className="relative">
@@ -124,7 +125,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
             />
           </div>
         </div>
-  
+
         <div>
           <label className="block text-gray-700 font-semibold">DNI</label>
           <div className="relative">
@@ -140,7 +141,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
             />
           </div>
         </div>
-  
+
         <div>
           <label className="block text-gray-700 font-semibold">Contraseña</label>
           <div className="relative">
@@ -156,7 +157,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
             />
           </div>
         </div>
-  
+
         <div>
           <label className="block text-gray-700 font-semibold">Confirmar Contraseña</label>
           <div className="relative">
@@ -172,7 +173,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
             />
           </div>
         </div>
-  
+
         <button
           type="submit"
           className="w-full bg-red-500 p-3 rounded-md text-white font-semibold hover:bg-red-600 transition duration-300 flex items-center justify-center gap-2 mt-3"
@@ -181,7 +182,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
           <CheckCircle size={18} />
           {loading ? 'Cargando...' : 'Registrarse'}
         </button>
-  
+
         <div className="text-center mt-4">
           <p className="text-gray-600">
             ¿Ya tienes cuenta?{" "}
@@ -193,8 +194,6 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
       </form>
     </div>
   );
-  
-  
 };
 
 export default RegisterForm;
