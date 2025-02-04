@@ -10,7 +10,7 @@ import GeneralDashboard from "./pages/GeneralDashboard";
 // import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import MantenerBeneficiarios from "./pages/Beneficiarios";
-import ValidarPoliza from "./components/ValidarPoliza";
+import ValidarPolizas from "./pages/ValdidarPolizas";
 import RegistrarProveedor from "./pages/RegistrarProveedor";
 import Proveedores from "./pages/Proveedores";
 import EditarProveedor from "./pages/EditarProveedor";
@@ -33,7 +33,7 @@ const App = () => {
         <Route path="/dashboard/general" element={<GeneralDashboard />} />
         <Route path="/registro-siniestro" element={<RegistroSiniestro />} />
         <Route path="/dashboard/personal/Mantener-Beneficiario" element={<MantenerBeneficiarios />} />
-        <Route path="/dashboard/personal/validar-poliza" element={<ValidarPoliza />} />
+        <Route path="/dashboard/personal/validar-poliza" element={<ValidarPolizas />} />
         <Route path="/polizas" element={<Policies />} />
         <Route path="/proveedores" element={<Proveedores/>} />
         <Route path="/registrar-proveedor" element={<RegistrarProveedor />} />

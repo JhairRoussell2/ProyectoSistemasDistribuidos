@@ -4,6 +4,7 @@ import { FaEnvelope, FaLock, FaWhatsapp } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import logo from "../assets/logo.jpg"; // Asegúrate de incluir tu logo
+import "../App"; // Asegúrate de importar el archivo de estilos donde definimos la animación
 
 const Login = () => {
   const { login } = useAuth();  // Contexto de autenticación
@@ -27,19 +28,27 @@ const Login = () => {
       setLoading(false); // Detén el estado de carga
     }
   };
-
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 to-black">
-      <div className="bg-gray-900 p-10 rounded-2xl shadow-lg w-full max-w-md text-center border border-gray-700">
-        {/* Logo centrado */}
+    <div className="flex items-center justify-center min-h-screen bg-white relative overflow-hidden">
+      
+      {/* Fondo animado independiente con desplazamiento diagonal */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-100 to-red-200 animate-moving-gradient"></div>
+  
+      {/* Tarjeta de login con efecto flotante sutil */}
+      <div className="relative z-10 bg-white p-10 rounded-lg shadow-xl w-full max-w-md text-center border border-gray-200 transition-all duration-300 hover:shadow-2xl">
+        
+        {/* Logo */}
         <div className="flex flex-col items-center mb-6">
-          <img src={logo} alt="SegurosFlex" className="w-24 mb-3" />
-          <h1 className="text-4xl font-extrabold text-red-500">SegurosFlex</h1>
-          <p className="text-gray-400">Inicia sesión para continuar</p>
+          <img src={logo} alt="SegurosFlex" className="w-24 mb-3 rounded-md shadow-sm" />
+          <h1 className="text-4xl font-extrabold text-red-700 drop-shadow-md">
+            Seguros<span className="text-black">Flex</span>
+          </h1>
+          <p className="text-gray-600">Inicia sesión para continuar</p>
         </div>
-
+  
         {/* Formulario */}
         <form onSubmit={handleLogin} className="space-y-6">
+          
           {/* Campo de email */}
           <div className="relative">
             <FaEnvelope className="absolute left-4 top-4 text-gray-500" />
@@ -48,11 +57,11 @@ const Login = () => {
               placeholder="Correo Electrónico"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full pl-12 p-3 border rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-red-500 outline-none"
+              className="w-full pl-12 p-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 focus:ring-2 focus:ring-red-700 shadow-sm outline-none transition-all duration-300 hover:border-gray-400"
               required
             />
           </div>
-
+  
           {/* Campo de contraseña */}
           <div className="relative">
             <FaLock className="absolute left-4 top-4 text-gray-500" />
@@ -61,39 +70,39 @@ const Login = () => {
               placeholder="Contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-12 p-3 border rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-red-500 outline-none"
+              className="w-full pl-12 p-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 focus:ring-2 focus:ring-red-700 shadow-sm outline-none transition-all duration-300 hover:border-gray-400"
               required
             />
           </div>
-
+  
           {/* Mensaje de error */}
-          {error && <p className="text-red-400 text-sm">{error}</p>}
-
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+  
           {/* Enlaces de ayuda */}
-          <div className="flex justify-between text-sm text-gray-400">
-            <Link to="/recuperar" className="text-red-400 hover:underline">
+          <div className="flex justify-between text-sm text-gray-500">
+            <Link to="/recuperar" className="text-red-700 hover:underline">
               ¿Olvidaste tu contraseña?
             </Link>
-            <Link to="/register" className="text-blue-400 hover:underline">
+            <Link to="/register" className="text-blue-600 hover:underline">
               Regístrate aquí
             </Link>
           </div>
-
-          {/* Botón de inicio de sesión */}
+  
+          {/* Botón de inicio de sesión con efecto 3D */}
           <button 
             type="submit" 
-            className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-bold text-lg transition-all duration-300"
-            disabled={loading} // Deshabilitar botón si está cargando
+            className="w-full bg-red-700 hover:bg-red-800 text-white py-3 rounded-lg font-bold text-lg shadow-md transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+            disabled={loading}
           >
-            {loading ? 'Cargando...' : 'Iniciar Sesión'}
+            {loading ? "Cargando..." : "Iniciar Sesión"}
           </button>
         </form>
       </div>
-
+  
       {/* Botón de WhatsApp flotante */}
       <a
         href="https://wa.me/123456789"
-        className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg flex items-center space-x-2 transition-all duration-300"
+        className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg flex items-center space-x-2 transition-all duration-300 transform hover:scale-110"
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -102,6 +111,7 @@ const Login = () => {
       </a>
     </div>
   );
+  
 };
 
 export default Login;
