@@ -7,7 +7,8 @@ import {
   deleteBeneficiario,
   updateBeneficiario,
   checkIfNewBeneficiario,
-  getBeneficiarioPorUsuarioID // Asegúrate de importar la función
+  getBeneficiarioPorUsuarioID,
+  getBeneficiariosPorDNI// Asegúrate de importar la función
 } from '../controllers/beneficiariosController';
 
 const router = express.Router();
@@ -20,6 +21,9 @@ router.put('/:id', updateBeneficiario);
 router.delete('/:id', deleteBeneficiario);
 router.get('/user/:UsuarioID/role', getUserRole);
 router.get("/:BeneficiarioID/check-new", checkIfNewBeneficiario);
+// Ruta para obtener los beneficiarios por DNI
+router.get("/validar/:DNI", getBeneficiariosPorDNI);
+
 
 // Nueva ruta para obtener el BeneficiarioID basado en UsuarioID
 router.get('/user/:UsuarioID/beneficiario', getBeneficiarioPorUsuarioID);

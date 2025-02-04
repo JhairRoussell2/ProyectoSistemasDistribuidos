@@ -5,6 +5,7 @@ import Modal from "../components/Modal";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 import GenerateReport from "../components/GenerateReport";
+import apiClient from "../services/apiClient";
 
 interface Beneficiario {
   beneficiarioid: number;
@@ -32,7 +33,6 @@ const MantenerBeneficiarios = () => {
       try {
         const response = await axios.get("http://localhost:3000/api/beneficiarios");
         const data = response.data;
-        console.log(data);
         setBeneficiarios(data);
         setFilteredBeneficiarios(data);
       } catch (error) {
@@ -43,11 +43,21 @@ const MantenerBeneficiarios = () => {
     fetchBeneficiarios();
   }, []);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchdni(value);
-    const filtered = beneficiarios.filter((b) => b.dni.includes(value));
-    setFilteredBeneficiarios(filtered);
+  // Función para manejar la búsqueda de beneficiarios por DNI
+  const handleSearch = async () => {
+    if (searchdni.trim() === "") {
+      setFilteredBeneficiarios(beneficiarios);  // Si no hay búsqueda, mostrar todos los beneficiarios
+      return;
+    }
+
+    try {
+      const response = await apiClient.get(`/api/beneficiarios/validar/${searchdni}`);
+      setFilteredBeneficiarios(response.data);  // Actualiza la lista de beneficiarios con los datos obtenidos
+    } catch (error) {
+      console.error("Error al buscar beneficiarios:", error);
+      alert("No se pudo encontrar el beneficiario con el DNI proporcionado.");
+      setFilteredBeneficiarios([]);  // Limpiar la lista si no se encuentran resultados
+    }
   };
 
   const handleDelete = async (id: number) => {
@@ -76,7 +86,7 @@ const MantenerBeneficiarios = () => {
       alert("Por favor, ingrese su contraseña para confirmar la actualización.");
       return;
     }
-  
+
     const datosActualizados = {
       nombre: selectedBeneficiario.nombre,
       apellido: selectedBeneficiario.apellido,
@@ -85,24 +95,21 @@ const MantenerBeneficiarios = () => {
       telefono: selectedBeneficiario.telefono,
       password, // Se usa solo para verificar identidad
     };
-  
-    console.log("Datos a actualizar:", datosActualizados); // Verifica en la consola que solo se envíen estos datos
-  
+
     try {
       const response = await axios.put(
         `http://localhost:3000/api/beneficiarios/${selectedBeneficiario.beneficiarioid}`,
         datosActualizados,
         { headers: { "Content-Type": "application/json" } }
       );
-  
-      if (response.status === 200) {
 
+      if (response.status === 200) {
         alert("Beneficiario actualizado correctamente");
         const updatedBeneficiarios = beneficiarios.map((b) =>
           b.beneficiarioid === selectedBeneficiario.beneficiarioid
             ? { ...selectedBeneficiario }
             : b
-        );    
+        );
 
         setBeneficiarios(updatedBeneficiarios);
         setFilteredBeneficiarios(updatedBeneficiarios);
@@ -133,15 +140,16 @@ const MantenerBeneficiarios = () => {
         </h1>
 
         <div className="mb-6 flex justify-between items-center">
-          <GenerateReport /> 
+          <GenerateReport />
         </div>
 
         <div className="mb-6 flex justify-between items-center">
           <input
             type="text"
-            placeholder="Buscar por dni"
+            placeholder="Buscar por DNI"
             value={searchdni}
-            onChange={handleSearchChange}
+            onChange={(e) => setSearchdni(e.target.value)}
+            onBlur={handleSearch}  // Ejecuta la búsqueda cuando el campo pierde foco
             className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white text-black placeholder-gray-400 focus:ring focus:ring-blue-500 focus:outline-none"
           />
         </div>
@@ -158,7 +166,7 @@ const MantenerBeneficiarios = () => {
             </tr>
           </thead>
           <tbody>
-            {Array.isArray(filteredBeneficiarios) && filteredBeneficiarios.length > 0 ? (
+            {filteredBeneficiarios.length > 0 ? (
               filteredBeneficiarios.map((b) => (
                 <tr key={b.beneficiarioid} className="text-center bg-gray-100 hover:bg-gray-200">
                   <td className="border border-gray-300 px-6 py-3">{b.nombre}</td>
@@ -184,7 +192,7 @@ const MantenerBeneficiarios = () => {
                 </tr>
               ))
             ) : (
-              <tr><td colSpan={6} className="text-center py-4 text-gray-500">No hay beneficiarios para mostrar</td></tr>
+              <tr><td colSpan={6} className="text-center py-4 text-gray-500">No se encontraron beneficiarios con ese DNI</td></tr>
             )}
           </tbody>
         </table>

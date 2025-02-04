@@ -293,4 +293,22 @@ export const updateBeneficiario = async (req: Request, res: Response, next: Next
     next(error);
   }
 };
+export const getBeneficiariosPorDNI = async (req: Request, res: Response) => {
+  const { DNI } = req.params;
+  try {
+    const { rows }: any = await pool.query(
+      `SELECT * FROM beneficiario WHERE dni = $1`, // Consulta para obtener el beneficiario por DNI
+      [DNI]
+    );
+    if (rows.length === 0) {
+      res.status(404).json({ message: "Beneficiario no encontrado." });
+      return;
+    }
+    res.status(200).json(rows);  // Devolver los beneficiarios encontrados
+  } catch (error) {
+    console.error("Error al obtener beneficiarios por DNI:", error);
+    res.status(500).json({ error: "Error al obtener beneficiarios por DNI" });
+  }
+};
+
 

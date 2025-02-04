@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateBeneficiario = exports.deleteBeneficiario = exports.checkIfNewBeneficiario = exports.getUserRole = exports.createBeneficiario = exports.login = exports.getBeneficiarioPorID = exports.getBeneficiarioPorUsuarioID = exports.getBeneficiarios = void 0;
+exports.getBeneficiariosPorDNI = exports.updateBeneficiario = exports.deleteBeneficiario = exports.checkIfNewBeneficiario = exports.getUserRole = exports.createBeneficiario = exports.login = exports.getBeneficiarioPorID = exports.getBeneficiarioPorUsuarioID = exports.getBeneficiarios = void 0;
 const joi_1 = __importDefault(require("joi"));
 const db_1 = __importDefault(require("../config/db"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
@@ -265,3 +265,20 @@ const updateBeneficiario = (req, res, next) => __awaiter(void 0, void 0, void 0,
     }
 });
 exports.updateBeneficiario = updateBeneficiario;
+const getBeneficiariosPorDNI = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { DNI } = req.params;
+    try {
+        const { rows } = yield db_1.default.query(`SELECT * FROM beneficiario WHERE dni = $1`, // Consulta para obtener el beneficiario por DNI
+        [DNI]);
+        if (rows.length === 0) {
+            res.status(404).json({ message: "Beneficiario no encontrado." });
+            return;
+        }
+        res.status(200).json(rows); // Devolver los beneficiarios encontrados
+    }
+    catch (error) {
+        console.error("Error al obtener beneficiarios por DNI:", error);
+        res.status(500).json({ error: "Error al obtener beneficiarios por DNI" });
+    }
+});
+exports.getBeneficiariosPorDNI = getBeneficiariosPorDNI;
