@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import logo from "../assets/logo.jpg";
-import { LockClosedIcon, KeyIcon } from "@heroicons/react/24/solid"; // ✅ Se agrega el ícono de llave
+import { LockClosedIcon, KeyIcon } from "@heroicons/react/24/solid"; 
 
 const ResetPassword = () => {
   const { token } = useParams<{ token: string }>();
