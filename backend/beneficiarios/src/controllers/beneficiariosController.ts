@@ -21,7 +21,7 @@ const schema = Joi.object({
 export const getBeneficiarios = async (req: Request, res: Response) => {
   try {
     console.log("Intentando conectar con la base de datos...");
-    const { rows } = await pool.query("SELECT * FROM beneficiario ORDER BY beneficiarioid ASC");  // Agregar ORDER BY para ordenar por beneficiarioid
+    const { rows } = await pool.query("SELECT * FROM beneficiario ORDER BY nombre ASC");  // Agregar ORDER BY para ordenar por beneficiarioid
     console.log("Datos obtenidos de la base de datos:", rows);
 
     if (rows.length === 0) {
@@ -151,6 +151,21 @@ export const createBeneficiario: RequestHandler = async (req, res, next): Promis
       [nombre, apellido, email, hashedPassword, dni, telefono]
     );
 
+    if (result.rows[0].error) {
+      const errorMessage = result.rows[0].error;
+
+      // Si el mensaje contiene "duplicate key value", es un problema de unicidad (correo o DNI)
+      if (errorMessage.includes("duplicate key value")) {
+        res.status(400).json({ error: "El correo electrónico o DNI ya están registrados." });
+        return;
+      }
+
+      // Si hay otro tipo de error, lo podemos manejar aquí
+      res.status(500).json({ error: "Error en el servidor. Intente más tarde." });
+      return;
+    }
+
+
     console.log("Beneficiario creado exitosamente");
 
     res.status(201).json({
@@ -159,7 +174,11 @@ export const createBeneficiario: RequestHandler = async (req, res, next): Promis
     });
   } catch (error) {
     console.error("Error al crear beneficiario:", error);
-    next(error);
+    if ((error as any).message.includes('duplicate key value')) {
+      res.status(400).json({ error: "El correo electrónico o DNI ya están registrados." });
+    } else {
+      res.status(500).json({ error: "Error en el servidor. Intente más tarde." });
+    }
   }
 };
 
@@ -311,4 +330,35 @@ export const getBeneficiariosPorDNI = async (req: Request, res: Response) => {
   }
 };
 
+export const verificarEmail = async (req: Request, res: Response) => {
+  const { email } = req.params;
+  try {
+    const { rows } = await pool.query("SELECT email FROM usuario WHERE email = $1", [email]);
+
+    if (rows.length > 0) {
+      res.status(200).json({ exists: true });
+    } else {
+      res.status(200).json({ exists: false });
+    }
+  } catch (error) {
+    console.error("Error al verificar email:", error);
+    res.status(500).json({ error: "Error al verificar email" });
+  }
+};
+
+export const verificarDNI = async (req: Request, res: Response) => {
+  const { dni } = req.params;
+  try {
+    const { rows } = await pool.query("SELECT dni FROM beneficiario WHERE dni = $1", [dni]);
+
+    if (rows.length > 0) {
+      res.status(200).json({ exists: true });
+    } else {
+      res.status(200).json({ exists: false });
+    }
+  } catch (error) {
+    console.error("Error al verificar DNI:", error);
+    res.status(500).json({ error: "Error al verificar DNI" });
+  }
+};
 

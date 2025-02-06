@@ -38,7 +38,19 @@ const registrarSiniestro = (req, res, next) => __awaiter(void 0, void 0, void 0,
         const { tipoSiniestro, fechaSiniestro, departamento, distrito, provincia, ubicacion, descripcion, documentos = [], usuarioID, } = req.body;
         // Obtener BeneficiarioID y PolizaID desde usuarioID
         const beneficiarioID = yield siniestroService_1.default.obtenerBeneficiarioID(usuarioID);
-        const polizaID = yield siniestroService_1.default.obtenerPolizaID(beneficiarioID);
+        let polizaID = null;
+        let estado = null;
+        try {
+            const polizaData = yield siniestroService_1.default.obtenerPolizaID(beneficiarioID);
+            polizaID = polizaData.polizaID;
+            estado = polizaData.estado;
+            console.log("Póliza obtenida:", polizaID, "Estado:", estado);
+        }
+        catch (error) {
+            console.error("Error al obtener la póliza:", error.message);
+            res.status(400).json({ error: "No se pudo obtener la póliza del beneficiario" });
+            return; // Detiene la ejecución si no se encuentra la póliza
+        }
         // Verificar y procesar los documentos
         let documentosUrls = [];
         if (documentos.length > 0) {

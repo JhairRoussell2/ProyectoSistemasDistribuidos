@@ -38,7 +38,19 @@ export const registrarSiniestro = async (req: Request, res: Response, next: Next
 
     // Obtener BeneficiarioID y PolizaID desde usuarioID
     const beneficiarioID = await SiniestroService.obtenerBeneficiarioID(usuarioID);
-    const polizaID = await SiniestroService.obtenerPolizaID(beneficiarioID);
+    let polizaID: number | null = null;
+    let estado: string | null = null;
+
+    try {
+      const polizaData = await SiniestroService.obtenerPolizaID(beneficiarioID);
+      polizaID = polizaData.polizaID;
+      estado = polizaData.estado;
+      console.log("Póliza obtenida:", polizaID, "Estado:", estado);
+    } catch (error) {
+      console.error("Error al obtener la póliza:", (error as Error).message);
+      res.status(400).json({ error: "No se pudo obtener la póliza del beneficiario" });
+      return; // Detiene la ejecución si no se encuentra la póliza
+    }
 
     // Verificar y procesar los documentos
     let documentosUrls: string[] = [];

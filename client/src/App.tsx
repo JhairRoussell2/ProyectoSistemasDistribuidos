@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { ToastContainer } from 'react-toastify'; // Importamos el ToastContainer
 import RegistroSiniestro from "./pages/RegistrarSiniestro";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -19,15 +20,17 @@ import RegistrarReclamacion from "./pages/RegistrarReclamacion"; // ✅ Importa 
 import ForgotPassword from "./pages/Recuperar";
 import ResetPassword from "./pages/Resetear";
 
-
+// No olvides importar los estilos de react-toastify
+import 'react-toastify/dist/ReactToastify.css'; // Importa el CSS de react-toastify
 
 const App = () => {
   return (
     <AuthProvider>
+      <ToastContainer /> {/* Colocamos el ToastContainer aquí para que las notificaciones se muestren */}
       <Routes>
         <Route path="/register" element={<Register />} />
-      <Route path="/" element={<PaginaPrincipal />} />
-      <Route path="/login" element={<Login />} />
+        <Route path="/" element={<PaginaPrincipal />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard/admin" element={<AdminDashboard />} />
         <Route path="/dashboard/personal" element={<PersonalDashboard />} />
@@ -35,8 +38,8 @@ const App = () => {
         <Route path="/registro-siniestro" element={<RegistroSiniestro />} />
         <Route path="/dashboard/personal/Mantener-Beneficiario" element={<MantenerBeneficiarios />} />
         <Route path="/dashboard/personal/validar-poliza" element={<ValidarPolizas />} />
-        <Route path="/polizas" element={<Policies />} />
-        <Route path="/proveedores" element={<Proveedores/>} />
+        <Route path="/dashboard/general/polizas" element={<Policies />} />
+        <Route path="/proveedores" element={<Proveedores />} />
         <Route path="/registrar-proveedor" element={<RegistrarProveedor />} />
         <Route path="/editar-proveedor/:id" element={<EditarProveedor />} />
         <Route path="/registrar-reclamacion" element={<RegistrarReclamacion />} />
@@ -50,12 +53,9 @@ const App = () => {
           <Route path="/dashboard/general" element={<GeneralDashboard />} />
           <Route path="/registro-siniestro" element={<RegistroSiniestro />} />
         </Route> */}
-
       </Routes>
     </AuthProvider>
   );
 };
 
 export default App;
-
-

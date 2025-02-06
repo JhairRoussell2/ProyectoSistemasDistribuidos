@@ -27,11 +27,25 @@ class SiniestroService {
     // Obtener PolizaID desde BeneficiarioID
     obtenerPolizaID(beneficiarioID) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { rows } = yield db_1.default.query("SELECT polizaid FROM poliza WHERE beneficiarioid = $1", [beneficiarioID]);
-            if (rows.length === 0) {
-                throw new Error("Póliza no encontrada");
+            try {
+                const { rows } = yield db_1.default.query("SELECT polizaid, estado FROM poliza WHERE beneficiarioid = $1", [beneficiarioID]);
+                if (rows.length === 0) {
+                    throw new Error("Póliza no encontrada");
+                }
+                if (rows[0].estado !== "Activa") {
+                    throw new Error("La póliza no ha sido activada");
+                }
+                return { polizaID: rows[0].polizaid, estado: rows[0].estado };
             }
-            return rows[0].polizaid;
+            catch (error) {
+                if (error instanceof Error) {
+                    console.error("Error en obtenerPolizaID:", error.message);
+                }
+                else {
+                    console.error("Error en obtenerPolizaID:", error);
+                }
+                throw error; // Relanzamos el error para ser manejado en la llamada `await`
+            }
         });
     }
     // Registrar el siniestro en la base de datos
