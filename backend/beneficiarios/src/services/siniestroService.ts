@@ -14,15 +14,31 @@ class SiniestroService {
   }
 
   // Obtener PolizaID desde BeneficiarioID
-  async obtenerPolizaID(beneficiarioID: number) {
-    const { rows } = await pool.query(
-      "SELECT polizaid FROM poliza WHERE beneficiarioid = $1", [beneficiarioID]
-    );
-    if (rows.length === 0) {
-      throw new Error("Póliza no encontrada");
+  async obtenerPolizaID(beneficiarioID: number): Promise<{ polizaID: number; estado: string }> {
+    try {
+        const { rows } = await pool.query(
+            "SELECT polizaid, estado FROM poliza WHERE beneficiarioid = $1",
+            [beneficiarioID]
+        );
+
+        if (rows.length === 0) {
+            throw new Error("Póliza no encontrada");
+        }
+        if (rows[0].estado !== "Activa") {
+            throw new Error("La póliza no ha sido activada");
+        }
+
+        return { polizaID: rows[0].polizaid, estado: rows[0].estado };
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error("Error en obtenerPolizaID:", error.message);
+        } else {
+            console.error("Error en obtenerPolizaID:", error);
+        }
+        throw error; // Relanzamos el error para ser manejado en la llamada `await`
     }
-    return rows[0].polizaid;
   }
+
 
   // Registrar el siniestro en la base de datos
   async registrarSiniestro(

@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify'; // Asegúrate de importar toast
 import apiClient from '../services/apiClient';
 
 interface AuthResponse {
-  // token: string;
   user: {
     UsuarioID: number;
     Nombre: string;
@@ -20,11 +20,12 @@ export const useAuth = () => {
     setLoading(true);
     try {
       const response = await apiClient.post<AuthResponse>('/api/beneficiarios/login', { Email: email, Password: password });
-      // localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       setUser(response.data.user);
+      toast.success('Inicio de sesión exitoso'); // Notificación de éxito
     } catch (error) {
       console.error('Error en inicio de sesión', error);
+      toast.error('Credenciales incorrectas'); // Notificación de error
       throw new Error('Credenciales incorrectas');
     } finally {
       setLoading(false);
@@ -38,8 +39,7 @@ export const useAuth = () => {
       const response = await apiClient.post('/api/beneficiarios', userData); // Cambié la ruta a '/api/beneficiarios'
 
       if (response.data && response.data.message) {
-        alert(response.data.message); // Muestra mensaje del backend
-        // localStorage.setItem('token', response.data.token);
+        toast.success(response.data.message); // Usamos toast en lugar de alert
         localStorage.setItem('user', JSON.stringify(response.data.user));
         setUser(response.data.user);
       } else {
@@ -47,27 +47,29 @@ export const useAuth = () => {
       }
     } catch (error) {
       console.error('Error en registro:', error);
-      alert('No se pudo registrar el usuario');
+      toast.error('No se pudo registrar el usuario'); // Notificación de error
     } finally {
       setLoading(false);
     }
   };
+
   const createPolicy = async (BeneficiarioID: number, TipoPoliza: string) => {
     try {
       const response = await apiClient.post('/api/polizas', { BeneficiarioID, TipoPoliza });
-      alert(`Póliza de tipo ${TipoPoliza} creada con éxito.`);
+      toast.success('Póliza creada exitosamente'); // Usamos toast para el éxito
       return response.data;
     } catch (error) {
       console.error('Error al crear la póliza:', error);
-      alert('No se pudo crear la póliza.');
+      toast.error('No se pudo crear la póliza.'); // Notificación de error
     }
-  }
+  };
 
   // Función para logout
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
+    toast.info('Has cerrado sesión'); // Notificación de información
   };
 
   return { login, register, createPolicy ,logout, loading, user };

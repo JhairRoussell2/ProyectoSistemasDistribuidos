@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import apiClient from '../services/apiClient';
 import Alert from '../components/AlertCard';
 
 interface CheckoutFormProps {
   policy: string;
   clientSecret: string;
+  onSuccess: (policy: string) => Promise<void>;  // Añadimos la propiedad onSuccess
 }
 
-const CheckoutForm = ({ policy, clientSecret }: CheckoutFormProps) => {
+const CheckoutForm = ({ policy, clientSecret, onSuccess }: CheckoutFormProps) => {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
@@ -53,11 +53,8 @@ const CheckoutForm = ({ policy, clientSecret }: CheckoutFormProps) => {
       if (confirmError) {
         setError(confirmError.message || 'Hubo un error al confirmar el pago');
       } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-        setSuccessMessage(`Pago exitoso para la póliza: ${policy}`);
-        // Redirigir al usuario después de un pago exitoso
-        setTimeout(() => {
-          navigate('/dashboard/general');
-        }, 3000);
+        // Llamamos a onSuccess solo después de un pago exitoso
+        await onSuccess(policy);
       } else {
         setError('Hubo un error al procesar el pago');
       }

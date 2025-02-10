@@ -49,7 +49,7 @@ const Navbar = () => {
 
   const handleContinue = () => {
     // Redirigir a la página de elección de póliza
-    navigate('/polizas');
+    navigate('/dashboard/general/polizas');
     setShowCard(false); // Cerrar la tarjeta
   };
 

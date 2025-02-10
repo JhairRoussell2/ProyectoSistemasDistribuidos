@@ -303,7 +303,7 @@ const RegistrarReclamacion = () => {
                 type="button"
                 className="bg-[#1f2937] hover:bg-[#111827] text-white px-12 py-3 w-80 rounded-lg font-semibold flex items-center justify-center shadow-md transition-all duration-300"
                 onClick={() => navigate("/dashboard/general")}
-                
+
               >
                 <IoMdArrowBack className="mr-2 text-lg" /> Regresar al Dashboard
               </button>

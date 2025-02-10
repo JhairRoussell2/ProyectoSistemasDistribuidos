@@ -3,6 +3,7 @@ import axios from "axios";
 import Navbar from "../components/Navbar";
 import Modal from "../components/Modal";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+import { FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import GenerateReport from "../components/GenerateReport";
 import apiClient from "../services/apiClient";
@@ -144,15 +145,24 @@ const MantenerBeneficiarios = () => {
         </div>
 
         <div className="mb-6 flex justify-between items-center">
-          <input
-            type="text"
-            placeholder="Buscar por DNI"
-            value={searchdni}
-            onChange={(e) => setSearchdni(e.target.value)}
-            onBlur={handleSearch}  // Ejecuta la búsqueda cuando el campo pierde foco
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white text-black placeholder-gray-400 focus:ring focus:ring-blue-500 focus:outline-none"
-          />
-        </div>
+    <div className="relative w-full">
+        <input
+          type="text"
+          placeholder="Buscar por DNI"
+          value={searchdni}
+          onChange={(e) => setSearchdni(e.target.value)}
+          onBlur={handleSearch} // Ejecuta la búsqueda cuando el campo pierde foco
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg text-black bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-600 shadow-sm"
+        />
+    </div>
+  <button
+    onClick={handleSearch}
+    className="ml-4 bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 shadow-md transition-all"
+  >
+    <FaSearch /> <span>Buscar</span>
+  </button>
+</div>
+
 
         <table className="min-w-full table-auto border-collapse border border-gray-300">
           <thead>

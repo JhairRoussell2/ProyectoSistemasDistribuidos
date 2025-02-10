@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getBeneficiariosPorDNI = exports.updateBeneficiario = exports.deleteBeneficiario = exports.checkIfNewBeneficiario = exports.getUserRole = exports.createBeneficiario = exports.login = exports.getBeneficiarioPorID = exports.getBeneficiarioPorUsuarioID = exports.getBeneficiarios = void 0;
+exports.verificarDNI = exports.verificarEmail = exports.getBeneficiariosPorDNI = exports.updateBeneficiario = exports.deleteBeneficiario = exports.checkIfNewBeneficiario = exports.getUserRole = exports.createBeneficiario = exports.login = exports.getBeneficiarioPorID = exports.getBeneficiarioPorUsuarioID = exports.getBeneficiarios = void 0;
 const joi_1 = __importDefault(require("joi"));
 const db_1 = __importDefault(require("../config/db"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
@@ -32,7 +32,7 @@ const schema = joi_1.default.object({
 const getBeneficiarios = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log("Intentando conectar con la base de datos...");
-        const { rows } = yield db_1.default.query("SELECT * FROM beneficiario ORDER BY beneficiarioid ASC"); // Agregar ORDER BY para ordenar por beneficiarioid
+        const { rows } = yield db_1.default.query("SELECT * FROM beneficiario ORDER BY nombre ASC"); // Agregar ORDER BY para ordenar por beneficiarioid
         console.log("Datos obtenidos de la base de datos:", rows);
         if (rows.length === 0) {
             console.log("No se encontraron beneficiarios.");
@@ -145,6 +145,17 @@ const createBeneficiario = (req, res, next) => __awaiter(void 0, void 0, void 0,
         const hashedPassword = yield bcrypt_1.default.hash(password, 10);
         // Llamada al procedimiento almacenado para crear el usuario y el beneficiario
         const result = yield db_1.default.query("SELECT public.sp_registerbeneficiario($1, $2, $3, $4, $5, $6)", [nombre, apellido, email, hashedPassword, dni, telefono]);
+        if (result.rows[0].error) {
+            const errorMessage = result.rows[0].error;
+            // Si el mensaje contiene "duplicate key value", es un problema de unicidad (correo o DNI)
+            if (errorMessage.includes("duplicate key value")) {
+                res.status(400).json({ error: "El correo electrónico o DNI ya están registrados." });
+                return;
+            }
+            // Si hay otro tipo de error, lo podemos manejar aquí
+            res.status(500).json({ error: "Error en el servidor. Intente más tarde." });
+            return;
+        }
         console.log("Beneficiario creado exitosamente");
         res.status(201).json({
             message: "Beneficiario creado exitosamente",
@@ -153,7 +164,12 @@ const createBeneficiario = (req, res, next) => __awaiter(void 0, void 0, void 0,
     }
     catch (error) {
         console.error("Error al crear beneficiario:", error);
-        next(error);
+        if (error.message.includes('duplicate key value')) {
+            res.status(400).json({ error: "El correo electrónico o DNI ya están registrados." });
+        }
+        else {
+            res.status(500).json({ error: "Error en el servidor. Intente más tarde." });
+        }
     }
 });
 exports.createBeneficiario = createBeneficiario;
@@ -282,3 +298,37 @@ const getBeneficiariosPorDNI = (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.getBeneficiariosPorDNI = getBeneficiariosPorDNI;
+const verificarEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email } = req.params;
+    try {
+        const { rows } = yield db_1.default.query("SELECT email FROM usuario WHERE email = $1", [email]);
+        if (rows.length > 0) {
+            res.status(200).json({ exists: true });
+        }
+        else {
+            res.status(200).json({ exists: false });
+        }
+    }
+    catch (error) {
+        console.error("Error al verificar email:", error);
+        res.status(500).json({ error: "Error al verificar email" });
+    }
+});
+exports.verificarEmail = verificarEmail;
+const verificarDNI = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { dni } = req.params;
+    try {
+        const { rows } = yield db_1.default.query("SELECT dni FROM beneficiario WHERE dni = $1", [dni]);
+        if (rows.length > 0) {
+            res.status(200).json({ exists: true });
+        }
+        else {
+            res.status(200).json({ exists: false });
+        }
+    }
+    catch (error) {
+        console.error("Error al verificar DNI:", error);
+        res.status(500).json({ error: "Error al verificar DNI" });
+    }
+});
+exports.verificarDNI = verificarDNI;

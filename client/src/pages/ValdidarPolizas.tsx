@@ -60,24 +60,39 @@ const ValidarPoliza = () => {
 
   const handleValidar = async (polizaID: number) => {
     setIsLoading(true);
-    setSuccessMessage(null);
+    setSuccessMessage(null);  // Limpiar mensaje previo
+  
     try {
       await apiClient.put(`/api/polizas/${polizaID}/estado`, { estado: 'Activa' });
+      
+      // Actualizar el estado de la póliza en el listado
       setPolizas((prevPolizas) =>
         prevPolizas.map((poliza) =>
           poliza.polizaid === polizaID ? { ...poliza, estado: 'Activa' } : poliza
         )
       );
+  
+      // Mostrar mensaje de éxito
       setSuccessMessage('Se ha validado con éxito la póliza');
+  
     } catch (error) {
       console.error('Error al validar la póliza:', error);
       alert('No se pudo validar la póliza.');
     } finally {
+      // Desactivar el spinner después de 5 segundos
       setTimeout(() => {
         setIsLoading(false);
-      }, 5000); // Spinner duration
+      }, 5000);
+  
+      // Mostrar el mensaje de éxito y redirigir después de 3 segundos
+      if (successMessage) {
+        setTimeout(() => {
+          navigate('/dashboard/general'); // Redirigir a la página principal después de 3 segundos
+        }, 3000);  // Esperar 3 segundos antes de redirigir
+      }
     }
   };
+  
 
   return (
     <div className="bg-white min-h-screen text-black relative overflow-hidden">

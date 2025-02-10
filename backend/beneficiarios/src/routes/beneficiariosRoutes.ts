@@ -8,7 +8,9 @@ import {
   updateBeneficiario,
   checkIfNewBeneficiario,
   getBeneficiarioPorUsuarioID,
-  getBeneficiariosPorDNI// Asegúrate de importar la función
+  getBeneficiariosPorDNI,// Asegúrate de importar la función
+  verificarEmail,
+  verificarDNI
 } from '../controllers/beneficiariosController';
 
 const router = express.Router();
@@ -23,6 +25,8 @@ router.get('/user/:UsuarioID/role', getUserRole);
 router.get("/:BeneficiarioID/check-new", checkIfNewBeneficiario);
 // Ruta para obtener los beneficiarios por DNI
 router.get("/validar/:DNI", getBeneficiariosPorDNI);
+router.get('/validar/email/:email', verificarEmail);
+router.get('/validar/dni/:dni', verificarDNI);
 
 
 // Nueva ruta para obtener el BeneficiarioID basado en UsuarioID

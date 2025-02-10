@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { User, Mail, Phone, Lock, CheckCircle, IdCard } from "lucide-react"; // Íconos
+import Validation from './Validation';
+import { required, isEmail, isPhoneNumber, isDNI, minLength, isAlpha, matches } from '../utils/validationRules';
 
 interface RegisterData {
   nombre: string;
@@ -43,7 +47,13 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
       await onSubmit(formData);
       setMessage("¡Registro exitoso!"); // Mensaje de éxito
     } catch (error) {
-      setMessage("Hubo un error en el registro. Por favor, inténtalo de nuevo."); // Mensaje de error
+      console.error('Error al registrar:', error);
+      if ((error as any).response && (error as any).response.data && (error as any).response.data.error) {
+        const errorMessage = (error as any).response?.data?.error || 'Hubo un error en el registro. Por favor, inténtalo de nuevo.';
+        toast.error(errorMessage);
+      } else {
+        toast.error('Hubo un error en el registro. Por favor, inténtalo de nuevo.');
+      }
     } finally {
       setLoading(false);
     }
@@ -66,15 +76,22 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
           <label className="block text-gray-700 font-semibold">Nombre</label>
           <div className="relative">
             <User className="absolute left-3 top-3 text-gray-400" />
-            <input
-              name="nombre"
-              type="text"
-              placeholder="Tu Nombre"
-              value={formData.nombre}
-              onChange={handleChange}
-              className="w-full pl-10 p-3 rounded-md border border-red-300 bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400"
-              required
-            />
+            <Validation value={formData.nombre} rules={[required, isAlpha]}>
+              {(error) => (
+                <>
+                  <input
+                    name="nombre"
+                    type="text"
+                    placeholder="Tu Nombre"
+                    value={formData.nombre}
+                    onChange={handleChange}
+                    className={`w-full pl-10 p-3 rounded-md border ${error ? 'border-red-500' : 'border-red-300'} bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400`}
+                    required
+                  />
+                  {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+                </>
+              )}
+            </Validation>
           </div>
         </div>
 
@@ -82,15 +99,22 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
           <label className="block text-gray-700 font-semibold">Apellido</label>
           <div className="relative">
             <User className="absolute left-3 top-3 text-gray-400" />
-            <input
-              name="apellido"
-              type="text"
-              placeholder="Tu Apellido"
-              value={formData.apellido}
-              onChange={handleChange}
-              className="w-full pl-10 p-3 rounded-md border border-red-300 bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400"
-              required
-            />
+            <Validation value={formData.apellido} rules={[required, isAlpha]}>
+              {(error) => (
+                <>
+                  <input
+                    name="apellido"
+                    type="text"
+                    placeholder="Tu Apellido"
+                    value={formData.apellido}
+                    onChange={handleChange}
+                    className={`w-full pl-10 p-3 rounded-md border ${error ? 'border-red-500' : 'border-red-300'} bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400`}
+                    required
+                  />
+                  {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+                </>
+              )}
+            </Validation>
           </div>
         </div>
 
@@ -98,15 +122,22 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
           <label className="block text-gray-700 font-semibold">Correo Electrónico</label>
           <div className="relative">
             <Mail className="absolute left-3 top-3 text-gray-400" />
-            <input
-              name="email"
-              type="email"
-              placeholder="ejemplo@correo.com"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full pl-10 p-3 rounded-md border border-red-300 bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400"
-              required
-            />
+            <Validation value={formData.email} rules={[required, isEmail]}>
+              {(error) => (
+                <>
+                  <input
+                    name="email"
+                    type="email"
+                    placeholder="ejemplo@correo.com"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={`w-full pl-10 p-3 rounded-md border ${error ? 'border-red-500' : 'border-red-300'} bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400`}
+                    required
+                  />
+                  {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+                </>
+              )}
+            </Validation>
           </div>
         </div>
 
@@ -114,15 +145,22 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
           <label className="block text-gray-700 font-semibold">Teléfono</label>
           <div className="relative">
             <Phone className="absolute left-3 top-3 text-gray-400" />
-            <input
-              name="telefono"
-              type="text"
-              placeholder="+51 987 654 321"
-              value={formData.telefono}
-              onChange={handleChange}
-              className="w-full pl-10 p-3 rounded-md border border-red-300 bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400"
-              required
-            />
+            <Validation value={formData.telefono} rules={[required, isPhoneNumber]}>
+              {(error) => (
+                <>
+                  <input
+                    name="telefono"
+                    type="text"
+                    placeholder="+51 987 654 321"
+                    value={formData.telefono}
+                    onChange={handleChange}
+                    className={`w-full pl-10 p-3 rounded-md border ${error ? 'border-red-500' : 'border-red-300'} bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400`}
+                    required
+                  />
+                  {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+                </>
+              )}
+            </Validation>
           </div>
         </div>
 
@@ -130,15 +168,22 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
           <label className="block text-gray-700 font-semibold">DNI</label>
           <div className="relative">
             <IdCard className="absolute left-3 top-3 text-gray-400" />
-            <input
-              name="dni"
-              type="text"
-              placeholder="12345678"
-              value={formData.dni}
-              onChange={handleChange}
-              className="w-full pl-10 p-3 rounded-md border border-red-300 bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400"
-              required
-            />
+            <Validation value={formData.dni} rules={[required, isDNI]}>
+              {(error) => (
+                <>
+                  <input
+                    name="dni"
+                    type="text"
+                    placeholder="12345678"
+                    value={formData.dni}
+                    onChange={handleChange}
+                    className={`w-full pl-10 p-3 rounded-md border ${error ? 'border-red-500' : 'border-red-300'} bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400`}
+                    required
+                  />
+                  {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+                </>
+              )}
+            </Validation>
           </div>
         </div>
 
@@ -146,15 +191,22 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
           <label className="block text-gray-700 font-semibold">Contraseña</label>
           <div className="relative">
             <Lock className="absolute left-3 top-3 text-gray-400" />
-            <input
-              name="password"
-              type="password"
-              placeholder="********"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full pl-10 p-3 rounded-md border border-red-300 bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400"
-              required
-            />
+            <Validation value={formData.password} rules={[required, minLength(6)]}>
+              {(error) => (
+                <>
+                  <input
+                    name="password"
+                    type="password"
+                    placeholder="********"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className={`w-full pl-10 p-3 rounded-md border ${error ? 'border-red-500' : 'border-red-300'} bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400`}
+                    required
+                  />
+                  {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+                </>
+              )}
+            </Validation>
           </div>
         </div>
 
@@ -162,15 +214,22 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
           <label className="block text-gray-700 font-semibold">Confirmar Contraseña</label>
           <div className="relative">
             <Lock className="absolute left-3 top-3 text-gray-400" />
-            <input
-              name="confirmPassword"
-              type="password"
-              placeholder="********"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className="w-full pl-10 p-3 rounded-md border border-red-300 bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400"
-              required
-            />
+            <Validation value={formData.confirmPassword} rules={[required, matches(formData.password)]}>
+              {(error) => (
+                <>
+                  <input
+                    name="confirmPassword"
+                    type="password"
+                    placeholder="********"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className={`w-full pl-10 p-3 rounded-md border ${error ? 'border-red-500' : 'border-red-300'} bg-red-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-400`}
+                    required
+                  />
+                  {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+                </>
+              )}
+            </Validation>
           </div>
         </div>
 
