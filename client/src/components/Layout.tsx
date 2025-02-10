@@ -124,6 +124,10 @@ const Layout = ({ children }: LayoutProps) => {
                   <FiUsers />
                   <span>Gestión de Beneficiarios</span>
                 </NavLink>
+                <NavLink to="/dashboard/personal/asignar-siniestros" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
+                  <FiClipboard />
+                  <span>Asignar Siniestros</span>
+                </NavLink>
               </>
             )}
           </nav>

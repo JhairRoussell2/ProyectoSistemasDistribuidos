@@ -24,6 +24,7 @@ import GestionarPresupuestos from "./pages/Presupuestos"; // Importa la página
 import DetallePresupuestos from "./pages/GestionarPresupuestos";
 import ForgotPassword from "./pages/Recuperar";
 import ResetPassword from "./pages/Resetear";
+import AsignarTaller from "./pages/AsignarTaller";
 
 // No olvides importar los estilos de react-toastify
 import 'react-toastify/dist/ReactToastify.css'; // Importa el CSS de react-toastify
@@ -43,6 +44,7 @@ const App = () => {
         <Route path="/registro-siniestro" element={<RegistroSiniestro />} />
         <Route path="/dashboard/personal/Mantener-Beneficiario" element={<MantenerBeneficiarios />} />
         <Route path="/dashboard/personal/validar-poliza" element={<ValidarPolizas />} />
+        <Route path="/dashboard/personal/asignar-siniestros" element={<AsignarTaller />} /> 
         <Route path="/dashboard/general/polizas" element={<Policies />} />
         <Route path="/proveedores" element={<Proveedores />} />
         <Route path="/gestionarpresupuestos" element={<GestionarPresupuestos />} />
@@ -54,7 +56,8 @@ const App = () => {
         <Route path="/editar-taller/:id" element={<EditarTaller />} />
         <Route path="/registrar-reclamacion" element={<RegistrarReclamacion />} />
         <Route path="/recuperar" element={<ForgotPassword />} />
-        <Route path="/reset/:token" element={<ResetPassword />} />        
+        <Route path="/reset/:token" element={<ResetPassword />} />
+               
         {/* Rutas protegidas */}
         {/* <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />

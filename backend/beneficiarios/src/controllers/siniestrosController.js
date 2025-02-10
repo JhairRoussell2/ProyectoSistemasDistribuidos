@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.listarSiniestros = exports.registrarSiniestro = void 0;
+exports.asignarTaller = exports.listarSiniestros = exports.registrarSiniestro = void 0;
 const joi_1 = __importDefault(require("joi"));
 const siniestroService_1 = __importDefault(require("../services/siniestroService"));
 // Esquema de validación para el cuerpo de la solicitud
@@ -90,3 +90,21 @@ const listarSiniestros = (req, res, next) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.listarSiniestros = listarSiniestros;
+const asignarTaller = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { siniestroid, tallerid } = req.body;
+        console.log("Siniestroid:", siniestroid);
+        console.log("tallerID", tallerid);
+        if (!siniestroid || !tallerid) {
+            res.status(400).json({ error: "Faltan datos requeridos (siniestroID o tallerID)" });
+            return;
+        }
+        yield siniestroService_1.default.asignarTallerASiniestro(siniestroid, tallerid);
+        res.status(200).json({ message: "Taller asignado y correo enviado con éxito." });
+    }
+    catch (error) {
+        console.error("Error al asignar taller:", error);
+        next(error);
+    }
+});
+exports.asignarTaller = asignarTaller;

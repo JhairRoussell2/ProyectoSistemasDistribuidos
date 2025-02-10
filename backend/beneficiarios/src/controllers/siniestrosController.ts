@@ -102,3 +102,20 @@ export const listarSiniestros = async (req: Request, res: Response, next: NextFu
     next(error);
   }
 };
+
+export const asignarTaller = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { siniestroid, tallerid } = req.body;
+    console.log("Siniestroid:", siniestroid);
+    console.log("tallerID", tallerid);
+    if (!siniestroid || !tallerid) {
+      res.status(400).json({ error: "Faltan datos requeridos (siniestroID o tallerID)" });
+      return;
+    }
+    await SiniestroService.asignarTallerASiniestro(siniestroid, tallerid);
+    res.status(200).json({ message: "Taller asignado y correo enviado con éxito." });
+  } catch (error) {
+    console.error("Error al asignar taller:", error);
+    next(error);
+  }
+};

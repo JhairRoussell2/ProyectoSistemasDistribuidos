@@ -10,4 +10,6 @@ const router = express_1.default.Router();
 router.post("/", siniestrosController_1.registrarSiniestro);
 // Ruta para listar todos los siniestros
 router.get("/", siniestrosController_1.listarSiniestros);
+// Ruta para asignar todos los siniestros
+router.put("/asignar", siniestrosController_1.asignarTaller);
 exports.default = router;
