@@ -50,6 +50,10 @@ const Layout = ({ children }: LayoutProps) => {
                   <FiFileText />
                   <span>Gestión de Proveedores</span>
                 </NavLink>
+                <NavLink to="/talleres" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
+                  <FiFileText />
+                  <span>Gestión de Talleres</span>
+                </NavLink>
                 <NavLink to="/dashboard/admin/pagos" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
                   <FiDollarSign />
                   <span>Pagos de Indemnización</span>

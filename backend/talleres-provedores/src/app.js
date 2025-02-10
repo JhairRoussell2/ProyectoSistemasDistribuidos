@@ -17,6 +17,7 @@ const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const cloudinary_1 = __importDefault(require("cloudinary"));
 //import siniestrosRoutes from "./routes/tallerRoutes";// para talleres proximamente 
+const TalleresRoutes_1 = __importDefault(require("./routes/TalleresRoutes"));
 const proveedoresRoutes_1 = __importDefault(require("./routes/proveedoresRoutes"));
 const multer_1 = __importDefault(require("multer"));
 // Configurar variables de entorno
@@ -51,6 +52,7 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 // Registrar rutas
 app.use("/api/proveedores", proveedoresRoutes_1.default);
+app.use("/api/talleres", TalleresRoutes_1.default);
 // Imprimir rutas registradas en el servidor
 console.log("Rutas registradas en el servidor:");
 const getRoutes = (layer, basePath = "") => {

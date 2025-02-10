@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import cloudinary from "cloudinary";
 //import siniestrosRoutes from "./routes/tallerRoutes";// para talleres proximamente 
+import TalleresRoutes from "./routes/TalleresRoutes";
 import beneficiariosRoutes from "./routes/proveedoresRoutes";
 import multer from "multer";
 
@@ -44,6 +45,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Registrar rutas
 app.use("/api/proveedores", beneficiariosRoutes);
+app.use("/api/talleres", TalleresRoutes)
 
 
 // Imprimir rutas registradas en el servidor

@@ -15,6 +15,9 @@ import ValidarPolizas from "./pages/ValdidarPolizas";
 import RegistrarProveedor from "./pages/RegistrarProveedor";
 import Proveedores from "./pages/Proveedores";
 import EditarProveedor from "./pages/EditarProveedor";
+import RegistrarTaller from "./pages/RegistrarTaller";
+import Talleres from "./pages/Talleres";
+import EditarTaller from "./pages/EditarTalleres";
 import PaginaPrincipal from "./pages/PaginaPrincipal";
 import RegistrarReclamacion from "./pages/RegistrarReclamacion"; // ✅ Importa la página
 import ForgotPassword from "./pages/Recuperar";
@@ -42,6 +45,9 @@ const App = () => {
         <Route path="/proveedores" element={<Proveedores />} />
         <Route path="/registrar-proveedor" element={<RegistrarProveedor />} />
         <Route path="/editar-proveedor/:id" element={<EditarProveedor />} />
+        <Route path="/talleres" element={<Talleres />} />
+        <Route path="/registrar-taller" element={<RegistrarTaller />} />
+        <Route path="/editar-taller/:id" element={<EditarTaller />} />
         <Route path="/registrar-reclamacion" element={<RegistrarReclamacion />} />
         <Route path="/recuperar" element={<ForgotPassword />} />
         <Route path="/reset/:token" element={<ResetPassword />} />        
