@@ -54,15 +54,14 @@ class PresupuestoPagosController {
             const { montototal, costo_reparacion, costo_piezas_mano_obra, detalle_presupuesto } = req.body;
             try {
                 // Llamada a la función 'update_presupuesto' para actualizar los datos del presupuesto
-                yield db_1.default.query("SELECT public.update_presupuesto($1, $2, $3, $4, $5, $6, $7)", // Ahora son 7 parámetros
-                [
+                yield db_1.default.query("SELECT public.update_presupuesto($1, $2, $3, $4, $5, $6, $7)", [
                     id, // ID del presupuesto a actualizar
                     montototal,
                     costo_reparacion,
                     costo_piezas_mano_obra,
                     detalle_presupuesto,
                     'Validado', // Nuevo estado
-                    new Date().toISOString() // Fecha de creación actualizada (formato compatible con timestamp)
+                    new Date().toISOString()
                 ]);
                 res.json({ message: "Presupuesto actualizado correctamente" });
             }

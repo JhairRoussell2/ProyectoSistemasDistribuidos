@@ -10,9 +10,4 @@ const router = (0, express_1.Router)();
 router.get("/", presupuestoPagosController_1.default.getPresupuestosPendientes);
 router.get("/:id", presupuestoPagosController_1.default.getPresupuestoById);
 router.put("/:id", presupuestoPagosController_1.default.updatePresupuesto);
-/*
-router.post("/", PresupuestoPagosController.createPresupuesto);
-
-router.delete("/:id", PresupuestoPagosController.deletePresupuesto);
-*/
 exports.default = router;

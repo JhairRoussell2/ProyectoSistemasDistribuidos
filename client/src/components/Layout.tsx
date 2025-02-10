@@ -58,6 +58,10 @@ const Layout = ({ children }: LayoutProps) => {
                   <FiBarChart2 />
                   <span>Generación de Reportes</span>
                 </NavLink>
+                <NavLink to="/gestionarpresupuestos" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
+                  <FiDollarSign />
+                  <span>Gestionar Presupuestos</span>
+                </NavLink>
                 <NavLink to="/dashboard/admin/seguridad" className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white">
                   <FiShield />
                   <span>Seguridad y Auditoría</span>
