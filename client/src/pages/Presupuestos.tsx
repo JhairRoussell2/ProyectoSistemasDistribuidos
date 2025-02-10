@@ -53,7 +53,7 @@ const Presupuestos = () => {
             <tbody>
               {presupuestos.map((presupuesto: any) => (
                 <tr key={presupuesto.presupuestoid} className="border-t hover:bg-gray-50 transition">
-                  <td className="p-3 text-center">{presupuesto.siniestroid}</td>
+                  <td className="p-3 text-center">{"SIN-0"+presupuesto.siniestroid}</td>
                   <td className="p-3 text-center">
                     {presupuesto.fecha_asignacion
                       ? new Date(presupuesto.fecha_asignacion).toLocaleString()
