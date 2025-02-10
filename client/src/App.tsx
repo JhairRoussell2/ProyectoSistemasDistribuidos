@@ -20,6 +20,8 @@ import Talleres from "./pages/Talleres";
 import EditarTaller from "./pages/EditarTalleres";
 import PaginaPrincipal from "./pages/PaginaPrincipal";
 import RegistrarReclamacion from "./pages/RegistrarReclamacion"; // ✅ Importa la página
+import GestionarPresupuestos from "./pages/Presupuestos"; // Importa la página
+import DetallePresupuestos from "./pages/GestionarPresupuestos";
 import ForgotPassword from "./pages/Recuperar";
 import ResetPassword from "./pages/Resetear";
 
@@ -43,6 +45,8 @@ const App = () => {
         <Route path="/dashboard/personal/validar-poliza" element={<ValidarPolizas />} />
         <Route path="/dashboard/general/polizas" element={<Policies />} />
         <Route path="/proveedores" element={<Proveedores />} />
+        <Route path="/gestionarpresupuestos" element={<GestionarPresupuestos />} />
+        <Route path="/detallepresupuesto/:id" element={<DetallePresupuestos />} />
         <Route path="/registrar-proveedor" element={<RegistrarProveedor />} />
         <Route path="/editar-proveedor/:id" element={<EditarProveedor />} />
         <Route path="/talleres" element={<Talleres />} />
