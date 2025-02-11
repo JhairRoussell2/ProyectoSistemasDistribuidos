@@ -7,7 +7,7 @@ class PresupuestoPagosController {
     try {
       // Llamada a la función 'get_presupuestos_pendientes()' que devuelve todos los datos necesarios de presupuestos pendientes
       const result = await pool.query("SELECT * FROM public.get_presupuestos_pendientes()");
-      res.json((result as any).rows);  // Acceder correctamente a 'rows'
+      res.json((result as any).rows);
     } catch (error) {
       res.status(500).json({ message: "Error al obtener los proveedores", error });
     }
@@ -19,11 +19,11 @@ class PresupuestoPagosController {
       // Llamada a la función 'get_presupuesto_by_id' para obtener el presupuesto por su ID
       const result = await pool.query("SELECT * FROM public.get_presupuesto_by_id($1)", [id]);
 
-      // Si no se encuentra el proveedor
+      // Si no se encuentra el presupuesto
       if ((result as any).rows.length === 0) {
-        res.status(404).json({ message: "presupuesto no encontrado" });
+        res.status(404).json({ message: "Presupuesto no encontrado" });
       } else {
-        res.json((result as any).rows[0]);  // Retorna el primer resultado
+        res.json((result as any).rows[0]); 
       }
     } catch (error) {
       res.status(500).json({ message: "Error al obtener el presupuesto", error });
@@ -49,7 +49,7 @@ public async updatePresupuesto(req: Request, res: Response): Promise<void> {
         costo_reparacion, 
         costo_piezas_mano_obra, 
         detalle_presupuesto, 
-        'Validado',  // Nuevo estado
+        'Validado',  
         new Date().toISOString()
       ]
     );
