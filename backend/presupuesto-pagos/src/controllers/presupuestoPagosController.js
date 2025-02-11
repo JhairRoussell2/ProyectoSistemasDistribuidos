@@ -20,7 +20,7 @@ class PresupuestoPagosController {
             try {
                 // Llamada a la función 'get_presupuestos_pendientes()' que devuelve todos los datos necesarios de presupuestos pendientes
                 const result = yield db_1.default.query("SELECT * FROM public.get_presupuestos_pendientes()");
-                res.json(result.rows); // Acceder correctamente a 'rows'
+                res.json(result.rows);
             }
             catch (error) {
                 res.status(500).json({ message: "Error al obtener los proveedores", error });
@@ -34,12 +34,12 @@ class PresupuestoPagosController {
             try {
                 // Llamada a la función 'get_presupuesto_by_id' para obtener el presupuesto por su ID
                 const result = yield db_1.default.query("SELECT * FROM public.get_presupuesto_by_id($1)", [id]);
-                // Si no se encuentra el proveedor
+                // Si no se encuentra el presupuesto
                 if (result.rows.length === 0) {
-                    res.status(404).json({ message: "presupuesto no encontrado" });
+                    res.status(404).json({ message: "Presupuesto no encontrado" });
                 }
                 else {
-                    res.json(result.rows[0]); // Retorna el primer resultado
+                    res.json(result.rows[0]);
                 }
             }
             catch (error) {
@@ -60,7 +60,7 @@ class PresupuestoPagosController {
                     costo_reparacion,
                     costo_piezas_mano_obra,
                     detalle_presupuesto,
-                    'Validado', // Nuevo estado
+                    'Validado',
                     new Date().toISOString()
                 ]);
                 res.json({ message: "Presupuesto actualizado correctamente" });
