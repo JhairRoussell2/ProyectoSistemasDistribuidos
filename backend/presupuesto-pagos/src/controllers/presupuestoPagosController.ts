@@ -59,6 +59,38 @@ public async updatePresupuesto(req: Request, res: Response): Promise<void> {
     res.status(500).json({ message: "Error al actualizar el presupuesto", error });
   }
 }
+//Obtener documento de siniestro
+public async getDocumentosPresupuesto(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  try {
+    // Llamada a la función 'get_documento_siniestro' para obtener el documento del siniestro
+    const result = await pool.query("SELECT * FROM public.obtener_documentos($1)", [id]);
+    // Si no se encuentra el documento
+    if ((result as any).rows.length === 0) {
+      res.status(404).json({ message: "Documento no encontrado" });
+    } else {
+      res.json((result as any).rows[0]); 
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener el documento", error });
+  }
 
+}
+//Obtener poliza por presupuestoid
+public async getPolizaByPresupuestoId(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  try {
+    // Llamada a la función 'obtener_poliza_por_presupuesto' para obtener la poliza por presupuesto id
+    const result = await pool.query("SELECT * FROM public.obtener_poliza_por_presupuesto($1)", [id]);
+    // Si no se encuentra la poliza
+    if ((result as any).rows.length === 0) {
+      res.status(404).json({ message: "Poliza no encontrada" });
+    } else {
+      res.json((result as any).rows[0]); 
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener la poliza", error });
+  }
+}
 }
 export default new PresupuestoPagosController();
