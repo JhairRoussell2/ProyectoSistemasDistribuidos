@@ -98,7 +98,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const createPolicy = async (BeneficiarioID: number, TipoPoliza: string) => {
     try {
       const response = await apiClient.post('/api/polizas', { BeneficiarioID, TipoPoliza });
-      alert(`Póliza de tipo ${TipoPoliza} creada con éxito.`);
       return response.data;
     } catch (error) {
       console.error('Error al crear la póliza:', error);
