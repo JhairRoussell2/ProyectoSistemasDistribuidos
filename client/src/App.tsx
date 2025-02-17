@@ -20,11 +20,15 @@ import Talleres from "./pages/Talleres";
 import EditarTaller from "./pages/EditarTalleres";
 import PaginaPrincipal from "./pages/PaginaPrincipal";
 import RegistrarReclamacion from "./pages/RegistrarReclamacion"; // ✅ Importa la página
+import GestionarReclamaciones from "./pages/GestionReclamaciones"; // Importa la página de gestionar reclamaciones
+
 import GestionarPresupuestos from "./pages/Presupuestos"; // Importa la página
 import DetallePresupuestos from "./pages/GestionarPresupuestos";
 import ForgotPassword from "./pages/Recuperar";
 import ResetPassword from "./pages/Resetear";
 import AsignarTaller from "./pages/AsignarTaller";
+import ValidarReclamacion from "./pages/ValidarReclamacion";  // Importa el nuevo componente
+
 
 // No olvides importar los estilos de react-toastify
 import 'react-toastify/dist/ReactToastify.css'; // Importa el CSS de react-toastify
@@ -57,6 +61,10 @@ const App = () => {
         <Route path="/registrar-reclamacion" element={<RegistrarReclamacion />} />
         <Route path="/recuperar" element={<ForgotPassword />} />
         <Route path="/reset/:token" element={<ResetPassword />} />
+        <Route path="/gestionar-reclamaciones" element={<GestionarReclamaciones />} /> {/* Aquí agregas la nueva ruta */}
+        <Route path="/validar-reclamacion/:id" element={<ValidarReclamacion />} />  {/* Ruta para Validar Documentos */}
+
+        
                
         {/* Rutas protegidas */}
         {/* <Route element={<ProtectedRoute />}>
