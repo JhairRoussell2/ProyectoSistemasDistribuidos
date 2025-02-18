@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FileText, CheckCircle } from "lucide-react";
+import { FileText, CheckCircle, AlignCenter } from "lucide-react";
 import Alert from "../components/Alert";
 import Navbar from "../components/Navbar";
 
@@ -41,18 +41,21 @@ const GestionarPresupuesto: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const polizaRes = await axios.get(`${API_PRESUPUESTO_URL}/poliza/${id}`);
+        const [polizaRes, presupuestoRes] = await Promise.all([
+          axios.get(`${API_PRESUPUESTO_URL}/poliza/${id}`),
+          axios.get(`${API_PRESUPUESTO_URL}/${id}`)
+        ]);
+  
         setPoliza(polizaRes.data);
-
-        const presupuestoRes = await axios.get(`${API_PRESUPUESTO_URL}/${id}`);
         setPresupuesto(presupuestoRes.data);
       } catch (error) {
         setAlert({ type: "error", message: "Error al cargar datos" });
       }
     };
-
+  
     fetchData();
   }, [id]);
+  
 
   const handleValidarPresupuesto = async () => {
     if (!presupuesto) return;
@@ -128,14 +131,12 @@ const GestionarPresupuesto: React.FC = () => {
                 <h2 className="text-xl font-bold text-red-700 mb-4">
                   Detalles del Presupuesto
                 </h2>
-                <p>
-                  <strong>Código de Siniestro:</strong>{" "}
-                  {`SIN-0${presupuesto.siniestroid}`}
+                <p className="block mt-2 text-gray-700 font-semibold">
+                  Código de Siniestro: {`SIN-${presupuesto.siniestroid}`}
                 </p>
-
-                <label className="block mt-2 text-gray-700 font-semibold">
+                <strong className="block mt-2 text-gray-700 font-semibold">
                   Costo de Reparación:
-                </label>
+                </strong>
                 <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
                   <span className="bg-gray-200 px-3 py-2 text-gray-700">S/.</span>
                   <input
@@ -146,9 +147,9 @@ const GestionarPresupuesto: React.FC = () => {
                       setPresupuesto((prev) =>
                         prev
                           ? {
-                              ...prev,
-                              costo_reparacion: Number(e.target.value),
-                            }
+                            ...prev,
+                            costo_reparacion: Number(e.target.value),
+                          }
                           : null
                       )
                     }
@@ -168,20 +169,20 @@ const GestionarPresupuesto: React.FC = () => {
                       setPresupuesto((prev) =>
                         prev
                           ? {
-                              ...prev,
-                              costo_piezas_mano_obra: Number(e.target.value),
-                            }
+                            ...prev,
+                            costo_piezas_mano_obra: Number(e.target.value),
+                          }
                           : null
                       )
                     }
                   />
                 </div>
-
-                <p className="mt-4 text-lg font-bold text-gray-800">
-                  <strong>Monto Total:</strong> S/{" "}
-                  {Number(presupuesto.costo_reparacion) +
-                    Number(presupuesto.costo_piezas_mano_obra)}
-                </p>
+                <strong className="inline mt-2 text-gray-700 font-semibold">
+                  Monto Total: 
+                </strong>
+                <strong> S/{Number(presupuesto.costo_reparacion) +
+                  Number(presupuesto.costo_piezas_mano_obra)}</strong>
+                
 
                 <label className="block mt-2 text-gray-700 font-semibold">
                   Detalle del Presupuesto:
@@ -239,22 +240,16 @@ const GestionarPresupuesto: React.FC = () => {
 
             {/* Lista de documentos con los botones centrados */}
             {mostrarDocumentos && (
-              <div className="mt-2 bg-white border border-gray-300 rounded p-2 w-72">
+              <div className="bg-white shadow-lg rounded-xl p-6 border border-red-300">
+                <p className="text-xl font-bold text-red-700 mb-4" style={{textAlign: "center"}}>Documentos Adjuntos</p>
                 {documentos.map((doc, index) => (
                   <div key={index} className="mb-2">
                     <button
-                      onClick={() => toggleDocument(index)}
+                      onClick={() => window.open(doc, "_blank")}  // Abre el documento en una nueva pestaña
                       className="w-full text-center text-blue-500 hover:underline"
                     >
                       Documento {index + 1}
                     </button>
-                    {docVisible[index] && (
-                      <img
-                        src={doc}
-                        alt={`Documento ${index + 1}`}
-                        className="mt-2 max-w-full h-auto"
-                      />
-                    )}
                   </div>
                 ))}
               </div>
