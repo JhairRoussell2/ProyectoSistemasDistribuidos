@@ -128,7 +128,7 @@ const GestionarPresupuesto: React.FC = () => {
             {/* Card de Detalles del Presupuesto */}
             {presupuesto && (
               <div className="bg-white shadow-lg rounded-xl p-6 border border-red-300">
-                <h2 className="text-xl font-bold text-red-700 mb-4">
+                <h2 style={{textAlign: "center"}}className="text-xl font-bold text-red-700 mb-4">
                   Detalles del Presupuesto
                 </h2>
                 <p className="block mt-2 text-gray-700 font-semibold">
@@ -203,7 +203,7 @@ const GestionarPresupuesto: React.FC = () => {
             {/* Card de Detalles de la Póliza */}
             {poliza && (
               <div className="bg-white shadow-lg rounded-xl p-6 border border-red-300">
-                <h2 className="text-xl font-bold text-red-700 mb-4">
+                <h2 style={{textAlign: "center"}}className="text-xl font-bold text-red-700 mb-4">
                   Detalles de la Póliza
                 </h2>
                 <p>
