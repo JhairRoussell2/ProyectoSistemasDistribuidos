@@ -27,11 +27,12 @@ import DetallePresupuestos from "./pages/GestionarPresupuestos";
 import ForgotPassword from "./pages/Recuperar";
 import ResetPassword from "./pages/Resetear";
 import AsignarTaller from "./pages/AsignarTaller";
-import ValidarReclamacion from "./pages/ValidarReclamacion";  // Importa el nuevo componente
+import ValidarReclamacion from "./pages/DetallesReclamacion";  // Importa el nuevo componente
 
 
 // No olvides importar los estilos de react-toastify
 import 'react-toastify/dist/ReactToastify.css'; // Importa el CSS de react-toastify
+import DetallesReclamacion from "./pages/DetallesReclamacion";
 
 const App = () => {
   return (
@@ -61,8 +62,8 @@ const App = () => {
         <Route path="/registrar-reclamacion" element={<RegistrarReclamacion />} />
         <Route path="/recuperar" element={<ForgotPassword />} />
         <Route path="/reset/:token" element={<ResetPassword />} />
-        <Route path="/gestionar-reclamaciones" element={<GestionarReclamaciones />} /> {/* Aquí agregas la nueva ruta */}
-        <Route path="/validar-reclamacion/:id" element={<ValidarReclamacion />} />  {/* Ruta para Validar Documentos */}
+        <Route path="/dashboard/personal/gestionar-reclamaciones" element={<GestionarReclamaciones />} /> {/* Aquí agregas la nueva ruta */}
+        <Route path="/detalles-reclamacion/:id" element={<DetallesReclamacion />} />  {/* Ruta para Validar Documentos */}
 
         
                

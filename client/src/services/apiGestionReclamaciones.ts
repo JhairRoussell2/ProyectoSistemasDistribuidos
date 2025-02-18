@@ -50,10 +50,15 @@ export const eliminarReclamacion = async (reclamacionid: string) => {
 
 export const validarDocumentos = async (reclamacionid: string) => {
   try {
-    const response = await axios.post(`${API_RECLAMACION_URL}/${reclamacionid}/validar-documentos`);
-    return response.data;  // Devuelve el resultado de la validación
+    const response = await axios.post(
+      `${API_RECLAMACION_URL}/gestionreclamaciones/${reclamacionid}/validar-documentos`
+    );
+    return response.data;  // Devuelve el resultado de la validación de todos los documentos
   } catch (error) {
-    console.error('Error al validar los documentos de la reclamación', error);
+    console.error("Error al validar los documentos de la reclamación", error);
     throw error;  // Lanza el error para manejarlo en el componente
   }
 };
+
+
+

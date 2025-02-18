@@ -78,7 +78,7 @@ const RegistrarReclamacion = () => {
     try {
       const formData = new FormData();
       formData.append("siniestroid", siniestroid);
-      formData.append("estado", "Pendiente");
+      formData.append("estado", "Por Atender");
       formData.append("descripcion", descripcion);
       formData.append("tipo", tipo);
 

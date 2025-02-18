@@ -1,10 +1,12 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import pool from "../config/db";
 
 class GestionReclamacionesController {
-  
   // Obtener todas las reclamaciones con su estado
-  public async obtenerTodasLasReclamaciones(req: Request, res: Response): Promise<void> {
+  public async obtenerTodasLasReclamaciones(
+    req: Request,
+    res: Response
+  ): Promise<void> {
     try {
       const result = await pool.query(
         `SELECT r.*, json_agg(d.*) AS documentos
@@ -18,12 +20,17 @@ class GestionReclamacionesController {
         res.json((result as any).rows);
       }
     } catch (error) {
-      res.status(500).json({ message: "Error al obtener las reclamaciones", error });
+      res
+        .status(500)
+        .json({ message: "Error al obtener las reclamaciones", error });
     }
   }
 
   // Obtener detalles de una reclamación específica
-  public async obtenerDetallesReclamacion(req: Request, res: Response): Promise<void> {
+  public async obtenerDetallesReclamacion(
+    req: Request,
+    res: Response
+  ): Promise<void> {
     const { reclamacionid } = req.params;
     try {
       const result = await pool.query(
@@ -41,62 +48,89 @@ class GestionReclamacionesController {
         res.json((result as any).rows[0]);
       }
     } catch (error) {
-      res.status(500).json({ message: "Error al obtener detalles de la reclamación", error });
+      res
+        .status(500)
+        .json({
+          message: "Error al obtener detalles de la reclamación",
+          error,
+        });
     }
   }
 
-  
   // Actualizar el estado de una reclamación
-public async actualizarEstadoReclamacion(req: Request, res: Response): Promise<void> {
-  const { reclamacionid } = req.params;
-  const { estado } = req.body; // Ya no incluimos "notas"
+  public async actualizarEstadoReclamacion(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    const { reclamacionid } = req.params;
+    const { estado, observacion } = req.body;
 
-  try {
-    const estadosValidos = ['Pendiente', 'En Proceso', 'Resuelta', 'Rechazada'];
-    if (!estadosValidos.includes(estado)) {
-      res.status(400).json({ message: "Estado inválido." });
-      return;
+    try {
+      const estadosValidos = [
+        "Por Atender",
+        "En Proceso",
+        "Observada",
+        "Resuelta",
+        "Corregida",
+      ];
+      if (!estadosValidos.includes(estado)) {
+        res.status(400).json({ message: "Estado inválido." });
+        return;
+      }
+
+      await pool.query(
+        `UPDATE reclamacion 
+         SET estado = $1, observacion = $2 
+         WHERE reclamacionid = $3`,
+        [estado, observacion, reclamacionid]
+      );
+
+      res.json({ message: "Estado de la reclamación actualizado con éxito." });
+    } catch (error) {
+      res
+        .status(500)
+        .json({
+          message: "Error al actualizar el estado de la reclamación",
+          error,
+        });
     }
-
-    // Actualizar solo el estado de la reclamación
-    await pool.query(
-      `UPDATE reclamacion 
-       SET estado = $1 
-       WHERE reclamacionid = $2`,
-      [estado, reclamacionid]
-    );
-    
-    res.json({ message: "Estado de la reclamación actualizado con éxito." });
-  } catch (error) {
-    res.status(500).json({ message: "Error al actualizar el estado de la reclamación", error });
   }
-}
-
 
   // Eliminar una reclamación
   public async eliminarReclamacion(req: Request, res: Response): Promise<void> {
     const { reclamacionid } = req.params;
     try {
-      const { rowCount } = await pool.query("SELECT * FROM reclamacion WHERE reclamacionid = $1", [reclamacionid]);
-      
+      const { rowCount } = await pool.query(
+        "SELECT * FROM reclamacion WHERE reclamacionid = $1",
+        [reclamacionid]
+      );
+
       if (rowCount === 0) {
         res.status(404).json({ message: "Reclamación no encontrada." });
         return;
       }
 
       // Eliminar los documentos relacionados
-      await pool.query("DELETE FROM documentosreclamacion WHERE reclamacionid = $1", [reclamacionid]);
+      await pool.query(
+        "DELETE FROM documentosreclamacion WHERE reclamacionid = $1",
+        [reclamacionid]
+      );
 
       // Eliminar la reclamación
-      await pool.query("DELETE FROM reclamacion WHERE reclamacionid = $1", [reclamacionid]);
+      await pool.query("DELETE FROM reclamacion WHERE reclamacionid = $1", [
+        reclamacionid,
+      ]);
 
       res.json({ message: "Reclamación eliminada con éxito." });
     } catch (error) {
-      res.status(500).json({ message: "Error al eliminar la reclamación", error });
+      res
+        .status(500)
+        .json({ message: "Error al eliminar la reclamación", error });
     }
   }
 
-  // Backend: Validación de Documentos
+  // Backend: Validar un solo documento
+ 
   public async validarDocumentos(req: Request, res: Response): Promise<void> {
     const { reclamacionid } = req.params;
     try {
@@ -139,8 +173,35 @@ public async actualizarEstadoReclamacion(req: Request, res: Response): Promise<v
       res.status(500).json({ message: "Error al validar los documentos", error });
     }
   }
-  
 
+  // Nuevo método en el controlador para buscar por ID de Reclamación o ID de Siniestro
+// Nuevo método en el controlador para buscar por ID de Reclamación
+public async buscarReclamacionPorId(req: Request, res: Response): Promise<void> {
+  const { reclamacionid } = req.params; // Obtener el ID de la URL
+
+  try {
+    // Realizar la consulta para buscar la reclamación por ID
+    const result = await pool.query(
+      `SELECT r.*, json_agg(d.*) AS documentos
+       FROM reclamacion r
+       LEFT JOIN documentosreclamacion d ON r.reclamacionid = d.reclamacionid
+       WHERE r.reclamacionid = $1
+       GROUP BY r.reclamacionid`,
+      [reclamacionid] // Filtrar por ID de reclamación
+    );
+
+    if ((result as any).rows.length === 0) {
+      res.status(404).json({ message: "Reclamación no encontrada" });
+    } else {
+      res.json((result as any).rows[0]);
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Error al buscar reclamación", error });
+  }
 }
 
+
+
+
+}
 export default new GestionReclamacionesController();

@@ -14,6 +14,5 @@ router.put("/:reclamacionid/estado", GestionReclamacionesController_1.default.ac
 router.get("/:reclamacionid/detalles", GestionReclamacionesController_1.default.obtenerDetallesReclamacion);
 // Ruta para eliminar una reclamación
 router.delete("/:reclamacionid", GestionReclamacionesController_1.default.eliminarReclamacion);
-// Ruta para validar documentos
-router.put("/:reclamacionid/validarDocumentos", GestionReclamacionesController_1.default.validarDocumentos);
+router.post("/:reclamacionid/validar-documentos", GestionReclamacionesController_1.default.validarDocumentos);
 exports.default = router;

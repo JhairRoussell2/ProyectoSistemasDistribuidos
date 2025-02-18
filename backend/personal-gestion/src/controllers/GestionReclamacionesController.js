@@ -30,7 +30,9 @@ class GestionReclamacionesController {
                 }
             }
             catch (error) {
-                res.status(500).json({ message: "Error al obtener las reclamaciones", error });
+                res
+                    .status(500)
+                    .json({ message: "Error al obtener las reclamaciones", error });
             }
         });
     }
@@ -52,7 +54,12 @@ class GestionReclamacionesController {
                 }
             }
             catch (error) {
-                res.status(500).json({ message: "Error al obtener detalles de la reclamación", error });
+                res
+                    .status(500)
+                    .json({
+                    message: "Error al obtener detalles de la reclamación",
+                    error,
+                });
             }
         });
     }
@@ -60,21 +67,31 @@ class GestionReclamacionesController {
     actualizarEstadoReclamacion(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { reclamacionid } = req.params;
-            const { estado } = req.body; // Ya no incluimos "notas"
+            const { estado, observacion } = req.body;
             try {
-                const estadosValidos = ['Pendiente', 'En Proceso', 'Resuelta', 'Rechazada'];
+                const estadosValidos = [
+                    "Por Atender",
+                    "En Proceso",
+                    "Observada",
+                    "Resuelta",
+                    "Corregida",
+                ];
                 if (!estadosValidos.includes(estado)) {
                     res.status(400).json({ message: "Estado inválido." });
                     return;
                 }
-                // Actualizar solo el estado de la reclamación
                 yield db_1.default.query(`UPDATE reclamacion 
-       SET estado = $1 
-       WHERE reclamacionid = $2`, [estado, reclamacionid]);
+         SET estado = $1, observacion = $2 
+         WHERE reclamacionid = $3`, [estado, observacion, reclamacionid]);
                 res.json({ message: "Estado de la reclamación actualizado con éxito." });
             }
             catch (error) {
-                res.status(500).json({ message: "Error al actualizar el estado de la reclamación", error });
+                res
+                    .status(500)
+                    .json({
+                    message: "Error al actualizar el estado de la reclamación",
+                    error,
+                });
             }
         });
     }
@@ -91,15 +108,19 @@ class GestionReclamacionesController {
                 // Eliminar los documentos relacionados
                 yield db_1.default.query("DELETE FROM documentosreclamacion WHERE reclamacionid = $1", [reclamacionid]);
                 // Eliminar la reclamación
-                yield db_1.default.query("DELETE FROM reclamacion WHERE reclamacionid = $1", [reclamacionid]);
+                yield db_1.default.query("DELETE FROM reclamacion WHERE reclamacionid = $1", [
+                    reclamacionid,
+                ]);
                 res.json({ message: "Reclamación eliminada con éxito." });
             }
             catch (error) {
-                res.status(500).json({ message: "Error al eliminar la reclamación", error });
+                res
+                    .status(500)
+                    .json({ message: "Error al eliminar la reclamación", error });
             }
         });
     }
-    // Backend: Validación de Documentos
+    // Backend: Validar un solo documento
     validarDocumentos(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { reclamacionid } = req.params;
