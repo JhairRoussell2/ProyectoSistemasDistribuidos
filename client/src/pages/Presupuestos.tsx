@@ -44,6 +44,25 @@ const Presupuestos = () => {
       }
   
       if (searchField === "siniestroid") {
+        if(search.length<3){
+          return true;
+        }else{
+          if(search.length<5){
+            const substring=search.substring(0,search.length+1);
+            if(substring=="SIN" || substring=="SIN-"){
+              return true;
+            }
+          }else{
+            const substring=search.substring(0,4);
+            if(substring=="SIN-"){
+              const searchNum = search.substring(4);
+              const idNum = p.siniestroid.toString();
+              return idNum.startsWith(searchNum);
+            }else{
+              return false;
+            }
+          }
+        }/* 
         // Extraer solo los números del input del usuario (por si ingresan "SIN-0XX")
         const searchNum = search.replace(/\D/g, ""); // Elimina todo lo que no sea número
         const searchNum2 = searchNum.substring(1); // Elimina el primer carácter
@@ -51,7 +70,7 @@ const Presupuestos = () => {
         // Convertimos el siniestroid a string para comparar
         const idNum = p.siniestroid.toString();
   
-        return idNum.includes(searchNum2); // Permite búsquedas parciales
+        return idNum.includes(searchNum2); // Permite búsquedas parciales */
       }
   
       return value?.toString().toLowerCase().includes(search.toLowerCase());
@@ -150,7 +169,7 @@ const Presupuestos = () => {
             <tbody>
               {filteredPresupuestos.map((presupuesto: any) => (
                 <tr key={presupuesto.presupuestoid} className="border-t hover:bg-gray-50 transition">
-                  <td className="p-3 text-center">{"SIN-0" + presupuesto.siniestroid}</td>
+                  <td className="p-3 text-center">{"SIN-" + presupuesto.siniestroid}</td>
                   <td className="p-3 text-center">{presupuesto.fecha_asignacion ? new Date(presupuesto.fecha_asignacion).toLocaleString() : "No asignada"}</td>
                   <td className="p-3 text-center">{presupuesto.nombre || "N/A"}</td>
                   <td className="p-3 text-center">{presupuesto.tipo_siniestro}</td>
