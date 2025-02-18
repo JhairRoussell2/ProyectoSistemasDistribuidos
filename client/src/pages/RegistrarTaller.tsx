@@ -10,25 +10,25 @@ const API_PROVEEDORES_URL = import.meta.env.VITE_API_PROVEEDORES_URL || "http://
 
 const RegistrarTaller = () => {
   const navigate = useNavigate();
+  
   interface AlertType {
     type: "success" | "error";
     message: string;
   }
-
-  const [alert, setAlert] = useState<AlertType | null>(null);
 
   interface Proveedor {
     id_proveedor: number;
     nombre_proveedor: string;
   }
 
+  const [alert, setAlert] = useState<AlertType | null>(null);
   const [proveedores, setProveedores] = useState<Proveedor[]>([]);
+  const [proveedoresSeleccionados, setProveedoresSeleccionados] = useState<number[]>([]);
   const [form, setForm] = useState({
     nombre: "",
     direccion: "",
     capacidad: "",
-    telefono: "",
-    proveedor_id: "", // Ahora usa proveedor_id en lugar de proveedor
+    telefono: ""
   });
 
   useEffect(() => {
@@ -43,14 +43,20 @@ const RegistrarTaller = () => {
     fetchProveedores();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleProveedorChange = (id: number) => {
+    setProveedoresSeleccionados((prev) =>
+      prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]
+    );
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const dataToSend = { ...form, proveedor_id: Number(form.proveedor_id) };
+      const dataToSend = { ...form, proveedores: proveedoresSeleccionados };
       await axios.post(API_TALLERES_URL, dataToSend);
       setAlert({ type: "success", message: "Taller creado correctamente" });
       setTimeout(() => navigate("/talleres"), 3000);
@@ -86,13 +92,29 @@ const RegistrarTaller = () => {
               <input type="tel" name="telefono" placeholder="+51 987 654 321" value={form.telefono} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg bg-red-50" required />
             </div>
             <div className="col-span-2">
-              <label className="block text-gray-700 font-semibold">Proveedor</label>
-              <select name="proveedor_id" value={form.proveedor_id} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg bg-red-50" required>
-                <option value="">Seleccione un proveedor</option>
+              <label className="block text-gray-700 font-semibold">Proveedores</label>
+              <div className="flex flex-col space-y-2 bg-red-50 p-4 border rounded-lg">
                 {proveedores.map((proveedor) => (
-                  <option key={proveedor.id_proveedor} value={proveedor.id_proveedor}>{proveedor.nombre_proveedor}</option>
+                  <label key={proveedor.id_proveedor} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={proveedoresSeleccionados.includes(proveedor.id_proveedor)}
+                      onChange={() => handleProveedorChange(proveedor.id_proveedor)}
+                    />
+                    {proveedor.nombre_proveedor}
+                  </label>
                 ))}
-              </select>
+              </div>
+              {proveedoresSeleccionados.length > 0 && (
+                <div className="mt-4 p-4 bg-gray-100 border rounded-lg">
+                  <h3 className="font-semibold">Proveedores Seleccionados:</h3>
+                  <ul>
+                    {proveedoresSeleccionados.map((id) => (
+                      <li key={id}>{proveedores.find((p) => p.id_proveedor === id)?.nombre_proveedor}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
             <button type="submit" className="col-span-2 bg-red-500 text-white font-bold px-6 py-3 rounded-lg hover:bg-blue-600 transition flex items-center justify-center gap-2">
               <CheckCircle size={18} /> Registrar
