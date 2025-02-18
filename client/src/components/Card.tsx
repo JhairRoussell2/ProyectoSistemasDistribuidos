@@ -22,3 +22,6 @@ const Card: React.FC<CardProps> = ({ icon, title, description, buttonText, butto
 };
 
 export default Card;
+
+
+

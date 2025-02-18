@@ -65,7 +65,7 @@ const DetallesReclamacion: React.FC = () => {
         observacion,
       });
       toast.success("Reclamación actualizada con éxito", {
-        onClose: () => navigate("/gestionar-reclamaciones"), // Redirige cuando el toast se cierre
+        onClose: () => navigate("/dashboard/personal/gestionar-reclamaciones"), // Redirige cuando el toast se cierre
       });
     } catch (error) {
         toast.error("Error al actualizar el estado"); // Mostrar notificación de error
@@ -262,7 +262,7 @@ const DetallesReclamacion: React.FC = () => {
               </button>
 
               <button
-                onClick={() => navigate("/gestionar-reclamaciones")}
+                onClick={() => navigate("/dashboard/personal/gestionar-reclamaciones")}
                 className="bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-300"
               >
                 <IoMdArrowBack className="inline-block mr-2" /> Regresar a la
