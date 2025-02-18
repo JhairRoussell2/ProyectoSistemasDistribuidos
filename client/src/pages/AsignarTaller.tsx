@@ -171,14 +171,14 @@ const AsignarTaller = () => {
                         <div className="mt-4">
                           <label className="block text-gray-700 font-semibold mb-2">Seleccionar Taller</label>
                           <select
-                            className="w-full p-3 border rounded-lg bg-gray-100 text-gray-700"
+                            className="w-full p-3 border border-gray-300 rounded-lg bg-white shadow-md text-gray-800 font-semibold focus:ring focus:ring-red-300"
                             value={selectedTaller || ""}
                             onChange={(e) => setSelectedTaller(Number(e.target.value))}
                           >
-                            <option value="">Seleccione un taller</option>
+                            <option value="" className="text-gray-500">Seleccione un taller</option>
                             {talleres.map((taller) => (
                               <option key={taller.tallerid} value={taller.tallerid}>
-                                {taller.nombre} - Capacidad: {taller.capacidad} - Direccion: {taller.direccion}
+                                🏭 {taller.nombre} | 👥 {taller.capacidad} | 📍 {taller.direccion}
                               </option>
                             ))}
                           </select>
