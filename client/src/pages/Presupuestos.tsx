@@ -38,49 +38,41 @@ const Presupuestos = () => {
   const filterAndSort = () => {
     let filtered = presupuestos.filter((p) => {
       let value = p[searchField];
-  
+
       if (searchField === "fecha_asignacion" && value) {
         value = new Date(value).toLocaleDateString(); // Convierte la fecha a formato legible (DD/MM/YYYY)
       }
-  
+
       if (searchField === "siniestroid") {
-        if(search.length<3){
+        if (search.length < 3) {
           return true;
-        }else{
-          if(search.length<5){
-            const substring=search.substring(0,search.length+1);
-            if(substring=="SIN" || substring=="SIN-"){
+        } else {
+          if (search.length < 5) {
+            const substring = search.substring(0, search.length + 1);
+            if (substring == "SIN" || substring == "SIN-") {
               return true;
             }
-          }else{
-            const substring=search.substring(0,4);
-            if(substring=="SIN-"){
+          } else {
+            const substring = search.substring(0, 4);
+            if (substring == "SIN-") {
               const searchNum = search.substring(4);
               const idNum = p.siniestroid.toString();
               return idNum.startsWith(searchNum);
-            }else{
+            } else {
               return false;
             }
           }
-        }/* 
-        // Extraer solo los números del input del usuario (por si ingresan "SIN-0XX")
-        const searchNum = search.replace(/\D/g, ""); // Elimina todo lo que no sea número
-        const searchNum2 = searchNum.substring(1); // Elimina el primer carácter
-  
-        // Convertimos el siniestroid a string para comparar
-        const idNum = p.siniestroid.toString();
-  
-        return idNum.includes(searchNum2); // Permite búsquedas parciales */
+        }
       }
-  
+
       return value?.toString().toLowerCase().includes(search.toLowerCase());
     });
-  
+
     if (sortField) {
       filtered.sort((a, b) => {
         let valA = a[sortField];
         let valB = b[sortField];
-  
+
         if (sortField === "fecha_asignacion") {
           valA = new Date(valA).getTime();
           valB = new Date(valB).getTime();
@@ -88,18 +80,15 @@ const Presupuestos = () => {
           valA = valA?.toString().toLowerCase();
           valB = valB?.toString().toLowerCase();
         }
-  
+
         if (valA < valB) return sortOrder === "asc" ? -1 : 1;
         if (valA > valB) return sortOrder === "asc" ? 1 : -1;
         return 0;
       });
     }
-  
+
     setFilteredPresupuestos(filtered);
   };
-  
-  
-
   const handleSort = (field: string) => {
     if (sortField === field) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -108,7 +97,6 @@ const Presupuestos = () => {
       setSortOrder("asc");
     }
   };
-
   return (
     <>
       <Navbar />
@@ -116,11 +104,12 @@ const Presupuestos = () => {
         {alert && (
           <Alert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />
         )}
-
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-4xl font-extrabold text-gray-800">📋 Presupuestos</h1>
-        </div>
-
+        <div className="flex items-center justify-between mb-6">
+          <button className="bg-white text-black border border-gray-300 px-3 py-2 rounded-lg shadow-md hover:bg-gray-200 transition" onClick={() => navigate("/dashboard")}>
+            Regresar
+          </button>
+          <h1 className="text-4xl font-extrabold text-gray-800 text-center flex-1">📋 Presupuestos</h1>
+        </div>  
         <div className="flex gap-4 mb-4">
           <input
             type="text"
@@ -152,8 +141,13 @@ const Presupuestos = () => {
             <option value="tipo_siniestro">Tipo Siniestro</option>
             <option value="placa">Placa</option>
           </select>
+          <button
+            className="flex items-center gap-1 bg-white text-black border border-gray-300 px-3 py-2 rounded-lg shadow-md hover:bg-gray-200 transition mx-auto"
+            onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+          >
+            ↑↓
+          </button>
         </div>
-
         <div className="bg-white rounded-xl shadow-xl p-6">
           <table className="w-full border border-gray-200 text-gray-800">
             <thead className="bg-gradient-to-r from-red-500 to-red-400 text-white uppercase text-sm tracking-wide">
