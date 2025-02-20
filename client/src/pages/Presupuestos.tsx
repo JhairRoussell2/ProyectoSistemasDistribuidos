@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye } from "lucide-react";
+import { Eye, ArrowLeft } from "lucide-react";
 import Alert from "../components/Alert";
 import Navbar from "../components/Navbar";
 
@@ -40,19 +40,19 @@ const Presupuestos = () => {
   const parseSiniestroId = (val: any) => {
     // Si es null o undefined, devolvemos 0 (o el valor que creas conveniente).
     if (!val) return 0;
-    
+
     // Conviértelo a string por seguridad.
     const strVal = val.toString().toUpperCase();
-  
+
     // Si empieza con "SIN-", extraemos el número que sigue.
     if (strVal.startsWith("SIN-")) {
       return parseInt(strVal.substring(4), 10) || 0;
     }
-  
+
     // Si no empieza con "SIN-", tratamos de parsearlo como número directo.
     return parseInt(strVal, 10) || 0;
   };
-  
+
 
   const filterAndSort = () => {
     let filtered = presupuestos.filter((p) => {
@@ -91,17 +91,17 @@ const Presupuestos = () => {
       filtered.sort((a, b) => {
         let valA = a[sortField];
         let valB = b[sortField];
-    
+
         // Ordenamiento especial para siniestroid (extrayendo parte numérica).
         if (sortField === "siniestroid") {
           valA = parseSiniestroId(valA);
           valB = parseSiniestroId(valB);
-        } 
+        }
         // Ordenamiento especial para fecha_asignacion.
         else if (sortField === "fecha_asignacion") {
           valA = new Date(valA).getTime();
           valB = new Date(valB).getTime();
-        } 
+        }
         // Ordenamiento por texto (cualquier otro campo).
         else {
           const strA = valA ? valA.toString().toLowerCase() : "";
@@ -109,13 +109,13 @@ const Presupuestos = () => {
           valA = strA;
           valB = strB;
         }
-    
+
         if (valA < valB) return sortOrder === "asc" ? -1 : 1;
         if (valA > valB) return sortOrder === "asc" ? 1 : -1;
         return 0;
       });
     }
-    
+
 
 
     setFilteredPresupuestos(filtered);
@@ -150,9 +150,10 @@ const Presupuestos = () => {
         )}
         <div className="flex items-center justify-between mb-6">
           <button
-            className="bg-white text-black border border-gray-300 px-3 py-2 rounded-lg shadow-md hover:bg-gray-200 transition"
-            onClick={() => navigate("/dashboard")}
+            className="flex items-center gap-2 bg-blue-500 text-white px-3 py-2 rounded-lg shadow-md hover:bg-blue-600 transition"
+            onClick={() => navigate("/dashboard/admin")}
           >
+            <ArrowLeft size={18} />
             Regresar
           </button>
           <h1 className="text-4xl font-extrabold text-gray-800 text-center flex-1">
@@ -245,9 +246,8 @@ const Presupuestos = () => {
             <button
               key={index}
               onClick={() => handlePageChange(index + 1)}
-              className={`px-4 py-2 rounded-lg border ${
-                currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
+              className={`px-4 py-2 rounded-lg border ${currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200"
+                }`}
             >
               {index + 1}
             </button>
