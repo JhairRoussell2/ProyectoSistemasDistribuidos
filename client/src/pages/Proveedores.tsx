@@ -20,6 +20,8 @@ const Proveedores = () => {
   const [searchTerm, setSearchTerm] = useState(""); // Estado para el término de búsqueda
   const [currentPage, setCurrentPage] = useState(1); // Página actual para la paginación
   const proveedoresPorPagina = 15; // Número de proveedores por página
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [sortColumn, setSortColumn] = useState<"nombre_proveedor" | "valoracion">("nombre_proveedor"); // Definir columna por la cual ordenar
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -85,11 +87,27 @@ const Proveedores = () => {
     window.open(doc, "_blank");
   };
 
+  const handleSort = (column: "nombre_proveedor" | "valoracion") => {
+    const order = sortColumn === column && sortOrder === "asc" ? "desc" : "asc";
+    setSortColumn(column);
+    setSortOrder(order);
+  };
+
   // Paginación
   const totalPages = Math.ceil(filteredProveedores.length / proveedoresPorPagina);
   const indexOfLastProvider = currentPage * proveedoresPorPagina;
   const indexOfFirstProvider = indexOfLastProvider - proveedoresPorPagina;
-  const currentProviders = filteredProveedores.slice(indexOfFirstProvider, indexOfLastProvider);
+  const currentProviders = filteredProveedores
+    .sort((a, b) => {
+      if (sortColumn === "nombre_proveedor") {
+        return sortOrder === "asc"
+          ? a.nombre_proveedor.localeCompare(b.nombre_proveedor)
+          : b.nombre_proveedor.localeCompare(a.nombre_proveedor);
+      } else {
+        return sortOrder === "asc" ? a.valoracion - b.valoracion : b.valoracion - a.valoracion;
+      }
+    })
+    .slice(indexOfFirstProvider, indexOfLastProvider);
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -101,15 +119,25 @@ const Proveedores = () => {
       <div className="p-8 min-h-screen bg-gradient-to-br from-white via-gray-100 to-red-50 text-gray-900 pt-24">
         {alert && <Alert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />}
 
-        {/* Botón Regresar */}
-        <div className="mb-6">
-          <button
-            onClick={() => navigate("/dashboard/admin")} // Cambia la ruta a tu ruta de administración
-            className="flex items-center gap-2 bg-blue-500 text-white px-5 py-3 rounded-lg shadow-md hover:bg-blue-600 transition"
-          >
-            <ArrowLeft size={18} />
-            Regresar al Dashboard
-          </button>
+        {/* Contenedor para Título y Botón Regresar */}
+        <div className="flex justify-center items-center pt-8 pb-6 w-full">
+          <div className="flex justify-between items-center w-full max-w-7xl px-6">
+            {/* Botón Regresar */}
+            <button
+              onClick={() => navigate("/dashboard/admin")}
+              className="flex items-center gap-2 bg-blue-500 text-white px-5 py-3 rounded-lg shadow-md hover:bg-blue-600 transition-all ease-in-out duration-200 transform hover:scale-105"
+              aria-label="Regresar al Dashboard"
+            >
+              <ArrowLeft size={18} />
+              Regresar
+            </button>
+
+            {/* Título Proveedores */}
+            <h1 className="text-4xl font-extrabold text-gray-800 shadow-lg p-2 bg-white rounded-lg mx-auto ml-85">
+  📋 Proveedores
+</h1>
+
+          </div>
         </div>
 
         {/* Buscador */}
@@ -119,20 +147,9 @@ const Proveedores = () => {
             placeholder="Buscar por nombre"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg shadow-md"
+            className="w-full p-3 border border-gray-300 rounded-lg shadow-md focus:ring-2 focus:ring-red-500 focus:outline-none"
+            aria-label="Buscar proveedor"
           />
-        </div>
-
-        {/* Encabezado */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-4xl font-extrabold text-gray-800">📋 Proveedores</h1>
-          <button
-            onClick={() => navigate("/registrar-proveedor")}
-            className="flex items-center gap-2 bg-red-500 text-white px-5 py-3 rounded-lg shadow-md hover:bg-red-600 transition"
-          >
-            <Plus size={18} />
-            Agregar Proveedor
-          </button>
         </div>
 
         {/* Tabla de Proveedores */}
@@ -140,17 +157,32 @@ const Proveedores = () => {
           <table className="w-full border border-gray-200 text-gray-800">
             <thead className="bg-gradient-to-r from-red-500 to-red-400 text-white uppercase text-sm tracking-wide">
               <tr>
-                <th className="p-3 text-center">Nombre</th>
+                <th
+                  className="p-3 text-center cursor-pointer"
+                  onClick={() => handleSort("nombre_proveedor")}
+                  aria-label="Ordenar por nombre proveedor"
+                >
+                  Nombre {sortColumn === "nombre_proveedor" && (sortOrder === "asc" ? "↑" : "↓")}
+                </th>
                 <th className="p-3 text-center">Teléfono</th>
                 <th className="p-3 text-center">Correo</th>
-                <th className="p-3 text-center">Calificación</th>
+                <th
+                  className="p-3 text-center cursor-pointer"
+                  onClick={() => handleSort("valoracion")}
+                  aria-label="Ordenar por calificación"
+                >
+                  Calificación {sortColumn === "valoracion" && (sortOrder === "asc" ? "↑" : "↓")}
+                </th>
                 <th className="p-3 text-center">Documentos</th>
                 <th className="p-3 text-center">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {currentProviders.map((prov: any) => (
-                <tr key={prov.id_proveedor} className="border-t hover:bg-gray-50 transition">
+                <tr
+                  key={prov.id_proveedor}
+                  className="border-t hover:bg-gray-50 transition-all duration-200"
+                >
                   <td className="p-3 text-center">{prov.nombre_proveedor}</td>
                   <td className="p-3 text-center">{prov.telefono_proveedor}</td>
                   <td className="p-3 text-center">{prov.correo_electronico}</td>
@@ -160,7 +192,8 @@ const Proveedores = () => {
                     {prov.documentos && prov.documentos.length > 0 ? (
                       <button
                         onClick={() => handleViewDocuments(prov.documentos)}
-                        className="flex items-center gap-1 bg-blue-500 text-white px-3 py-2 rounded-lg shadow-md hover:bg-blue-600 transition"
+                        className="flex items-center gap-1 bg-blue-500 text-white px-3 py-2 rounded-lg shadow-md hover:bg-blue-600 transition-all ease-in-out duration-200"
+                        aria-label="Ver documentos"
                       >
                         <Eye size={16} />
                         Ver Documentos ({prov.documentos.length})
@@ -173,7 +206,8 @@ const Proveedores = () => {
                   <td className="p-3 flex justify-center gap-2">
                     <button
                       onClick={() => navigate(`/editar-proveedor/${prov.id_proveedor}`)}
-                      className="flex items-center gap-1 bg-yellow-500 text-white px-3 py-2 rounded-lg shadow-md hover:bg-yellow-600 transition"
+                      className="flex items-center gap-1 bg-yellow-500 text-white px-3 py-2 rounded-lg shadow-md hover:bg-yellow-600 transition-all ease-in-out duration-200"
+                      aria-label="Editar proveedor"
                     >
                       <Pencil size={16} />
                       Editar
@@ -183,7 +217,8 @@ const Proveedores = () => {
                         setSelectedId(prov.id_proveedor);
                         setModalOpen(true);
                       }}
-                      className="flex items-center gap-1 bg-red-500 text-white px-3 py-2 rounded-lg shadow-md hover:bg-red-600 transition"
+                      className="flex items-center gap-1 bg-red-500 text-white px-3 py-2 rounded-lg shadow-md hover:bg-red-600 transition-all ease-in-out duration-200"
+                      aria-label="Eliminar proveedor"
                     >
                       <Trash2 size={16} />
                       Eliminar
@@ -270,13 +305,13 @@ const Proveedores = () => {
               <div className="flex justify-center gap-4 mt-4">
                 <button
                   onClick={closeModal}
-                  className="bg-gray-500 hover:bg-gray-600 px-5 py-2 rounded-lg text-white transition"
+                  className="bg-gray-500 hover:bg-gray-600 px-5 py-2 rounded-lg text-white transition-all ease-in-out duration-200"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="bg-red-600 hover:bg-red-700 px-5 py-2 rounded-lg text-white transition"
+                  className="bg-red-600 hover:bg-red-700 px-5 py-2 rounded-lg text-white transition-all ease-in-out duration-200"
                 >
                   Eliminar
                 </button>
