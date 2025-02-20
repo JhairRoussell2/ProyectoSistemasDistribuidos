@@ -12,4 +12,7 @@ router.get("/", listarSiniestros);
 // Ruta para asignar todos los siniestros
 router.put("/asignar", asignarTaller);
 
+// Ruta para asignar todos los siniestros
+router.put("/cambiar/estado", cambiarEstado);
+
 export default router;

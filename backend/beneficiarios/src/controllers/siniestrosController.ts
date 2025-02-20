@@ -119,3 +119,18 @@ export const asignarTaller = async (req: Request, res: Response, next: NextFunct
     next(error);
   }
 };
+
+export const cambiarEstado = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { siniestroid, estado } = req.body;
+    if (!siniestroid || !estado) {
+      res.status(400).json({ message: "Faltan datos obligatorios." });
+      return;
+    }
+    await SiniestroService.cambiarEstado(siniestroid, estado);
+    res.json({ message: "Estado actualizado correctamente." });
+  } catch (error) {
+    console.error("Error al cambiar el estado:", error);
+    res.status(500).json({ message: error instanceof Error ? error.message : "Error interno del servidor." });
+  }
+};
