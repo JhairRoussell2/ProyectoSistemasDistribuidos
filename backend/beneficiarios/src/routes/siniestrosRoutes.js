@@ -12,4 +12,6 @@ router.post("/", siniestrosController_1.registrarSiniestro);
 router.get("/", siniestrosController_1.listarSiniestros);
 // Ruta para asignar todos los siniestros
 router.put("/asignar", siniestrosController_1.asignarTaller);
+// Ruta para asignar todos los siniestros
+router.put("/cambiar/estado", siniestrosController_1.cambiarEstado);
 exports.default = router;
