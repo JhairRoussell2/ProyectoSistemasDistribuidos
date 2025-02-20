@@ -108,3 +108,19 @@ const asignarTaller = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.asignarTaller = asignarTaller;
+const cambiarEstado = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { siniestroid, estado } = req.body;
+        if (!siniestroid || !estado) {
+            res.status(400).json({ message: "Faltan datos obligatorios." });
+            return;
+        }
+        yield siniestroService_1.default.cambiarEstado(siniestroid, estado);
+        res.json({ message: "Estado actualizado correctamente." });
+    }
+    catch (error) {
+        console.error("Error al cambiar el estado:", error);
+        res.status(500).json({ message: error instanceof Error ? error.message : "Error interno del servidor." });
+    }
+});
+exports.cambiarEstado = cambiarEstado;
