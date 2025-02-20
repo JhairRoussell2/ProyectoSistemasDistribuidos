@@ -15,6 +15,8 @@ const Presupuestos = () => {
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [alert, setAlert] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const presupuestosPorPagina = 15; // Número de presupuestos por página
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,6 +37,23 @@ const Presupuestos = () => {
       setAlert({ type: "error", message: "Error al obtener presupuestos" });
     }
   };
+  const parseSiniestroId = (val: any) => {
+    // Si es null o undefined, devolvemos 0 (o el valor que creas conveniente).
+    if (!val) return 0;
+    
+    // Conviértelo a string por seguridad.
+    const strVal = val.toString().toUpperCase();
+  
+    // Si empieza con "SIN-", extraemos el número que sigue.
+    if (strVal.startsWith("SIN-")) {
+      return parseInt(strVal.substring(4), 10) || 0;
+    }
+  
+    // Si no empieza con "SIN-", tratamos de parsearlo como número directo.
+    return parseInt(strVal, 10) || 0;
+  };
+  
+
   const filterAndSort = () => {
     let filtered = presupuestos.filter((p) => {
       let value = p[searchField];
@@ -49,12 +68,12 @@ const Presupuestos = () => {
         } else {
           if (search.length < 5) {
             const substring = search.substring(0, search.length + 1);
-            if (substring == "SIN" || substring == "SIN-") {
+            if (substring === "SIN" || substring === "SIN-") {
               return true;
             }
           } else {
             const substring = search.substring(0, 4);
-            if (substring == "SIN-") {
+            if (substring === "SIN-") {
               const searchNum = search.substring(4);
               const idNum = p.siniestroid.toString();
               return idNum.startsWith(searchNum);
@@ -72,23 +91,37 @@ const Presupuestos = () => {
       filtered.sort((a, b) => {
         let valA = a[sortField];
         let valB = b[sortField];
-
-        if (sortField === "fecha_asignacion") {
+    
+        // Ordenamiento especial para siniestroid (extrayendo parte numérica).
+        if (sortField === "siniestroid") {
+          valA = parseSiniestroId(valA);
+          valB = parseSiniestroId(valB);
+        } 
+        // Ordenamiento especial para fecha_asignacion.
+        else if (sortField === "fecha_asignacion") {
           valA = new Date(valA).getTime();
           valB = new Date(valB).getTime();
-        } else {
-          valA = valA?.toString().toLowerCase();
-          valB = valB?.toString().toLowerCase();
+        } 
+        // Ordenamiento por texto (cualquier otro campo).
+        else {
+          const strA = valA ? valA.toString().toLowerCase() : "";
+          const strB = valB ? valB.toString().toLowerCase() : "";
+          valA = strA;
+          valB = strB;
         }
-
+    
         if (valA < valB) return sortOrder === "asc" ? -1 : 1;
         if (valA > valB) return sortOrder === "asc" ? 1 : -1;
         return 0;
       });
     }
+    
+
 
     setFilteredPresupuestos(filtered);
+    setCurrentPage(1); // Reinicia a la primera página al filtrar o cambiar criterios
   };
+
   const handleSort = (field: string) => {
     if (sortField === field) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -97,6 +130,17 @@ const Presupuestos = () => {
       setSortOrder("asc");
     }
   };
+
+  // Paginación
+  const totalPages = Math.ceil(filteredPresupuestos.length / presupuestosPorPagina);
+  const indexOfLastPresupuesto = currentPage * presupuestosPorPagina;
+  const indexOfFirstPresupuesto = indexOfLastPresupuesto - presupuestosPorPagina;
+  const currentPresupuestos = filteredPresupuestos.slice(indexOfFirstPresupuesto, indexOfLastPresupuesto);
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <>
       <Navbar />
@@ -105,11 +149,16 @@ const Presupuestos = () => {
           <Alert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />
         )}
         <div className="flex items-center justify-between mb-6">
-          <button className="bg-white text-black border border-gray-300 px-3 py-2 rounded-lg shadow-md hover:bg-gray-200 transition" onClick={() => navigate("/dashboard")}>
+          <button
+            className="bg-white text-black border border-gray-300 px-3 py-2 rounded-lg shadow-md hover:bg-gray-200 transition"
+            onClick={() => navigate("/dashboard")}
+          >
             Regresar
           </button>
-          <h1 className="text-4xl font-extrabold text-gray-800 text-center flex-1">📋 Presupuestos</h1>
-        </div>  
+          <h1 className="text-4xl font-extrabold text-gray-800 text-center flex-1">
+            📋 Presupuestos
+          </h1>
+        </div>
         <div className="flex gap-4 mb-4">
           <input
             type="text"
@@ -161,16 +210,24 @@ const Presupuestos = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredPresupuestos.map((presupuesto: any) => (
+              {currentPresupuestos.map((presupuesto: any) => (
                 <tr key={presupuesto.presupuestoid} className="border-t hover:bg-gray-50 transition">
-                  <td className="p-3 text-center">{"SIN-" + presupuesto.siniestroid}</td>
-                  <td className="p-3 text-center">{presupuesto.fecha_asignacion ? new Date(presupuesto.fecha_asignacion).toLocaleString() : "No asignada"}</td>
+                  <td className="p-3 text-center">
+                    {"SIN-" + presupuesto.siniestroid}
+                  </td>
+                  <td className="p-3 text-center">
+                    {presupuesto.fecha_asignacion
+                      ? new Date(presupuesto.fecha_asignacion).toLocaleString()
+                      : "No asignada"}
+                  </td>
                   <td className="p-3 text-center">{presupuesto.nombre || "N/A"}</td>
                   <td className="p-3 text-center">{presupuesto.tipo_siniestro}</td>
                   <td className="p-3 text-center">{presupuesto.placa || "N/A"}</td>
                   <td className="p-3 text-center">
                     <button
-                      onClick={() => navigate(`/detallepresupuesto/${presupuesto.presupuestoid}`)}
+                      onClick={() =>
+                        navigate(`/detallepresupuesto/${presupuesto.presupuestoid}`)
+                      }
                       className="flex items-center gap-1 bg-blue-500 text-white px-3 py-2 rounded-lg shadow-md hover:bg-blue-600 transition mx-auto"
                     >
                       <Eye size={16} />
@@ -181,6 +238,20 @@ const Presupuestos = () => {
               ))}
             </tbody>
           </table>
+        </div>
+        {/* Controles de paginación */}
+        <div className="flex justify-center mt-6 gap-2">
+          {[...Array(totalPages)].map((_, index) => (
+            <button
+              key={index}
+              onClick={() => handlePageChange(index + 1)}
+              className={`px-4 py-2 rounded-lg border ${
+                currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200"
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
         </div>
       </div>
     </>
