@@ -95,13 +95,25 @@ const AsignarTaller = () => {
   const handleConfirmAsignar = async () => {
     if (selectedSiniestro !== null && selectedTaller !== null) {
       try {
-        await axios.put("http://localhost:3000/api/siniestros/asignar", {
+        const response = await axios.put("http://localhost:3000/api/siniestros/asignar", {
           siniestroid: selectedSiniestro,
           tallerid: selectedTaller,
         });
+  
+        if (response.status === 200) {
+          setSiniestros(prevSiniestros =>
+            prevSiniestros.map(siniestro =>
+              siniestro.siniestroid === selectedSiniestro
+                ? { ...siniestro, tallerid: selectedTaller, estado: "Asignado" } // Actualiza localmente
+                : siniestro
+            )
+          );
+  
+          setSuccessMessage("✅ Taller asignado exitosamente.");
+          setTimeout(() => setSuccessMessage(""), 3000);
+        }
+        
         setSelectedSiniestro(null);
-        setSuccessMessage("✅ Taller asignado exitosamente.");
-        setTimeout(() => setSuccessMessage(""), 3000);
       } catch (error) {
         console.error("Error al asignar el taller:", error);
       }
