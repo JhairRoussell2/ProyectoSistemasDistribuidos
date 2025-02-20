@@ -195,21 +195,6 @@ const EditarTaller = () => {
               />
             </div>
 
-            {/* Campo: Estado */}
-            <div className="col-span-2">
-              <label className="block text-gray-700 font-semibold">Estado</label>
-              <select
-                name="estado"
-                value={form.estado}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                required
-              >
-                <option value="Disponible">Disponible</option>
-                <option value="No Disponible">No Disponible</option>
-              </select>
-            </div>
-
             {/* Sección de Proveedores: dos botones (Seleccionar y Ver seleccionados) */}
             <div className="col-span-2">
               <label className="block text-gray-700 font-semibold">Proveedores</label>
