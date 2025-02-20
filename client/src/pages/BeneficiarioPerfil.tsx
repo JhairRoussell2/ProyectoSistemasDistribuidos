@@ -220,7 +220,6 @@ const BeneficiarioPerfil = () => {
         </button>
         </div>       
 
-
       </div>
     </>
 
