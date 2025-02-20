@@ -27,6 +27,7 @@ import DetallePresupuestos from "./pages/GestionarPresupuestos";
 import ForgotPassword from "./pages/Recuperar";
 import ResetPassword from "./pages/Resetear";
 import AsignarTaller from "./pages/AsignarTaller";
+import BeneficiarioPerfil from "./pages/BeneficiarioPerfil";
 import ValidarReclamacion from "./pages/DetallesReclamacion";  // Importa el nuevo componente
 
 
@@ -60,6 +61,7 @@ const App = () => {
         <Route path="/registrar-taller" element={<RegistrarTaller />} />
         <Route path="/editar-taller/:id" element={<EditarTaller />} />
         <Route path="/registrar-reclamacion" element={<RegistrarReclamacion />} />
+        <Route path="/dashboard/general/info" element={<BeneficiarioPerfil />} />
         <Route path="/recuperar" element={<ForgotPassword />} />
         <Route path="/reset/:token" element={<ResetPassword />} />
         <Route path="/dashboard/personal/gestionar-reclamaciones" element={<GestionarReclamaciones />} /> {/* Aquí agregas la nueva ruta */}
