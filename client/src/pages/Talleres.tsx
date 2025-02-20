@@ -18,6 +18,10 @@ const Talleres = () => {
   const [proveedores, setProveedores] = useState<any[]>([]);
   const navigate = useNavigate();
 
+  // Estado para la paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const talleresPorPagina = 10; // 10 registros por página
+
   useEffect(() => {
     fetchTalleres();
   }, []);
@@ -70,6 +74,16 @@ const Talleres = () => {
     setProveedoresModalOpen(true);
   };
 
+  // Paginación:
+  const totalPages = Math.ceil(talleres.length / talleresPorPagina);
+  const indexOfLastTaller = currentPage * talleresPorPagina;
+  const indexOfFirstTaller = indexOfLastTaller - talleresPorPagina;
+  const currentTalleres = talleres.slice(indexOfFirstTaller, indexOfLastTaller);
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <>
       <Navbar />
@@ -79,7 +93,7 @@ const Talleres = () => {
         <div className="flex items-center justify-center mb-6 relative">
           {/* Botón "Regresar" a la izquierda */}
           <button
-            onClick={() => navigate("/dashboard")} // Ajusta la ruta según corresponda
+            onClick={() => navigate("/dashboard/admin")}
             className="absolute left-0 flex items-center gap-2 bg-blue-500 text-white px-5 py-3 rounded-lg shadow-md hover:bg-blue-600 transition"
           >
             <ArrowLeft size={18} />
@@ -91,7 +105,6 @@ const Talleres = () => {
 
           {/* CONTENEDOR ALERTA Y BOTÓN AGREGAR TALLER */}
           <div className="absolute right-0 flex flex-col items-end gap-2">
-            {/* Alerta (aparece arriba del botón) */}
             {alert && (
               <Alert
                 type={alert.type}
@@ -99,8 +112,6 @@ const Talleres = () => {
                 onClose={() => setAlert(null)}
               />
             )}
-
-            {/* Botón "Agregar Taller" */}
             <button
               onClick={() => navigate("/registrar-taller")}
               className="flex items-center gap-2 bg-blue-500 text-white px-5 py-3 rounded-lg shadow-md hover:bg-blue-600 transition"
@@ -126,7 +137,7 @@ const Talleres = () => {
               </tr>
             </thead>
             <tbody>
-              {talleres.map((taller: any) => (
+              {currentTalleres.map((taller: any) => (
                 <tr
                   key={taller.tallerid}
                   className="border-t hover:bg-gray-50 transition"
@@ -171,6 +182,21 @@ const Talleres = () => {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Controles de Paginación */}
+        <div className="flex justify-center mt-6 gap-2">
+          {[...Array(totalPages)].map((_, index) => (
+            <button
+              key={index}
+              onClick={() => handlePageChange(index + 1)}
+              className={`px-4 py-2 rounded-lg border ${
+                currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200"
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
         </div>
 
         {/* Modal para ver proveedores */}

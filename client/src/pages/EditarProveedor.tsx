@@ -198,9 +198,8 @@ const EditarProveedor = () => {
                 />
               </div>
             </div>
-
-            {/* TIPO DE PROVEEDOR */}
-            <div>
+   {/* TIPO DE PROVEEDOR */}
+   <div>
               <label className="block text-gray-700 font-semibold">Tipo de Proveedor</label>
               <select
                 name="tipo_proveedor"
@@ -208,13 +207,16 @@ const EditarProveedor = () => {
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-red-300 rounded-lg bg-red-50"
               >
-                <option value="Distribuidor">Distribuidor</option>
-                <option value="Fabricante">Fabricante</option>
-                <option value="Mayorista">Mayorista</option>
-                <option value="Minorista">Minorista</option>
+                <option value="Piezas y Componentes">Piezas y Componentes</option>
+                <option value="Herramientas y Equipos">Herramientas y Equipos</option>
+                <option value="Materiales Consumibles">Materiales Consumibles</option>
+                <option value="Herramientas Especializadas">Herramientas Especializadas</option>
+                <option value="Equipos de Diagnóstico y Tecnología">Equipos de Diagnóstico y Tecnología</option>
+                <option value="Servicios de Desmontaje y Reciclaje">Servicios de Desmontaje y Reciclaje</option>
+                <option value="Seguridad y Protección">Seguridad y Protección</option>
+                <option value="Carrocería y Pintura">Carrocería y Pintura</option>
               </select>
             </div>
-
             {/* ESTADO DEL PROVEEDOR */}
             <div>
               <label className="block text-gray-700 font-semibold">Estado del Proveedor</label>

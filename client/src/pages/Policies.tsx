@@ -32,7 +32,6 @@ const Policies = () => {
       });
 
       setPaymentIntent(response.data.clientSecret);
-
     } catch (error) {
       setErrorMessage('Error al procesar el pago. Intenta nuevamente.');
       console.error('Error en la creación del pago:', error);
@@ -60,8 +59,8 @@ const Policies = () => {
   const handlePaymentSuccess = async (policy: string) => {
     try {
       if (user) {
+        toast.success(`Pago exitoso para la póliza: ${policy}`);
         await createPolicy(user.UsuarioID, policy);
-        setSuccessMessage(`Pago exitoso para la póliza: ${policy}`);
         toast.success(`¡Póliza ${policy} creada con éxito!`);
       } else {
         setErrorMessage('Usuario no autenticado. Intenta nuevamente.');
@@ -87,7 +86,7 @@ const Policies = () => {
           <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transform transition duration-300 ease-in-out hover:scale-105">
             <h3 className="text-xl font-bold text-gray-800 mb-4">Póliza Básica</h3>
             <p className="text-gray-600 mb-4">Cobertura básica con beneficios esenciales para ti.</p>
-            <p className="text-lg font-semibold mb-4 text-gray-800">Costo: <span className="text-green-600">$10 / mes</span></p>
+            <p className="text-lg font-semibold mb-4 text-gray-800">Costo: <span className="text-green-600">S/100 / mes</span></p>
             <button
               onClick={() => handleSelectPolicy('Básica')}
               className="w-full bg-black hover:bg-red-500 text-white py-2 rounded-lg font-semibold transition"
@@ -100,7 +99,7 @@ const Policies = () => {
           <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transform transition duration-300 ease-in-out hover:scale-105">
             <h3 className="text-xl font-bold text-gray-800 mb-4">Póliza Normal</h3>
             <p className="text-gray-600 mb-4">Cobertura intermedia con mayores beneficios y atención preferencial.</p>
-            <p className="text-lg font-semibold mb-4 text-gray-800">Costo: <span className="text-green-600">$25 / mes</span></p>
+            <p className="text-lg font-semibold mb-4 text-gray-800">Costo: <span className="text-green-600">S/250 / mes</span></p>
             <button
               onClick={() => handleSelectPolicy('Normal')}
               className="w-full bg-black hover:bg-red-500 text-white py-2 rounded-lg font-semibold transition"
@@ -113,7 +112,7 @@ const Policies = () => {
           <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transform transition duration-300 ease-in-out hover:scale-105">
             <h3 className="text-xl font-bold text-gray-800 mb-4">Póliza Premium</h3>
             <p className="text-gray-600 mb-4">Cobertura premium con atención personalizada y todos los beneficios.</p>
-            <p className="text-lg font-semibold mb-4 text-gray-800">Costo: <span className="text-green-600">$50 / mes</span></p>
+            <p className="text-lg font-semibold mb-4 text-gray-800">Costo: <span className="text-green-600">S/500 / mes</span></p>
             <button
               onClick={() => handleSelectPolicy('Premium')}
               className="w-full bg-black hover:bg-red-500 text-white py-2 rounded-lg font-semibold transition"
