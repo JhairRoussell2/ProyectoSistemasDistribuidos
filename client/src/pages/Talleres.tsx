@@ -79,7 +79,7 @@ const Talleres = () => {
         <div className="flex items-center justify-center mb-6 relative">
           {/* Botón "Regresar" a la izquierda */}
           <button
-            onClick={() => navigate("/dashboard")} // Ajusta la ruta según corresponda
+            onClick={() => navigate("/dashboard/admin")} // Ajusta la ruta según corresponda
             className="absolute left-0 flex items-center gap-2 bg-blue-500 text-white px-5 py-3 rounded-lg shadow-md hover:bg-blue-600 transition"
           >
             <ArrowLeft size={18} />
