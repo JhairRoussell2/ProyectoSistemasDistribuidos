@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { FileText, CheckCircle } from "lucide-react";
 import Alert from "../components/Alert";
 import Navbar from "../components/Navbar";
+import apiClient from "../services/apiClient";
 
-const API_PRESUPUESTO_URL = "https://segurosflexpresupuestopagos.onrender.com/api/presupuesto-pagos"; // 🔗 Cambiar por la URL de la API http://localhost:5002
+//const API_PRESUPUESTO_URL = "https://segurosflexpresupuestopagos.onrender.com/api/presupuesto-pagos"; // 🔗 Cambiar por la URL de la API http://localhost:5002
 
 interface AlertType {
   type: "success" | "error";
@@ -40,8 +40,10 @@ const GestionarPresupuesto: React.FC = () => {
     const fetchData = async () => {
       try {
         const [polizaRes, presupuestoRes] = await Promise.all([
-          axios.get(`${API_PRESUPUESTO_URL}/poliza/${id}`),
-          axios.get(`${API_PRESUPUESTO_URL}/${id}`),
+          apiClient.get(`/poliza/${id}`),
+          apiClient.get(`/${id}`),
+          //axios.get(`${API_PRESUPUESTO_URL}/poliza/${id}`),
+          //axios.get(`${API_PRESUPUESTO_URL}/${id}`),
         ]);
 
         setPoliza(polizaRes.data);
@@ -71,7 +73,7 @@ const GestionarPresupuesto: React.FC = () => {
     };
 
     try {
-      await axios.put(`${API_PRESUPUESTO_URL}/${id}`, data);
+      await apiClient.put(`/${id}`,data);// axios.put(`${API_PRESUPUESTO_URL}/${id}`, data);
       setAlert({ type: "success", message: "Presupuesto validado correctamente" });
       setTimeout(() => {
         navigate("/gestionarpresupuestos");
@@ -83,7 +85,7 @@ const GestionarPresupuesto: React.FC = () => {
 
   const fetchDocumentos = async () => {
     try {
-      const response = await axios.get(`${API_PRESUPUESTO_URL}/documentos/${id}`);
+      const response = await apiClient.get(`/documentos/${id}`);// axios.get(`${API_PRESUPUESTO_URL}/documentos/${id}`);
       const documentosArray = JSON.parse(response.data.obtener_documentos);
       setDocumentos(documentosArray);
       setMostrarDocumentos(true);
