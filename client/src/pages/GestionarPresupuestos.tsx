@@ -5,7 +5,7 @@ import { FileText, CheckCircle } from "lucide-react";
 import Alert from "../components/Alert";
 import Navbar from "../components/Navbar";
 
-const API_PRESUPUESTO_URL = "http://localhost:5002/api/presupuesto-pagos";
+const API_PRESUPUESTO_URL = "https://segurosflexpresupuestopagos.onrender.com/api/presupuesto-pagos"; // 🔗 Cambiar por la URL de la API http://localhost:5002
 
 interface AlertType {
   type: "success" | "error";

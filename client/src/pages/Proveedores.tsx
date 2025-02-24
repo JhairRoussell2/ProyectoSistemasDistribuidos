@@ -5,8 +5,9 @@ import Alert from "../components/Alert";
 import Modal from "../components/Modal";
 import Navbar from "../components/Navbar";
 import { motion } from "framer-motion";
-
-const API_PROVEEDORES_URL = import.meta.env.VITE_API_PROVEEDORES_URL || "http://localhost:5001/api/proveedores";
+const ruta_deploy = import.meta.env.VITE_API_PROVEEDORES_URL;
+const url = `${ruta_deploy}/api/proveedores`;
+const API_PROVEEDORES_URL = url || "http://localhost:5001/api/proveedores";
 
 const Proveedores = () => {
   const [proveedores, setProveedores] = useState<any[]>([]);
