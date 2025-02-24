@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FileText, CheckCircle, AlignCenter } from "lucide-react";
+import { FileText, CheckCircle} from "lucide-react";
 import Alert from "../components/Alert";
 import Navbar from "../components/Navbar";
 

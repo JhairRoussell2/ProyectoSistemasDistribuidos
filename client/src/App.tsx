@@ -28,7 +28,6 @@ import ForgotPassword from "./pages/Recuperar";
 import ResetPassword from "./pages/Resetear";
 import AsignarTaller from "./pages/AsignarTaller";
 import BeneficiarioPerfil from "./pages/BeneficiarioPerfil";
-import ValidarReclamacion from "./pages/DetallesReclamacion";  // Importa el nuevo componente
 
 
 // No olvides importar los estilos de react-toastify

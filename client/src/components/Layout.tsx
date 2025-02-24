@@ -7,7 +7,6 @@ import {
   FiHome,
   FiInfo,
   FiClipboard,
-  FiSettings,
   FiCheckCircle,
   FiUsers,
 } from "react-icons/fi";

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion"; // Importa Framer Motion para animaciones
 import { FiMessageSquare } from "react-icons/fi"; // Ícono para el mensaje
 import asistenteImage from '../assets/I.png'; // Importa la imagen de manera correcta

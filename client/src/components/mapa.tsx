@@ -43,7 +43,6 @@ const Mapa: React.FC<MapaProps> = ({ setUbicacion }) => {
         fetch(url)
           .then((response) => response.json())
           .then((data) => {
-            const address = data.address;
             setUbicacion(data.display_name);
           })
           .catch((error) => {

@@ -1,4 +1,3 @@
-import React from "react";
 import { Bar, Pie } from "react-chartjs-2";
 import Layout from "../components/Layout";
 import Assistant from "../components/Assistant"; // Importa el componente Assistant

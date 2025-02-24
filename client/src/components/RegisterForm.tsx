@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { User, Mail, Phone, Lock, CheckCircle, IdCard } from "lucide-react"; // Íconos
 import Validation from './Validation';

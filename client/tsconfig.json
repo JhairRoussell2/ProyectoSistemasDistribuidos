@@ -1,4 +1,7 @@
 {
+  "compilerOptions": {
+      "noUnusedLocals": false  // Esto desactivará los errores de variables no utilizadas
+  },
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
