@@ -154,5 +154,30 @@ class GestionReclamacionesController {
             }
         });
     }
+    // Nuevo método en el controlador para buscar por ID de Reclamación o ID de Siniestro
+    // Nuevo método en el controlador para buscar por ID de Reclamación
+    buscarReclamacionPorId(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { reclamacionid } = req.params; // Obtener el ID de la URL
+            try {
+                // Realizar la consulta para buscar la reclamación por ID
+                const result = yield db_1.default.query(`SELECT r.*, json_agg(d.*) AS documentos
+       FROM reclamacion r
+       LEFT JOIN documentosreclamacion d ON r.reclamacionid = d.reclamacionid
+       WHERE r.reclamacionid = $1
+       GROUP BY r.reclamacionid`, [reclamacionid] // Filtrar por ID de reclamación
+                );
+                if (result.rows.length === 0) {
+                    res.status(404).json({ message: "Reclamación no encontrada" });
+                }
+                else {
+                    res.json(result.rows[0]);
+                }
+            }
+            catch (error) {
+                res.status(500).json({ message: "Error al buscar reclamación", error });
+            }
+        });
+    }
 }
 exports.default = new GestionReclamacionesController();
