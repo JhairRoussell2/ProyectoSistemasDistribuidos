@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-      "noUnusedLocals": false  // Esto desactivará los errores de variables no utilizadas
+      "composite": true,
+      "emitDeclarationOnly": true,    
+      "noUnusedLocals": false
   },
   "files": [],
   "references": [

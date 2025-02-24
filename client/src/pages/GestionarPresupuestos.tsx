@@ -110,9 +110,9 @@ const GestionarPresupuesto: React.FC = () => {
   };
 
   // Alterna la visibilidad de la imagen del documento al hacer clic
-  const toggleDocument = (index: number) => {
-    setDocVisible((prev) => ({ ...prev, [index]: !prev[index] }));
-  };
+  // const toggleDocument = (index: number) => {
+  //   setDocVisible((prev) => ({ ...prev, [index]: !prev[index] }));
+  // };
 
   return (
     <>

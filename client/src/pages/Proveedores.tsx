@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Trash2, Pencil, Plus, Eye, ArrowLeft } from "lucide-react";
+import { Trash2, Pencil, Eye, ArrowLeft } from "lucide-react";
 import Alert from "../components/Alert";
 import Modal from "../components/Modal";
 import Navbar from "../components/Navbar";
@@ -17,7 +17,7 @@ const Proveedores = () => {
   const [selectedDocuments, setSelectedDocuments] = useState<string[] | null>(null);
   const [currentDocument, setCurrentDocument] = useState<string | null>(null);
   const [isImage, setIsImage] = useState(false);
-  const [modalSize, setModalSize] = useState("large");
+  const [modalSize, setModalSize] = useState<string>("large");
   const [searchTerm, setSearchTerm] = useState(""); // Estado para el término de búsqueda
   const [currentPage, setCurrentPage] = useState(1); // Página actual para la paginación
   const proveedoresPorPagina = 15; // Número de proveedores por página
@@ -252,56 +252,57 @@ const Proveedores = () => {
 
         {/* Modales */}
         {modalOpen && selectedDocuments && (
-          <Modal onClose={closeModal}>
-            <div className="text-center">
-              <h2 className="text-xl font-bold text-gray-900">Documentos del Proveedor</h2>
-              {selectedDocuments.length === 1 ? (
-                <div className="mt-4">
-                  <button
-                    onClick={() => handleDocumentClick(selectedDocuments[0])}
-                    className="text-blue-600 underline"
-                  >
-                    Ver Documento
-                  </button>
-                </div>
-              ) : (
-                <div className="mt-4">
-                  <ul className="list-disc pl-5">
-                    {selectedDocuments.map((doc, index) => (
-                      <li key={index}>
-                        <button
-                          onClick={() => handleDocumentClick(doc)}
-                          className="text-blue-600 underline"
-                        >
-                          Ver Documento {index + 1}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {currentDocument && (
-                <div className="mt-4 flex flex-col items-center">
-                  {isImage ? (
-                    <div className="relative">
-                      <img src={currentDocument} alt="Documento" width="100%" />
-                      <div className="mt-4">
-                        <button
-                          onClick={() => handleViewLarger(currentDocument)}
-                          className="bg-gray-600 text-white px-3 py-2 rounded-lg shadow-md"
-                        >
-                          Ver Más Grande
-                        </button>
-                      </div>
+        <Modal onClose={closeModal}>
+          <div className="text-center">
+            <h2 className="text-xl font-bold text-gray-900">Documentos del Proveedor</h2>
+            {selectedDocuments.length === 1 ? (
+              <div className="mt-4">
+                <button
+                  onClick={() => handleDocumentClick(selectedDocuments[0])}
+                  className="text-blue-600 underline"
+                >
+                  Ver Documento
+                </button>
+              </div>
+            ) : (
+              <div className="mt-4">
+                <ul className="list-disc pl-5">
+                  {selectedDocuments.map((doc, index) => (
+                    <li key={index}>
+                      <button
+                        onClick={() => handleDocumentClick(doc)}
+                        className="text-blue-600 underline"
+                      >
+                        Ver Documento {index + 1}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {currentDocument && (
+              <div className="mt-4 flex flex-col items-center">
+                {isImage ? (
+                  <div className="relative">
+                    <img src={currentDocument} alt="Documento" width="100%" />
+                    <div className="mt-4">
+                      <button
+                        onClick={() => handleViewLarger(currentDocument)}
+                        className="bg-gray-600 text-white px-3 py-2 rounded-lg shadow-md"
+                      >
+                        Ver Más Grande
+                      </button>
                     </div>
-                  ) : currentDocument.endsWith(".pdf") ? (
-                    <iframe src={currentDocument} width="100%" height="500px" title="Documento" />
-                  ) : null}
-                </div>
-              )}
-            </div>
-          </Modal>
-        )}
+                  </div>
+                ) : currentDocument.endsWith(".pdf") ? (
+                  <iframe src={currentDocument} width="100%" height="500px" title="Documento" />
+                ) : null}
+              </div>
+            )}
+          </div>
+        </Modal>
+      )}
+
 
         {/* Modal de Confirmación de Eliminar */}
         {modalOpen && !selectedDocuments && (

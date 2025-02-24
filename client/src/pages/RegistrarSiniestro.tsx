@@ -37,7 +37,7 @@ const RegistroSiniestro = () => {
     documentos: [] // Inicializa 'documentos' como un arreglo vacío de tipo File[]
   });
 
-  const [imageUrl, setImageUrl] = useState<string | null>(null); // Estado para la URL de la imagen
+  const [imageUrl] = useState<string | null>(null); // Estado para la URL de la imagen
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<mapboxgl.Marker | null>(null);
