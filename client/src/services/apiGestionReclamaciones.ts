@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // URL de la API
-const API_RECLAMACION_URL = "http://localhost:5005/gestionreclamaciones";
+const API_RECLAMACION_URL = import.meta.env.VITE_API_RECLAMACION_URL || "http://localhost:5005/gestionreclamaciones";
 
 // Obtener todas las reclamaciones
 export const obtenerReclamaciones = async () => {
