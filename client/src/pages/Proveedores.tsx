@@ -17,7 +17,7 @@ const Proveedores = () => {
   const [selectedDocuments, setSelectedDocuments] = useState<string[] | null>(null);
   const [currentDocument, setCurrentDocument] = useState<string | null>(null);
   const [isImage, setIsImage] = useState(false);
-  const [modalSize, setModalSize] = useState<string>("large");
+  const [, setModalSize] = useState<string>("large");
   const [searchTerm, setSearchTerm] = useState(""); // Estado para el término de búsqueda
   const [currentPage, setCurrentPage] = useState(1); // Página actual para la paginación
   const proveedoresPorPagina = 15; // Número de proveedores por página

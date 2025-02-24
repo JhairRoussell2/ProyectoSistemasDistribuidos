@@ -30,7 +30,7 @@ const FormularioSiniestro: React.FC<FormularioSiniestroProps> = ({ onSubmit }) =
     documentos: [],
   });
 
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [, setImageUrl] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
