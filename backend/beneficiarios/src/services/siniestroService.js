@@ -90,6 +90,27 @@ class SiniestroService {
             return rows[0]; // Retorna el beneficiario y los detalles del taller
         });
     }
+    cambiarEstado(siniestroid, estado) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Validar que el estado sea permitido
+            const estadosPermitidos = ["En proceso", "Culminado"];
+            if (!estadosPermitidos.includes(estado)) {
+                throw new Error("Estado inv谩lido. Solo se permite 'En proceso' o 'Culminado'.");
+            }
+            // Verificar si el siniestro existe
+            const checkSiniestro = yield db_1.default.query("SELECT * FROM siniestros WHERE siniestroid = $1", [siniestroid]);
+            if (checkSiniestro.rows.length === 0) {
+                throw new Error("Siniestro no encontrado.");
+            }
+            // Actualizar el estado en la base de datos
+            if (estado === "Culminado") {
+                yield db_1.default.query("UPDATE siniestros SET estado = $1, tallerid = NULL WHERE siniestroid = $2", [estado, siniestroid]);
+            }
+            else {
+                yield db_1.default.query("UPDATE siniestros SET estado = $1 WHERE siniestroid = $2", [estado, siniestroid]);
+            }
+        });
+    }
     // Asignar un taller a un siniestro y enviar correo de confirmación
     asignarTallerASiniestro(siniestroID, tallerID) {
         return __awaiter(this, void 0, void 0, function* () {

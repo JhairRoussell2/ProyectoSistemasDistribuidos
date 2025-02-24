@@ -73,7 +73,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
               {(error) => (
                 <>
                   <input
-                    name="nombre"
+                    name="Nombre"
                     type="text"
                     placeholder="Tu Nombre"
                     value={formData.Nombre}
@@ -96,7 +96,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
               {(error) => (
                 <>
                   <input
-                    name="apellido"
+                    name="Apellido"
                     type="text"
                     placeholder="Tu Apellido"
                     value={formData.Apellido}
@@ -119,7 +119,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
               {(error) => (
                 <>
                   <input
-                    name="email"
+                    name="Email"
                     type="email"
                     placeholder="ejemplo@correo.com"
                     value={formData.Email}
@@ -142,7 +142,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
               {(error) => (
                 <>
                   <input
-                    name="telefono"
+                    name="Telefono"
                     type="text"
                     placeholder="+51 987 654 321"
                     value={formData.Telefono}
@@ -165,7 +165,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
               {(error) => (
                 <>
                   <input
-                    name="dni"
+                    name="DNI"
                     type="text"
                     placeholder="12345678"
                     value={formData.DNI}
@@ -188,7 +188,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
               {(error) => (
                 <>
                   <input
-                    name="password"
+                    name="Password"
                     type="password"
                     placeholder="********"
                     value={formData.Password}
@@ -211,7 +211,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
               {(error) => (
                 <>
                   <input
-                    name="confirmPassword"
+                    name="ConfirmPassword"
                     type="password"
                     placeholder="********"
                     value={formData.ConfirmPassword}

@@ -1,5 +1,5 @@
 import express from "express";
-import { registrarSiniestro, listarSiniestros , asignarTaller} from "../controllers/siniestrosController";
+import { registrarSiniestro, listarSiniestros , asignarTaller,cambiarEstado} from "../controllers/siniestrosController";
 
 const router = express.Router();
 

@@ -19,13 +19,13 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const email_1 = require("../models/email");
 // Esquema de validación
 const schema = joi_1.default.object({
-    nombre: joi_1.default.string().max(100).required(),
-    apellido: joi_1.default.string().max(100).required(),
-    dni: joi_1.default.string().length(8).required(),
-    email: joi_1.default.string().email().required(),
-    telefono: joi_1.default.string().max(15).required(),
-    password: joi_1.default.string().min(6).required(),
-    confirmPassword: joi_1.default.ref("password")
+    Nombre: joi_1.default.string().max(100).required(),
+    Apellido: joi_1.default.string().max(100).required(),
+    DNI: joi_1.default.string().length(8).required(),
+    Email: joi_1.default.string().email().required(),
+    Telefono: joi_1.default.string().max(15).required(),
+    Password: joi_1.default.string().min(6).required(),
+    ConfirmPassword: joi_1.default.ref("Password")
     // Elimina la validación de UsuarioID, ya que es generado en la base de datos
 });
 // Controlador para obtener beneficiarios
@@ -135,16 +135,16 @@ const createBeneficiario = (req, res, next) => __awaiter(void 0, void 0, void 0,
             res.status(400).json({ error: error.details[0].message });
             return;
         }
-        const { nombre, apellido, dni, email, telefono, password, confirmPassword } = req.body;
+        const { Nombre, Apellido, DNI, Email, Telefono, Password, ConfirmPassword } = req.body;
         // Verifica que las contraseñas coincidan
-        if (password !== confirmPassword) {
+        if (Password !== ConfirmPassword) {
             res.status(400).json({ error: 'Las contraseñas no coinciden' });
             return;
         }
         // Hashear la contraseña antes de guardarla
-        const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+        const hashedPassword = yield bcrypt_1.default.hash(Password, 10);
         // Llamada al procedimiento almacenado para crear el usuario y el beneficiario
-        const result = yield db_1.default.query("SELECT public.sp_registerbeneficiario($1, $2, $3, $4, $5, $6)", [nombre, apellido, email, hashedPassword, dni, telefono]);
+        const result = yield db_1.default.query("SELECT public.sp_registerbeneficiario($1, $2, $3, $4, $5, $6)", [Nombre, Apellido, Email, hashedPassword, DNI, Telefono]);
         if (result.rows[0].error) {
             const errorMessage = result.rows[0].error;
             // Si el mensaje contiene "duplicate key value", es un problema de unicidad (correo o DNI)
