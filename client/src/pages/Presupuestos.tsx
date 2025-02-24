@@ -4,6 +4,7 @@ import { Eye, ArrowLeft } from "lucide-react";
 import Alert from "../components/Alert";
 import Navbar from "../components/Navbar";
 
+//Ruta para manejarlo con vercel y render
 const API_PRESUPUESTOS_URL =
   import.meta.env.VITE_API_PRESUPUESTOS_URL || "http://localhost:5002/api/presupuesto-pagos";
 
