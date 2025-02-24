@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api/reclamaciones";
+const API_URL = import.meta.env.VITE_API_RECLAMACION1_URL || "http://localhost:3000/api/reclamaciones";
 
 // ✅ Obtener siniestros de un usuario
 export const obtenerSiniestrosPorUsuario = async (usuarioID: number) => {
