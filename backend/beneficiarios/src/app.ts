@@ -16,7 +16,13 @@ dotenv.config();
 const app = express();
 
 // Middlewares
-app.use(cors());
+const corsOptions = {
+  origin: 'https://seguros-flex.vercel.app', // Permitir solo el frontend desplegado
+  methods: 'GET, POST',  // Asegúrate de que se permita el método POST
+};
+
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
