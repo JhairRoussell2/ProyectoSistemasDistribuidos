@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const presupuestoPagosRoutes_1 = __importDefault(require("./routes/presupuestoPagosRoutes"));
+const pagosIndemnizacionRoutes_1 = __importDefault(require("./routes/pagosIndemnizacionRoutes"));
 // Configurar variables de entorno
 dotenv_1.default.config();
 // Crear aplicación
@@ -29,6 +30,7 @@ app.use(express_1.default.urlencoded({ extended: true }));
 // Registrar rutas
 //app.use("/api/proveedores", presupuestoPagosRoutes);
 app.use("/api/presupuesto-pagos", presupuestoPagosRoutes_1.default);
+app.use("/api/indemnizaciones", pagosIndemnizacionRoutes_1.default);
 // Imprimir rutas registradas en el servidor
 console.log("Rutas registradas en el servidor:");
 const getRoutes = (layer, basePath = "") => {
