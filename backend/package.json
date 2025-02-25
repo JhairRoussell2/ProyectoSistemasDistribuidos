@@ -1,0 +1,32 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend consolidado de todos los servicios.",
+  "scripts": {
+    "start-beneficiarios": "cd beneficiarios && npm run dev",
+    "start-personal-gestion": "cd personal-gestion && npm run dev",
+    "start-presupuesto-pagos": "cd presupuesto-pagos && npm run dev",
+    "start-talleres-provedores": "cd talleres-provedores && npm run dev",
+    "start": "concurrently \"npm run start-beneficiarios\" \"npm run start-personal-gestion\" \"npm run start-presupuesto-pagos\" \"npm run start-talleres-provedores\""
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "ts-node": "^10.9.2",
+    "nodemon": "^3.1.9",
+    "typescript": "^5.7.3",
+    "concurrently": "^7.2.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.10",
+    "@types/cors": "^2.8.17"
+  },
+  "engines": {
+    "node": "14.x",
+    "npm": "7.x"
+  },
+  "author": "Tu Nombre",
+  "license": "ISC"
+}

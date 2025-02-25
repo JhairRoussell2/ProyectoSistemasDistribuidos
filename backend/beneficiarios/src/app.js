@@ -28,7 +28,11 @@ dotenv_1.default.config();
 // Crear aplicación
 const app = (0, express_1.default)();
 // Middlewares
-app.use((0, cors_1.default)());
+const corsOptions = {
+    origin: 'https://seguros-flex.vercel.app', // Permitir solo el frontend desplegado
+    methods: 'GET, POST', // Asegúrate de que se permita el método POST
+};
+app.use((0, cors_1.default)(corsOptions));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 // ✅ Agregar Rutas de la API

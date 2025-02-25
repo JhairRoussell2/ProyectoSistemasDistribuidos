@@ -263,13 +263,6 @@ const GestionarReclamaciones: React.FC = () => {
               {Math.ceil(filteredReclamaciones.length / postsPerPage)}
             </p>
           </div>
-
-
-
-
-
-
-          
         </div>
       </div>
     </>

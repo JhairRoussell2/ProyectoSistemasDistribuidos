@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { CheckCircle, MapPin, Mail, Phone, User, Star, Trash, FileText } from "lucide-react";
+import { CheckCircle, MapPin, Mail, Phone, User, Star, Trash} from "lucide-react";
 import Alert from "../components/Alert";
 import Navbar from "../components/Navbar"; // Importar el Navbar
 import axios from "axios";

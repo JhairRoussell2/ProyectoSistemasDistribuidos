@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { FiUsers } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
-import ExcelJS from "exceljs";
-import { saveAs } from "file-saver";
+// import { useNavigate } from "react-router-dom";
 import apiClient from "../services/apiClient";
 import { Bar, Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from "chart.js";
@@ -13,8 +11,8 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,
 const PersonalDashboard = () => {
   const [beneficiariosData, setBeneficiariosData] = useState([]);
   const [polizasData, setPolizasData] = useState([]);
-  const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
+  // const [error, setError] = useState<string | null>(null);
+  // const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBeneficiarios = async () => {
@@ -22,7 +20,7 @@ const PersonalDashboard = () => {
         const response = await apiClient.get("/api/beneficiarios");
         setBeneficiariosData(response.data);
       } catch (error) {
-        setError("Error al obtener los beneficiarios");
+        console.error("Error al obtener los beneficiarios");
       }
     };
 
@@ -31,7 +29,7 @@ const PersonalDashboard = () => {
         const response = await apiClient.get("/api/polizas");
         setPolizasData(response.data);
       } catch (error) {
-        setError("Error al obtener las pólizas");
+        console.error("Error al obtener las pólizas");
       }
     };
 
@@ -39,33 +37,6 @@ const PersonalDashboard = () => {
     fetchPolizas();
   }, []);
 
-  const generateBeneficiaryReport = async () => {
-    try {
-      const response = await apiClient.get("/api/beneficiarios");
-      const beneficiarios = response.data;
-
-      const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet("Beneficiarios");
-
-      worksheet.columns = [
-        { header: "ID Beneficiario", key: "beneficiarioid" },
-        { header: "Nombre", key: "nombre" },
-        { header: "Apellido", key: "apellido" },
-        { header: "Email", key: "email" },
-        { header: "Teléfono", key: "telefono" },
-        { header: "DNI", key: "dni" },
-      ];
-
-      beneficiarios.forEach((beneficiario: any) => {
-        worksheet.addRow(beneficiario);
-      });
-
-      const buffer = await workbook.xlsx.writeBuffer();
-      saveAs(new Blob([buffer]), "Reporte_Beneficiarios.xlsx");
-    } catch (error) {
-      console.error("Error generando el reporte:", error);
-    }
-  };
 
   const policyPrices = {
     Básica: 10,

@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+      "target": "es2016",
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "strict": true,
+      "outDir": "./dist", 
+      "baseUrl": "./", 
+      "typeRoots": ["./types", "./node_modules/@types"],
+      "paths": {
+        "*": ["node_modules/*", "src/*"]
+      }
+    },
+    "include": [
+      "beneficiarios/src/**/*",
+      "personal-gestion/src/**/*",
+      "presupuesto-pagos/src/**/*",
+      "talleres-provedores/src/**/*"
+    ]
+  }
+  

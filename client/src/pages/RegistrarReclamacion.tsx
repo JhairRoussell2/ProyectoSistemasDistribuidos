@@ -88,7 +88,7 @@ const RegistrarReclamacion = () => {
       });
 
       // 📌 **Enviar todo en una sola petición**
-      const response = await registrarReclamacion(formData);
+      await registrarReclamacion(formData);
 
       toast.success("¡Reclamación registrada con éxito! 🎉");
 

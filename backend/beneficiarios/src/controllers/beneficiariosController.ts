@@ -6,13 +6,13 @@ import { findUserByEmail } from "../models/email";
 
 // Esquema de validación
 const schema = Joi.object({
-  nombre: Joi.string().max(100).required(),
-  apellido: Joi.string().max(100).required(),
-  dni: Joi.string().length(8).required(),
-  email: Joi.string().email().required(),
-  telefono: Joi.string().max(15).required(),
-  password: Joi.string().min(6).required(),
-  confirmPassword: Joi.ref("password")
+  Nombre: Joi.string().max(100).required(),
+  Apellido: Joi.string().max(100).required(),
+  DNI: Joi.string().length(8).required(),
+  Email: Joi.string().email().required(),
+  Telefono: Joi.string().max(15).required(),
+  Password: Joi.string().min(6).required(),
+  ConfirmPassword: Joi.ref("Password")
   // Elimina la validación de UsuarioID, ya que es generado en la base de datos
 });
 
@@ -134,21 +134,21 @@ export const createBeneficiario: RequestHandler = async (req, res, next): Promis
       return;
     }
 
-    const { nombre, apellido, dni, email, telefono, password, confirmPassword } = req.body;
+    const { Nombre, Apellido, DNI, Email, Telefono, Password, ConfirmPassword } = req.body;
 
     // Verifica que las contraseñas coincidan
-    if (password !== confirmPassword) {
+    if (Password !== ConfirmPassword) {
       res.status(400).json({ error: 'Las contraseñas no coinciden' });
       return;
     }
 
     // Hashear la contraseña antes de guardarla
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(Password, 10);
 
     // Llamada al procedimiento almacenado para crear el usuario y el beneficiario
     const result = await pool.query(
       "SELECT public.sp_registerbeneficiario($1, $2, $3, $4, $5, $6)",
-      [nombre, apellido, email, hashedPassword, dni, telefono]
+      [Nombre, Apellido, Email, hashedPassword, DNI, Telefono]
     );
 
     if (result.rows[0].error) {

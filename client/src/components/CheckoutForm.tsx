@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import Alert from '../components/AlertCard';
 
@@ -15,7 +15,7 @@ const CheckoutForm = ({ policy, clientSecret, onSuccess }: CheckoutFormProps) =>
   const [processing, setProcessing] = useState(false);
   const stripe = useStripe();
   const elements = useElements();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();

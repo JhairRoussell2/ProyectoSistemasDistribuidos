@@ -16,7 +16,7 @@ const Policies = () => {
   const [selectedPolicy, setSelectedPolicy] = useState<string | null>(null);
   const [paymentIntent, setPaymentIntent] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [successMessage] = useState<string | null>(null);
 
   const stripePromise = loadStripe('pk_test_51Qol4rAkA9dBfeWxoAuj2g6TZwwsnPCYEo5irLHfl4vpyl2C4O3rSB9fTSJBiMsb38dRvAFdKKvpFSktk0je5Nuc00olzhFV12');
 
