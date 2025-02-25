@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const db_1 = __importDefault(require("../config/db"));
 class pagosIndemnizacionController {
-    // Obtener datos importantes de presupuestos pendientes
+    // Obtener datos importantes de presupuestos validados y pagados
     getIndemnizaciones(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

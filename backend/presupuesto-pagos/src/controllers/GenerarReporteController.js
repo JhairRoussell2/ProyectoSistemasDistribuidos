@@ -29,7 +29,7 @@ class GenerarReporteController {
           FROM siniestros s
           JOIN presupuesto p ON s.siniestroid = p.siniestroid
           JOIN taller t ON s.tallerid = t.tallerid
-         WHERE p.estado = 'Validado'
+         WHERE p.estado in('Validado', 'Pagado')
       `;
                 const result = yield db_1.default.query(query);
                 res.json(result.rows);
