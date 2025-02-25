@@ -48,8 +48,8 @@ const AsignarTaller = () => {
     const fetchData = async () => {
       try {
         const [siniestrosResponse, talleresResponse] = await Promise.all([
-          axios.get("http://localhost:3000/api/siniestros"),
-          axios.get("http://localhost:5001/api/talleres"),
+          axios.get("https://segurosflexbeneficiarios.onrender.com/api/siniestros"),
+          axios.get("https://segurosflextalleresproveedores.onrender.com/api/talleres"),
         ]);
         const talleresDisponibles = talleresResponse.data.filter((taller: Taller) => taller.estado !== "Ocupado");
         setSiniestros(siniestrosResponse.data);
@@ -95,7 +95,7 @@ const AsignarTaller = () => {
   const handleConfirmAsignar = async () => {
     if (selectedSiniestro !== null && selectedTaller !== null) {
       try {
-        const response = await axios.put("http://localhost:3000/api/siniestros/asignar", {
+        const response = await axios.put("https://segurosflexbeneficiarios.onrender.com/api/siniestros/asignar", {
           siniestroid: selectedSiniestro,
           tallerid: selectedTaller,
         });
@@ -128,7 +128,7 @@ const AsignarTaller = () => {
     if (!estadoTemp || selectedEstado === null) return; // Evita errores si no hay estado seleccionado
   
     try {
-      await axios.put("http://localhost:3000/api/siniestros/cambiar/estado", {
+      await axios.put("https://segurosflexbeneficiarios.onrender.com/api/siniestros/cambiar/estado", {
         siniestroid: selectedEstado,
         estado: estadoTemp,
       });

@@ -97,9 +97,8 @@ class SiniestroService {
     
     return rows[0]; // Retorna el beneficiario y los detalles del taller
   }
-
   async cambiarEstado(siniestroid: number, estado: string): Promise<void> {
-    // Validar que el estado sea permitido
+      // Validar que el estado sea permitido
       const estadosPermitidos = ["En proceso", "Culminado"];
       if (!estadosPermitidos.includes(estado)) {
         throw new Error("Estado inv谩lido. Solo se permite 'En proceso' o 'Culminado'.");
@@ -115,8 +114,9 @@ class SiniestroService {
         await pool.query("UPDATE siniestros SET estado = $1, tallerid = NULL WHERE siniestroid = $2", [estado, siniestroid]);
     } else {
         await pool.query("UPDATE siniestros SET estado = $1 WHERE siniestroid = $2", [estado, siniestroid]);
-    }
+    }
   }
+
 
   // Asignar un taller a un siniestro y enviar correo de confirmación
   async asignarTallerASiniestro(siniestroID: number, tallerID: number) {
@@ -203,6 +203,7 @@ class SiniestroService {
   }
 
 }
+
 
 
 

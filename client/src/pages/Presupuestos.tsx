@@ -178,7 +178,6 @@ const Presupuestos = () => {
             <option value="fecha_asignacion">Fecha Asignación</option>
             <option value="nombre">Taller</option>
             <option value="tipo_siniestro">Tipo Siniestro</option>
-            <option value="placa">Placa</option>
           </select>
           <select
             className="p-3 border border-gray-300 rounded-lg"
@@ -190,7 +189,6 @@ const Presupuestos = () => {
             <option value="fecha_asignacion">Fecha Asignación</option>
             <option value="nombre">Taller</option>
             <option value="tipo_siniestro">Tipo Siniestro</option>
-            <option value="placa">Placa</option>
           </select>
           <button
             className="flex items-center gap-1 bg-white text-black border border-gray-300 px-3 py-2 rounded-lg shadow-md hover:bg-gray-200 transition mx-auto"
@@ -207,7 +205,6 @@ const Presupuestos = () => {
                 <th className="p-3 text-center">Fecha Asignación</th>
                 <th className="p-3 text-center">Taller</th>
                 <th className="p-3 text-center">Tipo Siniestro</th>
-                <th className="p-3 text-center">Placa</th>
                 <th className="p-3 text-center">Acciones</th>
               </tr>
             </thead>
@@ -224,7 +221,6 @@ const Presupuestos = () => {
                   </td>
                   <td className="p-3 text-center">{presupuesto.nombre || "N/A"}</td>
                   <td className="p-3 text-center">{presupuesto.tipo_siniestro}</td>
-                  <td className="p-3 text-center">{presupuesto.placa || "N/A"}</td>
                   <td className="p-3 text-center">
                     <button
                       onClick={() =>

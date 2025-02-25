@@ -8,6 +8,8 @@ import beneficiariosRoutes from "./routes/beneficiariosRoutes";
 import polizasRoutes from "./routes/polizaRoutes";
 import reclamacionRoutes from "./routes/reclamacionRoutes"; // ✅ Agregar las rutas de reclamación
 import pagosRoutes from "./routes/pagosRoutes"; // ✅ Agregar las rutas de pagos
+import seguimientoRoutes from "./routes/seguimientoRoutes"; // Importa las rutas de seguimiento
+
 
 // Configurar variables de entorno
 dotenv.config();
@@ -18,7 +20,7 @@ const app = express();
 // Middlewares
 const corsOptions = {
   origin: 'https://seguros-flex.vercel.app', // Permitir solo el frontend desplegado
-  methods: 'GET, POST',  // Asegúrate de que se permita el método POST
+  methods: 'GET, POST, PUT, DELETE'  // Asegúrate de que se permita el método POST
 };
 
 
@@ -32,6 +34,8 @@ app.use("/api/siniestros", siniestrosRoutes);
 app.use("/api/polizas", polizasRoutes);
 app.use("/api/reclamaciones", reclamacionRoutes);
 app.use('/api/pagos', pagosRoutes);
+app.use("/api/seguimiento", seguimientoRoutes);
+
 
 // ✅ Ruta para cargar imágenes a Cloudinary (SOLO para siniestros)
 const fileFilter = (req: any, file: any, cb: any) => {

@@ -120,7 +120,7 @@ class GestionReclamacionesController {
             }
         });
     }
-    // Backend: Validar un solo documento
+    // Backend: Validar un solo documento NO UTILIZADO EN EL FRONT
     validarDocumentos(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { reclamacionid } = req.params;

@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import presupuestoPagosRoutes from "./routes/presupuestoPagosRoutes";
+import pagosIndemnizacionRoutes from "./routes/pagosIndemnizacionRoutes";
 import GenerarReporteRoutes from "./routes/GenerarReporteRoutes";
 
 // Configurar variables de entorno
@@ -31,6 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 // Registrar rutas
 //app.use("/api/proveedores", presupuestoPagosRoutes);
 app.use("/api/presupuesto-pagos", presupuestoPagosRoutes);
+app.use("/api/indemnizaciones",pagosIndemnizacionRoutes);
 app.use("/api/GenerarReporte", GenerarReporteRoutes);
 
 // Imprimir rutas registradas en el servidor
