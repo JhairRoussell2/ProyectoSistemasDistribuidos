@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 // URL de la API
+
 const API_RECLAMACION_URL = "http://localhost:5005/gestionreclamaciones";
 
 // Obtener todas las reclamaciones

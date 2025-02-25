@@ -15,4 +15,5 @@ router.get("/:reclamacionid/detalles", GestionReclamacionesController_1.default.
 // Ruta para eliminar una reclamación
 router.delete("/:reclamacionid", GestionReclamacionesController_1.default.eliminarReclamacion);
 router.post("/:reclamacionid/validar-documentos", GestionReclamacionesController_1.default.validarDocumentos);
+router.get("/buscar-reclamacion/:reclamacionid", GestionReclamacionesController_1.default.buscarReclamacionPorId);
 exports.default = router;

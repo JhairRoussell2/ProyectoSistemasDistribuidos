@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   obtenerReclamaciones,
-  actualizarEstadoReclamacion,
   eliminarReclamacion,
 } from "../services/apiGestionReclamaciones";
 import { IoMdArrowBack } from "react-icons/io";
@@ -14,9 +13,8 @@ import { toast, ToastContainer } from "react-toastify";
 const GestionarReclamaciones: React.FC = () => {
   const navigate = useNavigate();
   const [reclamaciones, setReclamaciones] = useState<any[]>([]);
-  const [estadoSeleccionado, setEstadoSeleccionado] = useState<string>("");
-  const [observacion, setObservacion] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+
+
   const [alerta, setAlerta] = useState<{
     message: string;
     type: "success" | "error" | "warning" | "info";
@@ -33,7 +31,7 @@ const GestionarReclamaciones: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
+
         const reclamacionesData = await obtenerReclamaciones();
         setReclamaciones(reclamacionesData);
       } catch (error) {
@@ -42,7 +40,7 @@ const GestionarReclamaciones: React.FC = () => {
           type: "error",
         });
       } finally {
-        setLoading(false);
+
       }
     };
     fetchData();
@@ -70,23 +68,6 @@ const GestionarReclamaciones: React.FC = () => {
   // Cambiar la página
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-  const handleActualizarEstado = async (
-    id: number,
-    estado: string,
-    observacion: string
-  ) => {
-    try {
-      setLoading(true);
-      await actualizarEstadoReclamacion(estado, observacion);
-      toast.success("¡Estado actualizado exitosamente!");
-      const updatedReclamaciones = await obtenerReclamaciones();
-      setReclamaciones(updatedReclamaciones);
-    } catch (error) {
-      toast.error("Error al actualizar el estado");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleEliminarReclamacion = async (id: number) => {
     // Creamos un toast de confirmación con un ID
