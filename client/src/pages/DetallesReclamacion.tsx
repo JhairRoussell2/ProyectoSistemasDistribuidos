@@ -18,7 +18,7 @@ import { AiOutlineEye } from "react-icons/ai"; // Importar el ícono de ojo
 import { IoMdArrowBack } from "react-icons/io";
 import Navbar from "../components/Navbar";
 
-const API_RECLAMACIONES_URL = "https://segurosflex.onrender.com/gestionreclamaciones";
+const API_RECLAMACIONES_URL = "https://segurosflexreclamaciones.onrender.com/gestionreclamaciones";
 
 interface Documento {
   documentoId: number;

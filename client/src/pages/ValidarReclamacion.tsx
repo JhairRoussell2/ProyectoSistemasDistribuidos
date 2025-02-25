@@ -5,7 +5,7 @@ import { CheckCircle } from "lucide-react";
 import Alert from "../components/Alert";
 import Navbar from "../components/Navbar";
 
-const API_RECLAMACIONES_URL = "http://localhost:5005/gestionreclamaciones";
+const API_RECLAMACIONES_URL = "https://segurosflexreclamaciones.onrender.com/gestionreclamaciones";
 
 interface AlertType {
   type: "success" | "error";
