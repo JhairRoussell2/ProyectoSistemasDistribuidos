@@ -9,7 +9,9 @@ import {
   FiClipboard,
   FiCheckCircle,
   FiUsers,
+  FiMapPin, // Icono de seguimiento añadido
 } from "react-icons/fi";
+
 import { NavLink, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 
@@ -144,6 +146,13 @@ const Layout = ({ children }: LayoutProps) => {
                 >
                   <FiFileText />
                   <span>Registrar Reclamación</span>
+                </NavLink>
+                <NavLink
+                  to="/seguimiento"
+                  className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white"
+                >
+                  <FiMapPin  />
+                  <span>Gestionar Seguimiento</span>
                 </NavLink>
               </>
             )}
