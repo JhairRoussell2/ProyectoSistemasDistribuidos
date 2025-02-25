@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:3000/api/seguimiento"; // Ajusta la URL según tu entorno
+const API_BASE_URL = import.meta.env.VITE_SEGUIMIENTO_URL || "http://localhost:3000/api/seguimiento"; // Ajusta la URL según tu entorno
+
 
 // 📌 Obtener siniestros de un beneficiario
 export const obtenerSiniestrosBeneficiario = async (usuarioid: string) => {
@@ -23,5 +24,3 @@ export const obtenerDetalleSiniestroCompleto = async (siniestroid: string) => {
     throw error;
   }
 };
-
-
