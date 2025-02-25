@@ -9,7 +9,6 @@ import "react-toastify/dist/ReactToastify.css";
 const SeguimientoSiniestros = () => {
   const navigate = useNavigate();
   const [siniestros, setSiniestros] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [usuarioID, setUsuarioID] = useState<number | null>(null);
   const [alerta, setAlerta] = useState<any>(null);
   const [siniestroSeleccionado, setSiniestroSeleccionado] = useState<any>(null);
@@ -32,7 +31,7 @@ const SeguimientoSiniestros = () => {
       } catch (error) {
         setAlerta({ message: "Error al cargar siniestros.", type: "error" });
       } finally {
-        setLoading(false);
+        
       }
     };
 
