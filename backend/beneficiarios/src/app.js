@@ -30,7 +30,7 @@ const app = (0, express_1.default)();
 // Middlewares
 const corsOptions = {
     origin: 'https://seguros-flex.vercel.app', // Permitir solo el frontend desplegado
-    methods: 'GET, POST', // Asegúrate de que se permita el método POST
+    methods: 'GET, POST, PUT, DELETE' // Asegúrate de que se permita el método POST
 };
 app.use((0, cors_1.default)(corsOptions));
 app.use(express_1.default.json());
