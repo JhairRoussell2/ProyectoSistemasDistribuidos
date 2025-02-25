@@ -129,7 +129,7 @@ class GestionReclamacionesController {
     }
   }
 
-  // Backend: Validar un solo documento
+  // Backend: Validar un solo documento NO UTILIZADO EN EL FRONT
  
   public async validarDocumentos(req: Request, res: Response): Promise<void> {
     const { reclamacionid } = req.params;

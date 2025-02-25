@@ -3,6 +3,8 @@ import GestionReclamacionesController from "../controllers/GestionReclamacionesC
 
 const router = express.Router();
 
+
+
 // Ruta para obtener todas las reclamaciones con su estado
 router.get("/", GestionReclamacionesController.obtenerTodasLasReclamaciones);
 
