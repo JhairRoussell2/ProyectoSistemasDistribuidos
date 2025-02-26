@@ -9,7 +9,7 @@ import polizasRoutes from "./routes/polizaRoutes";
 import reclamacionRoutes from "./routes/reclamacionRoutes"; // ✅ Agregar las rutas de reclamación
 import pagosRoutes from "./routes/pagosRoutes"; // ✅ Agregar las rutas de pagos
 import seguimientoRoutes from "./routes/seguimientoRoutes"; // Importa las rutas de seguimiento
-
+import vehiculoRoute from "./routes/vehiculoRoute"; 
 
 // Configurar variables de entorno
 dotenv.config();
@@ -35,6 +35,7 @@ app.use("/api/polizas", polizasRoutes);
 app.use("/api/reclamaciones", reclamacionRoutes);
 app.use('/api/pagos', pagosRoutes);
 app.use("/api/seguimiento", seguimientoRoutes);
+app.use('/api/vehiculo', vehiculoRoute);
 
 
 // ✅ Ruta para cargar imágenes a Cloudinary (SOLO para siniestros)

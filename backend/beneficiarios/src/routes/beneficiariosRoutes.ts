@@ -7,6 +7,8 @@ import {
   deleteBeneficiario,
   updateBeneficiario,
   checkIfNewBeneficiario,
+  checkPoliza,
+  checkVehiculo,
   getBeneficiarioPorUsuarioID,
   getBeneficiariosPorDNI,// Asegúrate de importar la función
   verificarEmail,
@@ -22,6 +24,8 @@ router.post('/login', login);
 router.put('/:id', updateBeneficiario);
 router.delete('/:id', deleteBeneficiario);
 router.get('/user/:UsuarioID/role', getUserRole);
+router.get("/:id/check-poliza", checkPoliza);
+router.get("/:id/check-vehiculo", checkVehiculo);
 router.get("/:BeneficiarioID/check-new", checkIfNewBeneficiario);
 // Ruta para obtener los beneficiarios por DNI
 router.get("/validar/:DNI", getBeneficiariosPorDNI);

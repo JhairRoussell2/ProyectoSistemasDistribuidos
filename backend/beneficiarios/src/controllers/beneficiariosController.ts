@@ -45,7 +45,7 @@ export const getBeneficiarioPorUsuarioID = async (req: Request, res: Response) =
       res.status(404).json({ message: "Beneficiario no encontrado." });
       return;
     }
-    res.status(200).json({ BeneficiarioID: rows[0].BeneficiarioID });
+    res.status(200).json({ BeneficiarioID: rows[0].beneficiarioid });
   } catch (error) {
     console.error("Error al obtener BeneficiarioID:", error);
     res.status(500).json({ error: "Error al obtener BeneficiarioID" });
@@ -231,6 +231,37 @@ export const checkIfNewBeneficiario = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error al verificar beneficiario:", error);
     res.status(500).json({ error: "Error al verificar el beneficiario" });
+  }
+};
+
+export const checkPoliza = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const { rows } = await pool.query(
+      "SELECT COUNT(*) AS count FROM poliza WHERE beneficiarioid = $1",
+      [id]
+    );
+
+    res.status(200).json({ hasPoliza: parseInt(rows[0].count, 10) > 0 });
+  } catch (error) {
+    console.error("Error al verificar póliza:", error);
+    res.status(500).json({ error: "Error al verificar la póliza" });
+  }
+};
+
+// Verificar si el beneficiario tiene un vehículo registrado
+export const checkVehiculo = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const { rows } = await pool.query(
+      "SELECT COUNT(*) AS count FROM vehiculo WHERE beneficiarioid = $1",
+      [id]
+    );
+
+    res.status(200).json({ hasVehiculo: parseInt(rows[0].count, 10) > 0 });
+  } catch (error) {
+    console.error("Error al verificar vehículo:", error);
+    res.status(500).json({ error: "Error al verificar el vehículo" });
   }
 };
 
