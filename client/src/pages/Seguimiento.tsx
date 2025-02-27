@@ -104,7 +104,7 @@ const SeguimientoSiniestros = () => {
                   value={siniestro.siniestroid}
                 >
                   Número {siniestro.siniestroid} - {siniestro.descripcion}{" "}
-                  (Fecha: {siniestro.fecha_siniestro})
+                  (Fecha: {new Date(siniestro.fecha_siniestro).toLocaleDateString()})
                 </option>
               ))}
             </select>
