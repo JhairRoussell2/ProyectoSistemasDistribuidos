@@ -84,7 +84,7 @@ const RegistrarVehiculo = () => {
     console.log("📤 Enviando datos al backend:", requestData);
   
     try {
-      const response = await axios.post("http://localhost:3000/api/vehiculo", requestData);
+      const response = await axios.post("https://segurosflexbeneficiarios.onrender.com/api/vehiculo", requestData);
       setMessage(" Vehículo registrado exitosamente.");
       setFormData({
         placa: '',
