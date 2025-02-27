@@ -25,3 +25,4 @@ export const obtenerDetalleSiniestroCompleto = async (siniestroid: string) => {
     throw error;
   }
 };
+
