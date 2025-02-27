@@ -151,6 +151,9 @@ const SeguimientoDetalle = () => {
                           <th className="border border-gray-300 p-2">
                             Descripción
                           </th>
+                          <th className="border border-gray-300 p-2">
+                            Documentos
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -173,7 +176,9 @@ const SeguimientoDetalle = () => {
                             <td className="border border-gray-300 p-2">
                               {reclamacion.descripcion}
                             </td>
-                            
+                            {reclamacion.documentos.map((documento: any, index: number) => (
+                        <li key={index}><a href={documento.url} target="_blank" rel="noopener noreferrer">Ver Documento {index + 1}</a></li>
+                      ))}
                           </tr>
                         ))}
                       </tbody>
