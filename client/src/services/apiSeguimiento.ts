@@ -14,7 +14,7 @@ export const obtenerSiniestrosBeneficiario = async (usuarioid: string) => {
   }
 };
 
-// 📌 Obtener detalle completo de un siniestro
+// 📌 Obtener detalle completo de un siniest
 export const obtenerDetalleSiniestroCompleto = async (siniestroid: string) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/siniestro/${siniestroid}`);
