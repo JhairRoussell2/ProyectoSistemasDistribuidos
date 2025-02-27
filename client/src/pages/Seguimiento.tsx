@@ -105,8 +105,8 @@ const SeguimientoSiniestros = () => {
                     key={siniestro.siniestroid}
                     value={siniestro.siniestroid}
                   >
-                    Número {siniestro.siniestroid} - {siniestro.descripcion}{" "}
-                    (Fecha:{" "}
+                    Código {String(siniestro.siniestroid).padStart(4, "0")} -{" "}
+                    {siniestro.descripcion} (Fecha:{" "}
                     {new Date(siniestro.fecha_siniestro).toLocaleDateString()})
                   </option>
                 ))}
