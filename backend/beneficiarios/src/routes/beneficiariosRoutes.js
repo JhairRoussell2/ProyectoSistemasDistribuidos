@@ -13,6 +13,8 @@ router.post('/login', beneficiariosController_1.login);
 router.put('/:id', beneficiariosController_1.updateBeneficiario);
 router.delete('/:id', beneficiariosController_1.deleteBeneficiario);
 router.get('/user/:UsuarioID/role', beneficiariosController_1.getUserRole);
+router.get("/:id/check-poliza", beneficiariosController_1.checkPoliza);
+router.get("/:id/check-vehiculo", beneficiariosController_1.checkVehiculo);
 router.get("/:BeneficiarioID/check-new", beneficiariosController_1.checkIfNewBeneficiario);
 // Ruta para obtener los beneficiarios por DNI
 router.get("/validar/:DNI", beneficiariosController_1.getBeneficiariosPorDNI);
