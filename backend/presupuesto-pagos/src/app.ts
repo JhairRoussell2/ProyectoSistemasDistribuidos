@@ -30,7 +30,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Registrar rutas
-//app.use("/api/proveedores", presupuestoPagosRoutes);
 app.use("/api/presupuesto-pagos", presupuestoPagosRoutes);
 app.use("/api/indemnizaciones",pagosIndemnizacionRoutes);
 app.use("/api/GenerarReporte", GenerarReporteRoutes);
