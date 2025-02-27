@@ -29,7 +29,6 @@ app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 // Registrar rutas
-//app.use("/api/proveedores", presupuestoPagosRoutes);
 app.use("/api/presupuesto-pagos", presupuestoPagosRoutes_1.default);
 app.use("/api/indemnizaciones", pagosIndemnizacionRoutes_1.default);
 app.use("/api/GenerarReporte", GenerarReporteRoutes_1.default);
