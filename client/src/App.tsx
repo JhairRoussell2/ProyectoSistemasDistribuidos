@@ -28,7 +28,6 @@ import ForgotPassword from "./pages/Recuperar";
 import ResetPassword from "./pages/Resetear";
 import AsignarTaller from "./pages/AsignarTaller";
 import BeneficiarioPerfil from "./pages/BeneficiarioPerfil";
-
 import SeguimientoSiniestros from "./pages/Seguimiento";
 // No olvides importar los estilos de react-toastify
 import 'react-toastify/dist/ReactToastify.css'; // Importa el CSS de react-toastify
@@ -63,7 +62,7 @@ const App = () => {
         <Route path="/talleres" element={<Talleres />} />
         <Route path="/registrar-taller" element={<RegistrarTaller />} />
         <Route path="/editar-taller/:id" element={<EditarTaller />} />
-        <Route path="/indemnizaciones" element={<Indemnizaciones/>} />
+        <Route path="/dashboard/admin/pagos" element={<Indemnizaciones/>} />
         <Route path="/registrar-reclamacion" element={<RegistrarReclamacion />} />
         <Route path="/dashboard/general/info" element={<BeneficiarioPerfil />} />
         <Route path="/recuperar" element={<ForgotPassword />} />
