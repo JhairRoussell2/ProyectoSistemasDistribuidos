@@ -165,7 +165,9 @@ const Indemnizaciones = () => {
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
-
+  const selectedIndemnizacion = indemnizaciones.find(
+    (item) => item.presupuestoid === selectedPresupuesto
+  );
   return (
     <>
       <Navbar />
@@ -280,41 +282,56 @@ const Indemnizaciones = () => {
         </div>{showModal && (
   <Modal onClose={() => setShowModal(false)}>
     <div className="text-center">
-      {loading ? (
-        <div>
-          <p className="text-lg font-medium text-gray-900 mb-4">Pagando...</p>
-          <div className="loader mx-auto"></div>
-        </div>
-      ) : modalMessage ? (
-        <div>
-          <p className="text-lg font-medium text-gray-900 mb-4">{modalMessage}</p>
-          <button
-            className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition"
-            onClick={() => setShowModal(false)}
-          >
-            Cerrar
-          </button>
-        </div>
-      ) : (
-        <div>
-          <h2 className="text-xl font-bold text-gray-900">Confirmar Pago</h2>
-          <p className="mt-4 text-gray-700">¿Seguro de pagar esto?</p>
-          <div className="flex justify-center gap-4 mt-4">
-            <button
-              className="bg-green-500 hover:bg-green-600 px-5 py-2 rounded-lg text-white transition"
-              onClick={confirmPagar}
-            >
-              Sí
-            </button>
-            <button
-              className="bg-gray-500 hover:bg-gray-600 px-5 py-2 rounded-lg text-white transition"
-              onClick={() => setShowModal(false)}
-            >
-              No
-            </button>
-          </div>
-        </div>
-      )}
+    {loading ? (
+  <div>
+    <p className="text-lg font-medium text-gray-900 mb-4">Pagando...</p>
+    <div className="loader mx-auto animate-spin border-4 border-gray-300 border-t-blue-500 rounded-full w-12 h-12"></div>
+  </div>
+) : modalMessage ? (
+  <div>
+    <p className="text-lg font-medium text-gray-900 mb-4">{modalMessage}</p>
+    <button
+      className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition"
+      onClick={() => setShowModal(false)}
+    >
+      Cerrar
+    </button>
+  </div>
+) : (
+  <div>
+    <h2 className="text-xl font-bold text-gray-900">Confirmar Pago</h2>
+    <p className="mt-4 text-gray-700">¿Seguro de pagar esto?</p>
+    {selectedIndemnizacion && (
+      <div className="mt-4 text-gray-700">
+        <p>
+          <strong>SINIESTRO:</strong> {"SIN-" + selectedIndemnizacion.siniestroid}
+        </p>
+        <p>
+          <strong>FECHA DEL SINIESTRO:</strong>{" "}
+          {new Date(selectedIndemnizacion.fecha_siniestro).toLocaleDateString()}
+        </p>
+        <p>
+          <strong>MONTO DEL SINIESTRO:</strong> S/.{selectedIndemnizacion.montototal}
+        </p>
+      </div>
+    )}
+    <div className="flex justify-center gap-4 mt-4">
+      <button
+        className="bg-green-500 hover:bg-green-600 px-5 py-2 rounded-lg text-white transition"
+        onClick={confirmPagar}
+      >
+        Sí
+      </button>
+      <button
+        className="bg-gray-500 hover:bg-gray-600 px-5 py-2 rounded-lg text-white transition"
+        onClick={() => setShowModal(false)}
+      >
+        No
+      </button>
+    </div>
+  </div>
+)}
+
     </div>
   </Modal>
 )}
