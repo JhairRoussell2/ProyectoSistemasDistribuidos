@@ -43,7 +43,7 @@ const Indemnizaciones = () => {
     try {
       // Ejecutamos la petición PATCH y a la vez esperamos 1 segundo
       const [response] = await Promise.all([
-        fetch(`${API_INDEMNIZACIONES_URL}${selectedPresupuesto}`, {
+        fetch(`${API_INDEMNIZACIONES_URL}/${selectedPresupuesto}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
         }),
