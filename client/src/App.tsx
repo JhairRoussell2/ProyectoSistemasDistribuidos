@@ -28,7 +28,6 @@ import ForgotPassword from "./pages/Recuperar";
 import ResetPassword from "./pages/Resetear";
 import AsignarTaller from "./pages/AsignarTaller";
 import BeneficiarioPerfil from "./pages/BeneficiarioPerfil";
-
 import SeguimientoSiniestros from "./pages/Seguimiento";
 // No olvides importar los estilos de react-toastify
 import 'react-toastify/dist/ReactToastify.css'; // Importa el CSS de react-toastify
