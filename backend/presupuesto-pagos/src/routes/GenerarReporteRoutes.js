@@ -11,4 +11,6 @@ const router = (0, express_1.Router)();
 router.get("/", GenerarReporteController_1.default.getReportesCompleto);
 // Ruta para obtener el detalle completo de un siniestro por su ID
 router.get("/:id", GenerarReporteController_1.default.getReporteDetalle);
+//Ruta para generar un reporte en PDF
+router.get("/:id/pdf", GenerarReporteController_1.default.generatePdf);
 exports.default = router;

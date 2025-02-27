@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Reporte de Siniestro</title>
+  <style>
+    /* Estilos para el PDF */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1 {
+      text-align: center;
+      text-decoration: underline;
+    }
+    .detalle {
+      margin: 20px 0;
+    }
+    .detalle p {
+      font-size: 14px;
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Reporte de Siniestro #<%= siniestro.siniestroid %></h1>
+  <div class="detalle">
+    <p><strong>Fecha de Siniestro:</strong> <%= siniestro.fecha_siniestro %></p>
+    <p><strong>Tipo de Siniestro:</strong> <%= siniestro.tipo_siniestro %></p>
+    <p><strong>Descripción:</strong> <%= siniestro.descripcion %></p>
+    <p><strong>Taller Asignado:</strong> <%= siniestro.nombre_taller %></p>
+    <p><strong>Monto Total:</strong> <%= siniestro.montototal %></p>
+    <p><strong>Estado:</strong> <%= siniestro.estado %></p>
+  </div>
+</body>
+</html>
