@@ -87,7 +87,7 @@ const Layout = ({ children }: LayoutProps) => {
                   <span>Pagos de Indemnización</span>
                 </NavLink>
                 <NavLink
-                  to="/dashboard/admin/reportes"
+                  to="/dashboard/admin/GenerarReporte"
                   className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white"
                 >
                   <FiBarChart2 />

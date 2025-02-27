@@ -35,6 +35,7 @@ import DetallesReclamacion from "./pages/DetallesReclamacion";
 import SeguimientoDetalle from "./pages/SeguimientoDetalle";
 import RegistrarVehiculo from "./pages/RegistrarVehiculo"; 
 import Indemnizaciones from "./pages/Indemnizaciones";
+import GenerarReporte from "./pages/GenerarReporte"; // Importa la página de GenerarReporte
 
 const App = () => {
   return (
@@ -71,6 +72,7 @@ const App = () => {
         <Route path="/detalles-reclamacion/:id" element={<DetallesReclamacion />} />  {/* Ruta para Validar Documentos */}
         <Route path="/seguimiento" element={<SeguimientoSiniestros />} />
         <Route path="/seguimiento-detalle/:siniestroid" element={<SeguimientoDetalle />} />
+        <Route path="/dashboard/admin/GenerarReporte" element={<GenerarReporte/>} />
 
         
                
