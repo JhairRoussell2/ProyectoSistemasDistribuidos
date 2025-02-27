@@ -176,9 +176,22 @@ const SeguimientoDetalle = () => {
                             <td className="border border-gray-300 p-2">
                               {reclamacion.descripcion}
                             </td>
-                            {reclamacion.documentos.map((documento: any, index: number) => (
-                        <li key={index}><a href={documento.url} target="_blank" rel="noopener noreferrer">Ver Documento {index + 1}</a></li>
-                      ))}
+                            {reclamacion.documentos.map(
+                              (documento: any, index: number) => (
+                                <li key={index} className="mb-2">
+                                  {" "}
+                                
+                                  <a
+                                    href={documento.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:text-blue-800 underline transition-colors duration-300"
+                                  >
+                                    Ver Documento {index + 1}
+                                  </a>
+                                </li>
+                              )
+                            )}
                           </tr>
                         ))}
                       </tbody>
