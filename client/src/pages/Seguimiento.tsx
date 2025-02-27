@@ -98,15 +98,18 @@ const SeguimientoSiniestros = () => {
               onChange={handleSiniestroSeleccionado}
             >
               <option value="">Seleccione un siniestro</option>
-              {siniestros.map((siniestro) => (
-                <option
-                  key={siniestro.siniestroid}
-                  value={siniestro.siniestroid}
-                >
-                  Número {siniestro.siniestroid} - {siniestro.descripcion}{" "}
-                  (Fecha: {new Date(siniestro.fecha_siniestro).toLocaleDateString()})
-                </option>
-              ))}
+              {[...siniestros]
+                .sort((a, b) => a.siniestroid - b.siniestroid) // Ordenar por siniestroid ASC
+                .map((siniestro) => (
+                  <option
+                    key={siniestro.siniestroid}
+                    value={siniestro.siniestroid}
+                  >
+                    Número {siniestro.siniestroid} - {siniestro.descripcion}{" "}
+                    (Fecha:{" "}
+                    {new Date(siniestro.fecha_siniestro).toLocaleDateString()})
+                  </option>
+                ))}
             </select>
           </div>
 
