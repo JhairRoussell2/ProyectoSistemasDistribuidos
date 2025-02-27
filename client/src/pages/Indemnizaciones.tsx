@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import Alert from "../components/Alert";
 import Navbar from "../components/Navbar";
+import Modal from "../components/Modal";
 // Endpoint del backend para indemnizaciones
 const API_INDEMNIZACIONES_URL =
   import.meta.env.VITE_API_INDEMNIZACIONES_URL || "http://localhost:5001/api/indemnizaciones/";
@@ -23,8 +24,41 @@ const Indemnizaciones = () => {
   const [alert, setAlert] = useState<{ type: "success" | "error" | "warning" | "info"; message: string } | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState<string | null>(null);
+  const [selectedPresupuesto, setSelectedPresupuesto] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const handlePagar = (presupuestoid: number) => {
+    setModalMessage(null); // Limpia el mensaje anterior
+    setSelectedPresupuesto(presupuestoid);
+    setShowModal(true);
+  };
+  
 
+  const confirmPagar = async () => {
+    if (!selectedPresupuesto) return;
+    setLoading(true);
+  
+    try {
+      // Ejecutamos la petición PATCH y a la vez esperamos 1 segundo
+      const [response] = await Promise.all([
+        fetch(`${API_INDEMNIZACIONES_URL}${selectedPresupuesto}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+        }),
+        new Promise((resolve) => setTimeout(resolve, 1000)), // espera de 1 segundo
+      ]);
+      const data = await response.json();
+      setModalMessage(data.message);
+      fetchIndemnizaciones(); // Actualiza la tabla
+    } catch (error) {
+      setModalMessage("Error al procesar el pago.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   useEffect(() => {
     fetchIndemnizaciones();
   }, []);
@@ -204,14 +238,28 @@ const Indemnizaciones = () => {
             <tbody>
               {currentItems.map((item) => (
                 <tr key={item.presupuestoid} className="border-t hover:bg-gray-50 transition">
-                  <td className="p-3 text-center">{ "SIN-" + item.siniestroid }</td>
+                  <td className="p-3 text-center">{"SIN-" + item.siniestroid}</td>
                   <td className="p-3 text-center">
                     {item.fecha_siniestro
                       ? new Date(item.fecha_siniestro).toLocaleDateString()
                       : "No asignada"}
                   </td>
-                  <td className="p-3 text-center">{item.montototal}</td>
-                  <td className="p-3 text-center">{item.estado}</td>
+                  <td className="p-3 text-center">S/.{item.montototal}</td>
+                  <td className="p-3 text-center">
+                    <div className="h-8 flex items-center justify-center">
+                      {item.estado === "Validado" ? (
+                        <button
+                          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
+                          onClick={() => handlePagar(item.presupuestoid)}
+                        >
+                          Pagar
+                        </button>
+                      ) : (
+                        <span>{item.estado}</span>
+                      )}
+                    </div>
+                  </td>
+
                 </tr>
               ))}
             </tbody>
@@ -223,14 +271,54 @@ const Indemnizaciones = () => {
             <button
               key={index}
               onClick={() => handlePageChange(index + 1)}
-              className={`px-4 py-2 rounded-lg border ${
-                currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
+              className={`px-4 py-2 rounded-lg border ${currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200"
+                }`}
             >
               {index + 1}
             </button>
           ))}
+        </div>{showModal && (
+  <Modal onClose={() => setShowModal(false)}>
+    <div className="text-center">
+      {loading ? (
+        <div>
+          <p className="text-lg font-medium text-gray-900 mb-4">Pagando...</p>
+          <div className="loader mx-auto"></div>
         </div>
+      ) : modalMessage ? (
+        <div>
+          <p className="text-lg font-medium text-gray-900 mb-4">{modalMessage}</p>
+          <button
+            className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition"
+            onClick={() => setShowModal(false)}
+          >
+            Cerrar
+          </button>
+        </div>
+      ) : (
+        <div>
+          <h2 className="text-xl font-bold text-gray-900">Confirmar Pago</h2>
+          <p className="mt-4 text-gray-700">¿Seguro de pagar esto?</p>
+          <div className="flex justify-center gap-4 mt-4">
+            <button
+              className="bg-green-500 hover:bg-green-600 px-5 py-2 rounded-lg text-white transition"
+              onClick={confirmPagar}
+            >
+              Sí
+            </button>
+            <button
+              className="bg-gray-500 hover:bg-gray-600 px-5 py-2 rounded-lg text-white transition"
+              onClick={() => setShowModal(false)}
+            >
+              No
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  </Modal>
+)}
+
       </div>
     </>
   );
