@@ -4,10 +4,9 @@ import pool from "../config/db";
 import path from "path";
 import ejs from "ejs";
 import puppeteer from "puppeteer";
-import fs from "fs";
 
 class GenerarReporteController {
-  // Devuelve la lista completa de reportes usando el filtro 'Validado'
+  // Devuelve la lista completa de reportes usando el filtro 'Validado' o 'Pagado'
   public async getReportesCompleto(req: Request, res: Response): Promise<void> {
     try {
       const query = `
@@ -24,6 +23,7 @@ class GenerarReporteController {
          WHERE p.estado in('Validado', 'Pagado')
       `;
       const result = await pool.query(query);
+      // Retornamos JSON (esto está bien, es la lista general)
       res.json((result as any).rows);
     } catch (error) {
       res.status(500).json({
@@ -32,7 +32,6 @@ class GenerarReporteController {
       });
     }
   }
-
   // Devuelve el detalle completo de un siniestro específico (por ID)
   public async getReporteDetalle(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
@@ -54,9 +53,9 @@ class GenerarReporteController {
 
       if ((result as any).rows.length === 0) {
         res.status(404).json({ message: "Siniestro no encontrado" });
-      } else {
-        res.json((result as any).rows[0]);
+        return;
       }
+      res.json((result as any).rows[0]);
     } catch (error) {
       res.status(500).json({
         message: "Error al obtener el reporte del siniestro",
@@ -64,10 +63,12 @@ class GenerarReporteController {
       });
     }
   }
+
+  // Generar PDF con Puppeteer
   public async generatePdf(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     try {
-      // 1. Consulta a la base de datos (similar a getReporteDetalle)
+      // 1. Consulta a la base de datos
       const query = `
         SELECT s.siniestroid, 
                TO_CHAR(s.fecha_siniestro, 'YYYY-MM-DD') AS fecha_siniestro, 
@@ -86,31 +87,31 @@ class GenerarReporteController {
         res.status(404).json({ message: "Siniestro no encontrado" });
         return;
       }
-
       const siniestro = (result as any).rows[0];
 
-      // 2. Renderizamos la plantilla EJS, pasando siniestro como variable
+      // 2. Renderizar la plantilla EJS
       const templatePath = path.join(__dirname, "..", "views", "reporte.ejs");
       const htmlContent = await ejs.renderFile(templatePath, { siniestro });
 
-      // 3. Generamos el PDF con Puppeteer
+      // 3. Generar el PDF con Puppeteer
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
       await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+
       const pdfBuffer = await page.pdf({ format: "A4" });
+
       await browser.close();
 
-      // 4. Enviamos el PDF al cliente
+      // 4. Enviar el PDF al cliente
       res.setHeader("Content-Type", "application/pdf");
-      // Opcional: forzar descarga con un nombre
       res.setHeader("Content-Disposition", "attachment; filename=reporte.pdf");
-      res.send(pdfBuffer);
+      res.end(pdfBuffer);
 
     } catch (error) {
+      console.error("Error al generar el PDF:", error);
       res.status(500).json({ message: "Error al generar el PDF", error });
     }
   }
-
 }
 
 export default new GenerarReporteController();
