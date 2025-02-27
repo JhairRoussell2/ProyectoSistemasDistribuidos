@@ -17,7 +17,7 @@ const path_1 = __importDefault(require("path"));
 const ejs_1 = __importDefault(require("ejs"));
 const puppeteer_1 = __importDefault(require("puppeteer"));
 class GenerarReporteController {
-    // Devuelve la lista completa de reportes usando el filtro 'Validado' o 'Pagado'
+    // Devuelve la lista completa de reportes usando el filtro 'Validado'
     getReportesCompleto(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -35,8 +35,14 @@ class GenerarReporteController {
          WHERE p.estado in('Validado', 'Pagado')
       `;
                 const result = yield db_1.default.query(query);
-                // Retornamos JSON (esto está bien, es la lista general)
-                res.json(result.rows);
+                // Transformamos el estado: si es "Validado", lo renombramos a "No pagado"
+                const rows = result.rows.map((row) => {
+                    if (row.estado === "Validado") {
+                        row.estado = "No pagado";
+                    }
+                    return row;
+                });
+                res.json(rows);
             }
             catch (error) {
                 res.status(500).json({
@@ -53,6 +59,7 @@ class GenerarReporteController {
             try {
                 const query = `
         SELECT s.siniestroid, 
+               s.fecha_siniestro,
                TO_CHAR(s.fecha_siniestro, 'YYYY-MM-DD') AS fecha_siniestro, 
                s.tipo_siniestro, 
                s.descripcion, 
@@ -67,9 +74,14 @@ class GenerarReporteController {
                 const result = yield db_1.default.query(query, [id]);
                 if (result.rows.length === 0) {
                     res.status(404).json({ message: "Siniestro no encontrado" });
-                    return;
                 }
-                res.json(result.rows[0]);
+                else {
+                    const siniestro = result.rows[0];
+                    if (siniestro.estado === "Validado") {
+                        siniestro.estado = "No pagado";
+                    }
+                    res.json(siniestro);
+                }
             }
             catch (error) {
                 res.status(500).json({
@@ -79,7 +91,7 @@ class GenerarReporteController {
             }
         });
     }
-    // Generar PDF con Puppeteer
+    // Genera el PDF a partir de la plantilla EJS y lo envía como respuesta
     generatePdf(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
@@ -87,6 +99,7 @@ class GenerarReporteController {
                 // 1. Consulta a la base de datos
                 const query = `
         SELECT s.siniestroid, 
+               s.fecha_siniestro,
                TO_CHAR(s.fecha_siniestro, 'YYYY-MM-DD') AS fecha_siniestro, 
                s.tipo_siniestro, 
                s.descripcion, 
@@ -104,22 +117,24 @@ class GenerarReporteController {
                     return;
                 }
                 const siniestro = result.rows[0];
-                // 2. Renderizar la plantilla EJS
+                if (siniestro.estado === "Validado") {
+                    siniestro.estado = "No pagado";
+                }
+                // 2. Renderizamos la plantilla EJS, pasando 'siniestro' como variable
                 const templatePath = path_1.default.join(__dirname, "..", "views", "reporte.ejs");
                 const htmlContent = yield ejs_1.default.renderFile(templatePath, { siniestro });
-                // 3. Generar el PDF con Puppeteer
+                // 3. Generamos el PDF con Puppeteer
                 const browser = yield puppeteer_1.default.launch();
                 const page = yield browser.newPage();
                 yield page.setContent(htmlContent, { waitUntil: "networkidle0" });
                 const pdfBuffer = yield page.pdf({ format: "A4" });
                 yield browser.close();
-                // 4. Enviar el PDF al cliente
+                // 4. Enviamos el PDF al cliente en binario
                 res.setHeader("Content-Type", "application/pdf");
                 res.setHeader("Content-Disposition", "attachment; filename=reporte.pdf");
                 res.end(pdfBuffer);
             }
             catch (error) {
-                console.error("Error al generar el PDF:", error);
                 res.status(500).json({ message: "Error al generar el PDF", error });
             }
         });

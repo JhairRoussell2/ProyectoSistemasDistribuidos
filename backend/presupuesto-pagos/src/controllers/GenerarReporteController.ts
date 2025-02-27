@@ -6,7 +6,7 @@ import ejs from "ejs";
 import puppeteer from "puppeteer";
 
 class GenerarReporteController {
-  // Devuelve la lista completa de reportes usando el filtro 'Validado' o 'Pagado'
+  // Devuelve la lista completa de reportes usando el filtro 'Validado'
   public async getReportesCompleto(req: Request, res: Response): Promise<void> {
     try {
       const query = `
@@ -23,8 +23,14 @@ class GenerarReporteController {
          WHERE p.estado in('Validado', 'Pagado')
       `;
       const result = await pool.query(query);
-      // Retornamos JSON (esto está bien, es la lista general)
-      res.json((result as any).rows);
+      // Transformamos el estado: si es "Validado", lo renombramos a "No pagado"
+      const rows = (result as any).rows.map((row: any) => {
+        if (row.estado === "Validado") {
+          row.estado = "No pagado";
+        }
+        return row;
+      });
+      res.json(rows);
     } catch (error) {
       res.status(500).json({
         message: "Error al obtener los reportes completos",
@@ -32,12 +38,14 @@ class GenerarReporteController {
       });
     }
   }
+
   // Devuelve el detalle completo de un siniestro específico (por ID)
   public async getReporteDetalle(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     try {
       const query = `
         SELECT s.siniestroid, 
+               s.fecha_siniestro,
                TO_CHAR(s.fecha_siniestro, 'YYYY-MM-DD') AS fecha_siniestro, 
                s.tipo_siniestro, 
                s.descripcion, 
@@ -53,9 +61,13 @@ class GenerarReporteController {
 
       if ((result as any).rows.length === 0) {
         res.status(404).json({ message: "Siniestro no encontrado" });
-        return;
+      } else {
+        const siniestro = (result as any).rows[0];
+        if (siniestro.estado === "Validado") {
+          siniestro.estado = "No pagado";
+        }
+        res.json(siniestro);
       }
-      res.json((result as any).rows[0]);
     } catch (error) {
       res.status(500).json({
         message: "Error al obtener el reporte del siniestro",
@@ -64,13 +76,14 @@ class GenerarReporteController {
     }
   }
 
-  // Generar PDF con Puppeteer
+  // Genera el PDF a partir de la plantilla EJS y lo envía como respuesta
   public async generatePdf(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     try {
       // 1. Consulta a la base de datos
       const query = `
         SELECT s.siniestroid, 
+               s.fecha_siniestro,
                TO_CHAR(s.fecha_siniestro, 'YYYY-MM-DD') AS fecha_siniestro, 
                s.tipo_siniestro, 
                s.descripcion, 
@@ -88,27 +101,26 @@ class GenerarReporteController {
         return;
       }
       const siniestro = (result as any).rows[0];
+      if (siniestro.estado === "Validado") {
+        siniestro.estado = "No pagado";
+      }
 
-      // 2. Renderizar la plantilla EJS
+      // 2. Renderizamos la plantilla EJS, pasando 'siniestro' como variable
       const templatePath = path.join(__dirname, "..", "views", "reporte.ejs");
       const htmlContent = await ejs.renderFile(templatePath, { siniestro });
-
-      // 3. Generar el PDF con Puppeteer
+      
+      // 3. Generamos el PDF con Puppeteer
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
       await page.setContent(htmlContent, { waitUntil: "networkidle0" });
-
       const pdfBuffer = await page.pdf({ format: "A4" });
-
       await browser.close();
 
-      // 4. Enviar el PDF al cliente
+      // 4. Enviamos el PDF al cliente en binario
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader("Content-Disposition", "attachment; filename=reporte.pdf");
       res.end(pdfBuffer);
-
     } catch (error) {
-      console.error("Error al generar el PDF:", error);
       res.status(500).json({ message: "Error al generar el PDF", error });
     }
   }
