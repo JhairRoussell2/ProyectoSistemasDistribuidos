@@ -34,12 +34,12 @@ const Indemnizaciones = () => {
     setSelectedPresupuesto(presupuestoid);
     setShowModal(true);
   };
-  
+
 
   const confirmPagar = async () => {
     if (!selectedPresupuesto) return;
     setLoading(true);
-  
+
     try {
       // Ejecutamos la petición PATCH y a la vez esperamos 1 segundo
       const [response] = await Promise.all([
@@ -58,14 +58,15 @@ const Indemnizaciones = () => {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     fetchIndemnizaciones();
   }, []);
+  const [filtro, setFiltro] = useState("todos");
 
   useEffect(() => {
     filterAndSort();
-  }, [search, searchField, sortField, sortOrder, indemnizaciones]);
+  }, [search, searchField, sortField, sortOrder, indemnizaciones, filtro]);
 
   const fetchIndemnizaciones = async () => {
     try {
@@ -90,11 +91,10 @@ const Indemnizaciones = () => {
   const filterAndSort = () => {
     let filtered = indemnizaciones.filter((item) => {
       let value = item[searchField as keyof Indemnizacion];
-
       if (searchField === "fecha_siniestro" && value) {
         value = new Date(value as string).toLocaleDateString() as unknown as never;
       }
-
+  
       if (searchField === "siniestroid") {
         if (search.length < 3) {
           return true;
@@ -116,15 +116,23 @@ const Indemnizaciones = () => {
           }
         }
       }
-
       return value?.toString().toLowerCase().includes(search.toLowerCase());
     });
-
+  
+    // Filtrar según el valor del desplegable (filtro)
+    filtered = filtered.filter((item) => {
+      console.log(filtro);
+      if (filtro === "pagados") return item.estado.toLowerCase().trim() === "pagado";
+      if (filtro === "porPagar") return item.estado.toLowerCase().trim() !== "pagado";
+      return true; // "todos"
+      
+    });
+  
     if (sortField) {
       filtered.sort((a, b) => {
         let valA: any = a[sortField as keyof Indemnizacion];
         let valB: any = b[sortField as keyof Indemnizacion];
-
+  
         if (sortField === "siniestroid") {
           valA = parseSiniestroId(valA);
           valB = parseSiniestroId(valB);
@@ -137,17 +145,17 @@ const Indemnizaciones = () => {
           valA = strA;
           valB = strB;
         }
-
+  
         if (valA < valB) return sortOrder === "asc" ? -1 : 1;
         if (valA > valB) return sortOrder === "asc" ? 1 : -1;
         return 0;
       });
     }
-
+  
     setFilteredIndemnizaciones(filtered);
     setCurrentPage(1);
   };
-
+  
   const handleSort = (field: string) => {
     if (sortField === field) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -168,6 +176,7 @@ const Indemnizaciones = () => {
   const selectedIndemnizacion = indemnizaciones.find(
     (item) => item.presupuestoid === selectedPresupuesto
   );
+ 
   return (
     <>
       <Navbar />
@@ -209,12 +218,22 @@ const Indemnizaciones = () => {
             <option value="montototal">MONTO DE INDEMNIZACION</option>
             <option value="estado">ESTADO DEL PAGO</option>
           </select>
+          {/* Nuevo desplegable de filtro */}
+          <select
+            className="p-3 border border-gray-300 rounded-lg"
+            value={filtro}
+            onChange={(e) => setFiltro(e.target.value)}
+          >
+            <option value="todos">MOSTRAR TODOS</option>
+            <option value="pagados">MOSTRAR SOLO PAGADOS</option>
+            <option value="porPagar">MOSTRAR SOLO POR PAGAR</option>
+          </select>
           <select
             className="p-3 border border-gray-300 rounded-lg"
             value={sortField || ""}
             onChange={(e) => handleSort(e.target.value)}
           >
-            <option value="">Ordenar por...</option>
+            <option value="">ORDENAR POR...</option>
             <option value="siniestroid">ID SINIESTRO</option>
             <option value="fecha_siniestro">FECHA DEL SINIESTRO</option>
             <option value="montototal">MONTO DE INDEMNIZACION</option>
@@ -280,61 +299,61 @@ const Indemnizaciones = () => {
             </button>
           ))}
         </div>{showModal && (
-  <Modal onClose={() => setShowModal(false)}>
-    <div className="text-center">
-    {loading ? (
-  <div>
-    <p className="text-lg font-medium text-gray-900 mb-4">Pagando...</p>
-    <div className="loader mx-auto animate-spin border-4 border-gray-300 border-t-blue-500 rounded-full w-12 h-12"></div>
-  </div>
-) : modalMessage ? (
-  <div>
-    <p className="text-lg font-medium text-gray-900 mb-4">{modalMessage}</p>
-    <button
-      className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition"
-      onClick={() => setShowModal(false)}
-    >
-      Cerrar
-    </button>
-  </div>
-) : (
-  <div>
-    <h2 className="text-xl font-bold text-gray-900">Confirmar Pago</h2>
-    <p className="mt-4 text-gray-700">¿Seguro de pagar esto?</p>
-    {selectedIndemnizacion && (
-      <div className="mt-4 text-gray-700">
-        <p>
-          <strong>SINIESTRO:</strong> {"SIN-" + selectedIndemnizacion.siniestroid}
-        </p>
-        <p>
-          <strong>FECHA DEL SINIESTRO:</strong>{" "}
-          {new Date(selectedIndemnizacion.fecha_siniestro).toLocaleDateString()}
-        </p>
-        <p>
-          <strong>MONTO DEL SINIESTRO:</strong> S/.{selectedIndemnizacion.montototal}
-        </p>
-      </div>
-    )}
-    <div className="flex justify-center gap-4 mt-4">
-      <button
-        className="bg-green-500 hover:bg-green-600 px-5 py-2 rounded-lg text-white transition"
-        onClick={confirmPagar}
-      >
-        Sí
-      </button>
-      <button
-        className="bg-gray-500 hover:bg-gray-600 px-5 py-2 rounded-lg text-white transition"
-        onClick={() => setShowModal(false)}
-      >
-        No
-      </button>
-    </div>
-  </div>
-)}
+          <Modal onClose={() => setShowModal(false)}>
+            <div className="text-center">
+              {loading ? (
+                <div>
+                  <p className="text-lg font-medium text-gray-900 mb-4">Pagando...</p>
+                  <div className="loader mx-auto animate-spin border-4 border-gray-300 border-t-blue-500 rounded-full w-12 h-12"></div>
+                </div>
+              ) : modalMessage ? (
+                <div>
+                  <p className="text-lg font-medium text-gray-900 mb-4">{modalMessage}</p>
+                  <button
+                    className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition"
+                    onClick={() => setShowModal(false)}
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">Confirmar Pago</h2>
+                  <p className="mt-4 text-gray-700">¿Seguro de pagar esto?</p>
+                  {selectedIndemnizacion && (
+                    <div className="mt-4 text-gray-700">
+                      <p>
+                        <strong>SINIESTRO:</strong> {"SIN-" + selectedIndemnizacion.siniestroid}
+                      </p>
+                      <p>
+                        <strong>FECHA DEL SINIESTRO:</strong>{" "}
+                        {new Date(selectedIndemnizacion.fecha_siniestro).toLocaleDateString()}
+                      </p>
+                      <p>
+                        <strong>MONTO DEL SINIESTRO:</strong> S/.{selectedIndemnizacion.montototal}
+                      </p>
+                    </div>
+                  )}
+                  <div className="flex justify-center gap-4 mt-4">
+                    <button
+                      className="bg-green-500 hover:bg-green-600 px-5 py-2 rounded-lg text-white transition"
+                      onClick={confirmPagar}
+                    >
+                      Sí
+                    </button>
+                    <button
+                      className="bg-gray-500 hover:bg-gray-600 px-5 py-2 rounded-lg text-white transition"
+                      onClick={() => setShowModal(false)}
+                    >
+                      No
+                    </button>
+                  </div>
+                </div>
+              )}
 
-    </div>
-  </Modal>
-)}
+            </div>
+          </Modal>
+        )}
 
       </div>
     </>
