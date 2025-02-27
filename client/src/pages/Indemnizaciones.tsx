@@ -3,11 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import Alert from "../components/Alert";
 import Navbar from "../components/Navbar";
-
 // Endpoint del backend para indemnizaciones
 const API_INDEMNIZACIONES_URL =
   import.meta.env.VITE_API_INDEMNIZACIONES_URL || "http://localhost:5001/api/indemnizaciones/";
-
 const Indemnizaciones = () => {
   interface Indemnizacion {
     siniestroid: number;
@@ -16,7 +14,6 @@ const Indemnizaciones = () => {
     estado: string;
     presupuestoid: number;
   }
-
   const [indemnizaciones, setIndemnizaciones] = useState<Indemnizacion[]>([]);
   const [filteredIndemnizaciones, setFilteredIndemnizaciones] = useState<Indemnizacion[]>([]);
   const [search, setSearch] = useState("");
