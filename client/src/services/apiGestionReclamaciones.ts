@@ -16,7 +16,7 @@ export const obtenerReclamaciones = async () => {
   }
 };
 
-// Obtener detalles de una reclamación
+// Obtener detalles de una reclama
 export const obtenerDetallesReclamacion = async (reclamacionid: string) => {
   try {
     const response = await axios.get(`${API_RECLAMACION_URL}/${reclamacionid}/detalles`);

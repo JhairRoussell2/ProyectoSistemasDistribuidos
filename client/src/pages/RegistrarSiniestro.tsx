@@ -168,7 +168,7 @@ const finalDelay = 5000; // El mensaje desaparecerá después de 5 segundos
   
         // Enviar el archivo al servidor
         const response = await axios.post(
-          "http://localhost:3000/upload",
+          "https://segurosflexbeneficiarios.onrender.com/upload",
           fileFormData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
@@ -183,7 +183,7 @@ const finalDelay = 5000; // El mensaje desaparecerá después de 5 segundos
   
       // Enviar la información del siniestro con las URLs de las imágenes
       const secondResponse = await axios.post(
-        "http://localhost:3000/api/siniestros",
+        "https://segurosflexbeneficiarios.onrender.com/api/siniestros",
         { ...form, documentos: imageUrls }
       );
   

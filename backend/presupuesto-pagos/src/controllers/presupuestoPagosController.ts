@@ -9,7 +9,7 @@ class PresupuestoPagosController {
       const result = await pool.query("SELECT * FROM public.get_presupuestos_pendientes()");
       res.json((result as any).rows);
     } catch (error) {
-      res.status(500).json({ message: "Error al obtener los proveedores", error });
+      res.status(500).json({ message: "Error al obtener los presupuestos", error });
     }
   }
   // Obtener presupuesto por ID

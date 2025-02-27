@@ -32,7 +32,7 @@ const MantenerBeneficiarios = () => {
   useEffect(() => {
     const fetchBeneficiarios = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/beneficiarios");
+        const response = await axios.get("https://segurosflexbeneficiarios.onrender.com/api/beneficiarios");
         const data = response.data;
         setBeneficiarios(data);
         setFilteredBeneficiarios(data);
@@ -63,7 +63,7 @@ const MantenerBeneficiarios = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`http://localhost:3000/api/beneficiarios/${id}`);
+      await axios.delete(`https://segurosflexbeneficiarios.onrender.com/api/beneficiarios/api/beneficiarios/${id}`);
       alert("Beneficiario eliminado correctamente");
       const updatedList = beneficiarios.filter((b) => b.beneficiarioid !== id);
       setBeneficiarios(updatedList);
@@ -99,7 +99,7 @@ const MantenerBeneficiarios = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/beneficiarios/${selectedBeneficiario.beneficiarioid}`,
+        `https://segurosflexbeneficiarios.onrender.com/api/beneficiarios/api/beneficiarios/${selectedBeneficiario.beneficiarioid}`,
         datosActualizados,
         { headers: { "Content-Type": "application/json" } }
       );

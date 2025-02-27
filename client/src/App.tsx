@@ -34,6 +34,7 @@ import SeguimientoSiniestros from "./pages/Seguimiento";
 import 'react-toastify/dist/ReactToastify.css'; // Importa el CSS de react-toastify
 import DetallesReclamacion from "./pages/DetallesReclamacion";
 import SeguimientoDetalle from "./pages/SeguimientoDetalle";
+import RegistrarVehiculo from "./pages/RegistrarVehiculo"; 
 
 const App = () => {
   return (
@@ -52,6 +53,7 @@ const App = () => {
         <Route path="/dashboard/personal/validar-poliza" element={<ValidarPolizas />} />
         <Route path="/dashboard/personal/asignar-siniestros" element={<AsignarTaller />} /> 
         <Route path="/dashboard/general/polizas" element={<Policies />} />
+        <Route path="/dashboard/general/vehiculo" element={<RegistrarVehiculo />} />  
         <Route path="/proveedores" element={<Proveedores />} />
         <Route path="/gestionarpresupuestos" element={<GestionarPresupuestos />} />
         <Route path="/detallepresupuesto/:id" element={<DetallePresupuestos />} />

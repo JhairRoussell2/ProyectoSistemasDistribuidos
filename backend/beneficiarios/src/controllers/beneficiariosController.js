@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verificarDNI = exports.verificarEmail = exports.getBeneficiariosPorDNI = exports.updateBeneficiario = exports.deleteBeneficiario = exports.checkIfNewBeneficiario = exports.getUserRole = exports.createBeneficiario = exports.login = exports.getBeneficiarioPorID = exports.getBeneficiarioPorUsuarioID = exports.getBeneficiarios = void 0;
+exports.verificarDNI = exports.verificarEmail = exports.getBeneficiariosPorDNI = exports.updateBeneficiario = exports.deleteBeneficiario = exports.checkVehiculo = exports.checkPoliza = exports.checkIfNewBeneficiario = exports.getUserRole = exports.createBeneficiario = exports.login = exports.getBeneficiarioPorID = exports.getBeneficiarioPorUsuarioID = exports.getBeneficiarios = void 0;
 const joi_1 = __importDefault(require("joi"));
 const db_1 = __importDefault(require("../config/db"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
@@ -55,7 +55,7 @@ const getBeneficiarioPorUsuarioID = (req, res) => __awaiter(void 0, void 0, void
             res.status(404).json({ message: "Beneficiario no encontrado." });
             return;
         }
-        res.status(200).json({ BeneficiarioID: rows[0].BeneficiarioID });
+        res.status(200).json({ BeneficiarioID: rows[0].beneficiarioid });
     }
     catch (error) {
         console.error("Error al obtener BeneficiarioID:", error);
@@ -220,6 +220,31 @@ const checkIfNewBeneficiario = (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.checkIfNewBeneficiario = checkIfNewBeneficiario;
+const checkPoliza = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const { rows } = yield db_1.default.query("SELECT COUNT(*) AS count FROM poliza WHERE beneficiarioid = $1", [id]);
+        res.status(200).json({ hasPoliza: parseInt(rows[0].count, 10) > 0 });
+    }
+    catch (error) {
+        console.error("Error al verificar póliza:", error);
+        res.status(500).json({ error: "Error al verificar la póliza" });
+    }
+});
+exports.checkPoliza = checkPoliza;
+// Verificar si el beneficiario tiene un vehículo registrado
+const checkVehiculo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const { rows } = yield db_1.default.query("SELECT COUNT(*) AS count FROM vehiculo WHERE beneficiarioid = $1", [id]);
+        res.status(200).json({ hasVehiculo: parseInt(rows[0].count, 10) > 0 });
+    }
+    catch (error) {
+        console.error("Error al verificar vehículo:", error);
+        res.status(500).json({ error: "Error al verificar el vehículo" });
+    }
+});
+exports.checkVehiculo = checkVehiculo;
 // Controlador para eliminar un beneficiario
 const deleteBeneficiario = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {

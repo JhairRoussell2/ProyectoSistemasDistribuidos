@@ -23,7 +23,7 @@ class PresupuestoPagosController {
                 res.json(result.rows);
             }
             catch (error) {
-                res.status(500).json({ message: "Error al obtener los proveedores", error });
+                res.status(500).json({ message: "Error al obtener los presupuestos", error });
             }
         });
     }

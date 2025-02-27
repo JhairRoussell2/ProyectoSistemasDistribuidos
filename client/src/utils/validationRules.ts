@@ -25,3 +25,10 @@ export const required = (value: string) => {
   export const matches = (otherValue: string) => (value: string) => {
     return value === otherValue ? null : 'Las contraseñas no coinciden.';
   };
+
+  export const isValidPlate = (value: string) => {
+    return /^[A-Z]{3}-\d{3}$/.test(value) 
+      ? null 
+      : 'El formato debe ser ABC-123 (tres letras, guion, tres números).';
+  };
+  
