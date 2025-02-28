@@ -106,11 +106,14 @@ class GenerarReporteController {
       }
 
       // 2. Renderizamos la plantilla EJS, pasando 'siniestro' como variable
-      const templatePath = path.join(__dirname, "..", "views", "reporte.ejs");
+      const templatePath = path.join(process.cwd(), "views", "reporte.ejs");
       const htmlContent = await ejs.renderFile(templatePath, { siniestro });
       
       // 3. Generamos el PDF con Puppeteer
-      const browser = await puppeteer.launch();
+      const browser = await puppeteer.launch({
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        headless: true, 
+      });
       const page = await browser.newPage();
       await page.setContent(htmlContent, { waitUntil: "networkidle0" });
       const pdfBuffer = await page.pdf({ format: "A4" });
@@ -121,6 +124,7 @@ class GenerarReporteController {
       res.setHeader("Content-Disposition", "attachment; filename=reporte.pdf");
       res.end(pdfBuffer);
     } catch (error) {
+      console.error("Error al generar el PDF:", error);
       res.status(500).json({ message: "Error al generar el PDF", error });
     }
   }
