@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const pg_1 = require("pg"); // Asegúrate de tener instalado pg-pool
 // Cadena de conexión con SSL
-const connectionString = "postgresql://seguros_user:V26AfZvS1OM4uRVh9LvQEteaW8srKwwh@dpg-cueg03t6l47c739tvcbg-a.oregon-postgres.render.com:5432/seguros?sslmode=require";
+const connectionString = "postgresql://seguros_et85_user:NwsWdkmW9cSQLmLbTisoFihLNrTqrl3d@dpg-cv0vgf5umphs739j3r80-a.ohio-postgres.render.com/seguros_et85?sslmode=require";
 // Crear el pool de conexiones usando la cadena de conexión completa
 const pool = new pg_1.Pool({
     connectionString: connectionString,

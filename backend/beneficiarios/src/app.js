@@ -30,8 +30,8 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 // Middlewares
 const corsOptions = {
-    origin: 'https://seguros-flex.vercel.app', // Permitir solo el frontend desplegado
-    methods: 'GET, POST, PUT, DELETE' // Asegúrate de que se permita el méto
+    origin: ['https://seguros-flex.vercel.app'], // Permitir solo el frontend desplegado
+    methods: 'GET, POST, PUT, DELETE',
 };
 app.use((0, cors_1.default)(corsOptions));
 app.use(express_1.default.json());
