@@ -146,6 +146,14 @@ const Proveedores = () => {
               transition={{ duration: 2, repeat: Infinity }}
             />
           </div>
+           {/* Botón Agregar Proveedor alineado a la derecha */}
+           <button
+  onClick={() => navigate("/registrar-proveedor")}
+  className="absolute right-0 flex items-center gap-2 bg-red-500 text-white px-5 py-3 rounded-lg shadow-md hover:bg-red-600 transition"
+>
+  ➕ Agregar Proveedor
+</button>
+
         </div>
         {/* Buscador */}
         <div className="mb-6">
