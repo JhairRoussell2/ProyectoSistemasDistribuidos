@@ -62,7 +62,7 @@ const RegistrarProveedor = () => {
         fileFormData.append("image", file); // "image" es el campo que espera el backend
 
         const response = await axios.post(
-          "http://localhost:5001/upload",  // URL del servidor para subir archivos
+          "https://segurosflextalleresproveedores.onrender.com/upload",  // URL del servidor para subir archivos
           fileFormData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
