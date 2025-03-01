@@ -15,7 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const db_1 = __importDefault(require("../config/db"));
 const path_1 = __importDefault(require("path"));
 const ejs_1 = __importDefault(require("ejs"));
-const puppeteer_1 = __importDefault(require("puppeteer"));
+const chrome_aws_lambda_1 = __importDefault(require("chrome-aws-lambda"));
+const puppeteer_core_1 = __importDefault(require("puppeteer-core"));
 class GenerarReporteController {
     // Devuelve la lista completa de reportes usando el filtro 'Validado'
     getReportesCompleto(req, res) {
@@ -96,6 +97,7 @@ class GenerarReporteController {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
             try {
+                console.log("NODE_ENV:", process.env.NODE_ENV);
                 // 1. Consulta a la base de datos
                 const query = `
         SELECT s.siniestroid, 
@@ -121,20 +123,41 @@ class GenerarReporteController {
                     siniestro.estado = "No pagado";
                 }
                 // 2. Renderizamos la plantilla EJS, pasando 'siniestro' como variable
+                // Usamos __dirname para construir la ruta relativa a este archivo
                 const templatePath = path_1.default.join(__dirname, "..", "views", "reporte.ejs");
+                console.log("Ruta de la plantilla:", templatePath);
                 const htmlContent = yield ejs_1.default.renderFile(templatePath, { siniestro });
-                // 3. Generamos el PDF con Puppeteer
-                const browser = yield puppeteer_1.default.launch();
+                // 3. Lanzamos el navegador según el entorno
+                let browser;
+                // Si NODE_ENV no está definida o es "development", se asume modo desarrollo.
+                if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
+                    console.log("Modo desarrollo: usando Puppeteer completo");
+                    // En desarrollo, asegúrate de tener instalado "puppeteer" (completo)
+                    const puppeteerFull = require("puppeteer");
+                    browser = yield puppeteerFull.launch({
+                        headless: true,
+                    });
+                }
+                else {
+                    console.log("Modo producción: usando chrome-aws-lambda y puppeteer-core");
+                    browser = yield puppeteer_core_1.default.launch({
+                        args: chrome_aws_lambda_1.default.args,
+                        defaultViewport: chrome_aws_lambda_1.default.defaultViewport,
+                        executablePath: yield chrome_aws_lambda_1.default.executablePath,
+                        headless: chrome_aws_lambda_1.default.headless,
+                    });
+                }
                 const page = yield browser.newPage();
                 yield page.setContent(htmlContent, { waitUntil: "networkidle0" });
                 const pdfBuffer = yield page.pdf({ format: "A4" });
                 yield browser.close();
-                // 4. Enviamos el PDF al cliente en binario
+                // 4. Enviamos el PDF al cliente
                 res.setHeader("Content-Type", "application/pdf");
                 res.setHeader("Content-Disposition", "attachment; filename=reporte.pdf");
                 res.end(pdfBuffer);
             }
             catch (error) {
+                console.error("Error al generar el PDF:", error);
                 res.status(500).json({ message: "Error al generar el PDF", error });
             }
         });
