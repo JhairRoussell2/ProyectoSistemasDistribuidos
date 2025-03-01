@@ -79,7 +79,6 @@ class GenerarReporteController {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
             try {
-                console.log("NODE_ENV:", process.env.NODE_ENV);
                 // 1. Consulta a la base de datos
                 const query = `
         SELECT s.siniestroid, 

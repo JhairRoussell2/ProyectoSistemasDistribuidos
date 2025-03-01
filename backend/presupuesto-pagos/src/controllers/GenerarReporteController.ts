@@ -65,7 +65,7 @@ class GenerarReporteController {
   public async generatePdf(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     try {
-      console.log("NODE_ENV:", process.env.NODE_ENV);
+
 
       // 1. Consulta a la base de datos
       const query = `
