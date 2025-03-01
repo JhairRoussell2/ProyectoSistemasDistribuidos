@@ -19,6 +19,8 @@ const ValidarPoliza = () => {
   const [searchDNI, setSearchDNI] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -92,7 +94,24 @@ const ValidarPoliza = () => {
       }
     }
   };
-  
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = polizas.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(polizas.length / itemsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   return (
     <div className="bg-white min-h-screen text-black relative overflow-hidden">
@@ -151,8 +170,8 @@ const ValidarPoliza = () => {
               </tr>
             </thead>
             <tbody>
-              {polizas.length > 0 ? (
-                polizas.map((poliza) => (
+              {currentItems.length > 0 ? (
+                currentItems.map((poliza) => (
                   <tr key={poliza.polizaid} className="border-t border-gray-300 hover:bg-gray-50">
                     <td className="py-4 px-6">{poliza.polizaid}</td>
                     <td className="py-4 px-6">{poliza.tipopoliza}</td>
@@ -190,6 +209,24 @@ const ValidarPoliza = () => {
               )}
             </tbody>
           </table>
+        </div>
+
+        <div className="flex justify-between mt-4">
+          <button
+            onClick={handlePreviousPage}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg disabled:opacity-50"
+          >
+            Anterior
+          </button>
+          <span className="text-gray-700">Página {currentPage} de {totalPages}</span>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg disabled:opacity-50"
+          >
+            Siguiente
+          </button>
         </div>
       </div>
 
