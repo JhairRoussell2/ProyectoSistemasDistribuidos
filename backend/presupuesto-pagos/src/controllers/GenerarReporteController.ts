@@ -59,7 +59,6 @@ class GenerarReporteController {
          WHERE s.siniestroid = $1
       `;
       const result = await pool.query(query, [id]);
-
       if ((result as any).rows.length === 0) {
         res.status(404).json({ message: "Siniestro no encontrado" });
       } else {
@@ -81,7 +80,9 @@ class GenerarReporteController {
   public async generatePdf(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     try {
+      // Imprime la variable de entorno para verificar el modo
       console.log("NODE_ENV:", process.env.NODE_ENV);
+
       // 1. Consulta a la base de datos
       const query = `
         SELECT s.siniestroid, 
@@ -107,29 +108,27 @@ class GenerarReporteController {
         siniestro.estado = "No pagado";
       }
 
-      // 2. Renderizamos la plantilla EJS, pasando 'siniestro' como variable
-      // Usamos __dirname para construir la ruta relativa a este archivo
+      // 2. Renderizamos la plantilla EJS, pasando 'siniestro' como variable.
+      // Usamos __dirname para construir la ruta relativa al archivo actual.
       const templatePath = path.join(__dirname, "..", "views", "reporte.ejs");
       console.log("Ruta de la plantilla:", templatePath);
       const htmlContent = await ejs.renderFile(templatePath, { siniestro });
 
-      // 3. Lanzamos el navegador según el entorno
+      // 3. Lanzamos el navegador según el entorno:
       let browser;
-      // Si NODE_ENV no está definida o es "development", se asume modo desarrollo.
-      if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
-        console.log("Modo desarrollo: usando Puppeteer completo");
-        // En desarrollo, asegúrate de tener instalado "puppeteer" (completo)
-        const puppeteerFull = require("puppeteer");
-        browser = await puppeteerFull.launch({
-          headless: true,
-        });
-      } else {
+      if (process.env.NODE_ENV === "production") {
         console.log("Modo producción: usando chrome-aws-lambda y puppeteer-core");
         browser = await puppeteerCore.launch({
           args: chromium.args,
           defaultViewport: chromium.defaultViewport,
           executablePath: await chromium.executablePath,
           headless: chromium.headless,
+        });
+      } else {
+        console.log("Modo desarrollo: usando Puppeteer completo");
+        const puppeteerFull = require("puppeteer");
+        browser = await puppeteerFull.launch({
+          headless: true,
         });
       }
 
