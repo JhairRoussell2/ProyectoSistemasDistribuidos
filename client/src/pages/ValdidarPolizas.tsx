@@ -7,6 +7,9 @@ import { FaSearch, FaCheckCircle, FaTimesCircle, FaArrowLeft, FaSpinner } from '
 interface Poliza {
   polizaid: number;
   beneficiarioid: number;
+  email: string;
+  nombre: string;
+  apellido: string;
   tipopoliza: string;
   fechainicio: string;
   fechafin: string;
@@ -162,6 +165,9 @@ const ValidarPoliza = () => {
             <thead>
               <tr className="bg-gray-800 text-white">
                 <th className="py-3 px-6 text-left">ID Póliza</th>
+                <th className="py-3 px-6 text-left">Email</th>
+                <th className="py-3 px-6 text-left">Nombre</th>
+                <th className="py-3 px-6 text-left">Apellido</th>
                 <th className="py-3 px-6 text-left">Tipo de Póliza</th>
                 <th className="py-3 px-6 text-left">Fecha de Inicio</th>
                 <th className="py-3 px-6 text-left">Fecha de Fin</th>
@@ -174,6 +180,9 @@ const ValidarPoliza = () => {
                 currentItems.map((poliza) => (
                   <tr key={poliza.polizaid} className="border-t border-gray-300 hover:bg-gray-50">
                     <td className="py-4 px-6">{poliza.polizaid}</td>
+                    <td className="py-4 px-6">{poliza.email}</td>
+                    <td className="py-4 px-6">{poliza.nombre}</td>
+                    <td className="py-4 px-6">{poliza.apellido}</td>
                     <td className="py-4 px-6">{poliza.tipopoliza}</td>
                     <td className="py-4 px-6">{new Date(poliza.fechainicio).toLocaleDateString()}</td>
                     <td className="py-4 px-6">{new Date(poliza.fechafin).toLocaleDateString()}</td>
@@ -202,7 +211,7 @@ const ValidarPoliza = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="text-center py-4 text-gray-500">
+                  <td colSpan={9} className="text-center py-4 text-gray-500">
                     No hay pólizas disponibles
                   </td>
                 </tr>
