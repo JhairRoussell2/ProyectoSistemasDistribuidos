@@ -39,9 +39,9 @@ const PersonalDashboard = () => {
 
 
   const policyPrices = {
-    Básica: 10,
-    Normal: 25,
-    Premium: 50,
+    Básica: 1000,
+    Normal: 2500,
+    Premium: 5000,
   };
 
   const polizaChartData = {
