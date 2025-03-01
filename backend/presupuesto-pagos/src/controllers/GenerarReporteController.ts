@@ -3,7 +3,8 @@ import { Request, Response } from "express";
 import pool from "../config/db";
 import path from "path";
 import ejs from "ejs";
-import puppeteer from "puppeteer";
+import chromium from "chrome-aws-lambda";
+import puppeteerCore from "puppeteer-core";
 
 class GenerarReporteController {
   // Devuelve la lista completa de reportes usando el filtro 'Validado'
@@ -80,6 +81,7 @@ class GenerarReporteController {
   public async generatePdf(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     try {
+      console.log("NODE_ENV:", process.env.NODE_ENV);
       // 1. Consulta a la base de datos
       const query = `
         SELECT s.siniestroid, 
@@ -106,20 +108,37 @@ class GenerarReporteController {
       }
 
       // 2. Renderizamos la plantilla EJS, pasando 'siniestro' como variable
-      const templatePath = path.join(process.cwd(), "views", "reporte.ejs");
+      // Usamos __dirname para construir la ruta relativa a este archivo
+      const templatePath = path.join(__dirname, "..", "views", "reporte.ejs");
+      console.log("Ruta de la plantilla:", templatePath);
       const htmlContent = await ejs.renderFile(templatePath, { siniestro });
-      
-      // 3. Generamos el PDF con Puppeteer
-      const browser = await puppeteer.launch({
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
-        headless: true, 
-      });
+
+      // 3. Lanzamos el navegador según el entorno
+      let browser;
+      // Si NODE_ENV no está definida o es "development", se asume modo desarrollo.
+      if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
+        console.log("Modo desarrollo: usando Puppeteer completo");
+        // En desarrollo, asegúrate de tener instalado "puppeteer" (completo)
+        const puppeteerFull = require("puppeteer");
+        browser = await puppeteerFull.launch({
+          headless: true,
+        });
+      } else {
+        console.log("Modo producción: usando chrome-aws-lambda y puppeteer-core");
+        browser = await puppeteerCore.launch({
+          args: chromium.args,
+          defaultViewport: chromium.defaultViewport,
+          executablePath: await chromium.executablePath,
+          headless: chromium.headless,
+        });
+      }
+
       const page = await browser.newPage();
       await page.setContent(htmlContent, { waitUntil: "networkidle0" });
       const pdfBuffer = await page.pdf({ format: "A4" });
       await browser.close();
 
-      // 4. Enviamos el PDF al cliente en binario
+      // 4. Enviamos el PDF al cliente
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader("Content-Disposition", "attachment; filename=reporte.pdf");
       res.end(pdfBuffer);
