@@ -7,7 +7,8 @@
     "start": "ts-node src/server.ts",
     "build": "tsc",
     "dev": "cross-env NODE_ENV=production nodemon src/server.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "npx puppeteer browsers install chrome"
   },
   "keywords": [],
   "author": "",

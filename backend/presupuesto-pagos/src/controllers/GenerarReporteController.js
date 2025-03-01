@@ -108,6 +108,7 @@ class GenerarReporteController {
                 console.log("Lanzando Puppeteer...");
                 const browser = yield puppeteer_1.default.launch({
                     headless: true,
+                    executablePath: puppeteer_1.default.executablePath(),
                     args: [
                         "--no-sandbox",
                         "--disable-setuid-sandbox",
