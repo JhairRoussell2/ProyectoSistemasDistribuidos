@@ -19,11 +19,10 @@ const PaginaPrincipal = () => {
 
         {/* Menú de Navegación */}
         <ul className="hidden md:flex space-x-6 text-gray-800 font-medium">
-          <li className="cursor-pointer hover:text-red-500">Seguros ▼</li>
-          <li className="cursor-pointer hover:text-red-500">Centro de Ayuda</li>
-          <li className="cursor-pointer hover:text-red-500">Atención al Cliente ▼</li>
-          <li className="cursor-pointer hover:text-red-500">Blog</li>
-          <li className="cursor-pointer hover:text-red-500">Estar Bien</li>
+          <li className="cursor-pointer hover:text-red-500">Seguros</li>
+          <li className="cursor-pointer hover:text-red-500">Promociones</li>
+          <li className="cursor-pointer hover:text-red-500">Atención al Cliente</li>
+          <li className="cursor-pointer hover:text-red-500">Sobre Nosotros</li>
         </ul>
 
         {/* Iconos y Botón de Login */}
