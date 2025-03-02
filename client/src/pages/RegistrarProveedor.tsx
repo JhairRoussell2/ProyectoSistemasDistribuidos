@@ -249,6 +249,14 @@ const RegistrarProveedor = () => {
               <CheckCircle size={18} />
               Registrar
             </button>
+             {/* BOTÓN REGRESAR */}
+             <button
+              type="button"
+              onClick={() => navigate("/proveedores")}
+              className="col-span-2 mt-4 bg-gray-500 text-white font-bold px-6 py-3 rounded-lg shadow-md hover:bg-gray-600 transition"
+            >
+              Regresar a Proveedores
+            </button>
           </form>
         </div>
       </div>
