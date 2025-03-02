@@ -30,15 +30,10 @@ const SeguimientoSiniestros = () => {
         const siniestrosData = await obtenerSiniestrosBeneficiario(
           usuarioID.toString()
         );
-        if (siniestrosData.length === 0) {
-          setAlerta({
-            message: "No se encontraron siniestros para este beneficiario. Por favor, primero registre un siniestro.",
-            type: "warning",
-          });
-        }
+        
         setSiniestros(siniestrosData);
       } catch (error) {
-        setAlerta({ message: "Error al cargar siniestros.", type: "error" });
+        setAlerta({ message: "No se encontraron siniestros para este beneficiario. Por favor, primero registre un siniestro.", type: "error" });
       } finally {
       }
     };
