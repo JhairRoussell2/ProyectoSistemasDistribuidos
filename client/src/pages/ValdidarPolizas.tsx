@@ -7,6 +7,9 @@ import { FaSearch, FaCheckCircle, FaTimesCircle, FaArrowLeft, FaSpinner } from '
 interface Poliza {
   polizaid: number;
   beneficiarioid: number;
+  email: string;
+  nombre: string;
+  apellido: string;
   tipopoliza: string;
   fechainicio: string;
   fechafin: string;
@@ -19,6 +22,8 @@ const ValidarPoliza = () => {
   const [searchDNI, setSearchDNI] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -92,7 +97,24 @@ const ValidarPoliza = () => {
       }
     }
   };
-  
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = polizas.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(polizas.length / itemsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   return (
     <div className="bg-white min-h-screen text-black relative overflow-hidden">
@@ -143,6 +165,9 @@ const ValidarPoliza = () => {
             <thead>
               <tr className="bg-gray-800 text-white">
                 <th className="py-3 px-6 text-left">ID Póliza</th>
+                <th className="py-3 px-6 text-left">Email</th>
+                <th className="py-3 px-6 text-left">Nombre</th>
+                <th className="py-3 px-6 text-left">Apellido</th>
                 <th className="py-3 px-6 text-left">Tipo de Póliza</th>
                 <th className="py-3 px-6 text-left">Fecha de Inicio</th>
                 <th className="py-3 px-6 text-left">Fecha de Fin</th>
@@ -151,10 +176,13 @@ const ValidarPoliza = () => {
               </tr>
             </thead>
             <tbody>
-              {polizas.length > 0 ? (
-                polizas.map((poliza) => (
+              {currentItems.length > 0 ? (
+                currentItems.map((poliza) => (
                   <tr key={poliza.polizaid} className="border-t border-gray-300 hover:bg-gray-50">
                     <td className="py-4 px-6">{poliza.polizaid}</td>
+                    <td className="py-4 px-6">{poliza.email}</td>
+                    <td className="py-4 px-6">{poliza.nombre}</td>
+                    <td className="py-4 px-6">{poliza.apellido}</td>
                     <td className="py-4 px-6">{poliza.tipopoliza}</td>
                     <td className="py-4 px-6">{new Date(poliza.fechainicio).toLocaleDateString()}</td>
                     <td className="py-4 px-6">{new Date(poliza.fechafin).toLocaleDateString()}</td>
@@ -183,13 +211,31 @@ const ValidarPoliza = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="text-center py-4 text-gray-500">
+                  <td colSpan={9} className="text-center py-4 text-gray-500">
                     No hay pólizas disponibles
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
+        </div>
+
+        <div className="flex justify-between mt-4">
+          <button
+            onClick={handlePreviousPage}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg disabled:opacity-50"
+          >
+            Anterior
+          </button>
+          <span className="text-gray-700">Página {currentPage} de {totalPages}</span>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg disabled:opacity-50"
+          >
+            Siguiente
+          </button>
         </div>
       </div>
 

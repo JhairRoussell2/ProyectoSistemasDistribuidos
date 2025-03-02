@@ -3,9 +3,7 @@ import {
   FiFileText,
   FiDollarSign,
   FiBarChart2,
-  FiShield,
   FiHome,
-  FiInfo,
   FiClipboard,
   FiCheckCircle,
   FiUsers,
@@ -100,13 +98,6 @@ const Layout = ({ children }: LayoutProps) => {
                   <FiDollarSign />
                   <span>Gestionar Presupuestos</span>
                 </NavLink>
-                <NavLink
-                  to="/dashboard/admin/seguridad"
-                  className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white"
-                >
-                  <FiShield />
-                  <span>Seguridad y Auditoría</span>
-                </NavLink>
               </>
             )}
 
@@ -125,13 +116,6 @@ const Layout = ({ children }: LayoutProps) => {
                 >
                   <FiHome />
                   <span>Panel General</span>
-                </NavLink>
-                <NavLink
-                  to="/dashboard/general/info"
-                  className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white"
-                >
-                  <FiInfo />
-                  <span>Ver Información</span>
                 </NavLink>
                 <NavLink
                   to="/registro-siniestro"

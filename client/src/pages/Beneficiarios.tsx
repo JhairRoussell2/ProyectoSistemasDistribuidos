@@ -27,6 +27,9 @@ const MantenerBeneficiarios = () => {
   const [selectedBeneficiario, setSelectedBeneficiario] = useState<Beneficiario | null>(null);
   const [password, setPassword] = useState(""); 
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -124,6 +127,24 @@ const MantenerBeneficiarios = () => {
     }
   };
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredBeneficiarios.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(filteredBeneficiarios.length / itemsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -145,24 +166,23 @@ const MantenerBeneficiarios = () => {
         </div>
 
         <div className="mb-6 flex justify-between items-center">
-    <div className="relative w-full">
-        <input
-          type="text"
-          placeholder="Buscar por DNI"
-          value={searchdni}
-          onChange={(e) => setSearchdni(e.target.value)}
-          onBlur={handleSearch} // Ejecuta la búsqueda cuando el campo pierde foco
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg text-black bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-600 shadow-sm"
-        />
-    </div>
-  <button
-    onClick={handleSearch}
-    className="ml-4 bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 shadow-md transition-all"
-  >
-    <FaSearch /> <span>Buscar</span>
-  </button>
-</div>
-
+          <div className="relative w-full">
+            <input
+              type="text"
+              placeholder="Buscar por DNI"
+              value={searchdni}
+              onChange={(e) => setSearchdni(e.target.value)}
+              onBlur={handleSearch} // Ejecuta la búsqueda cuando el campo pierde foco
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-black bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-600 shadow-sm"
+            />
+          </div>
+          <button
+            onClick={handleSearch}
+            className="ml-4 bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 shadow-md transition-all"
+          >
+            <FaSearch /> <span>Buscar</span>
+          </button>
+        </div>
 
         <table className="min-w-full table-auto border-collapse border border-gray-300">
           <thead>
@@ -176,8 +196,8 @@ const MantenerBeneficiarios = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredBeneficiarios.length > 0 ? (
-              filteredBeneficiarios.map((b) => (
+            {currentItems.length > 0 ? (
+              currentItems.map((b) => (
                 <tr key={b.beneficiarioid} className="text-center bg-gray-100 hover:bg-gray-200">
                   <td className="border border-gray-300 px-6 py-3">{b.nombre}</td>
                   <td className="border border-gray-300 px-6 py-3">{b.apellido}</td>
@@ -206,6 +226,24 @@ const MantenerBeneficiarios = () => {
             )}
           </tbody>
         </table>
+
+        <div className="flex justify-between mt-4">
+          <button
+            onClick={handlePreviousPage}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg disabled:opacity-50"
+          >
+            Anterior
+          </button>
+          <span className="text-gray-700">Página {currentPage} de {totalPages}</span>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg disabled:opacity-50"
+          >
+            Siguiente
+          </button>
+        </div>
 
         {isModalOpen && (
           <Modal onClose={() => setIsModalOpen(false)}>

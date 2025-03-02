@@ -123,14 +123,6 @@ const Navbar = () => {
 
       {/* Botón de Perfil */}
       <div className="flex items-center space-x-4">
-        {userRole === 'Administrador' && (
-          <button
-            onClick={() => navigate('/usuarios')}
-            className="bg-green-600 hover:bg-green-700 px-5 py-2 rounded-lg text-white font-semibold transition shadow-lg"
-          >
-            Ver Usuarios
-          </button>
-        )}
         <button
           onClick={() => setShowProfile(!showProfile)}
           className="bg-red-600 hover:bg-red-700 px-5 py-2 rounded-lg text-white font-semibold transition shadow-lg"
