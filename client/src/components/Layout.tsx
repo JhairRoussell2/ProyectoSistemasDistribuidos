@@ -78,6 +78,13 @@ const Layout = ({ children }: LayoutProps) => {
                   <span>Gestión de Talleres</span>
                 </NavLink>
                 <NavLink
+                  to="/gestionarpresupuestos"
+                  className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white"
+                >
+                  <FiDollarSign />
+                  <span>Gestionar Presupuestos</span>
+                </NavLink>
+                <NavLink
                   to="/dashboard/admin/pagos"
                   className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white"
                 >
@@ -91,13 +98,7 @@ const Layout = ({ children }: LayoutProps) => {
                   <FiBarChart2 />
                   <span>Generación de Reportes</span>
                 </NavLink>
-                <NavLink
-                  to="/gestionarpresupuestos"
-                  className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white"
-                >
-                  <FiDollarSign />
-                  <span>Gestionar Presupuestos</span>
-                </NavLink>
+                
               </>
             )}
 
@@ -176,7 +177,7 @@ const Layout = ({ children }: LayoutProps) => {
                   className="flex items-center space-x-2 p-2 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white"
                 >
                   <FiClipboard />
-                  <span>Asignar Siniestros</span>
+                  <span>Asignar Taller a Siniestro</span>
                 </NavLink>
                 <NavLink
                   to="/dashboard/personal/gestionar-reclamaciones"
