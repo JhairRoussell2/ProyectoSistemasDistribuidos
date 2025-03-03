@@ -6,7 +6,7 @@ import Navbar from "../components/Navbar";
 import Modal from "../components/Modal";
 // Endpoint del backend para indemnizaciones
 const API_INDEMNIZACIONES_URL =
-  import.meta.env.VITE_API_INDEMNIZACIONES_URL || "http://localhost:5001/api/indemnizaciones/";
+  import.meta.env.VITE_API_INDEMNIZACIONES_URL || "http://localhost:5002/api/indemnizaciones/";
 const Indemnizaciones = () => {
   interface Indemnizacion {
     siniestroid: number;
@@ -29,6 +29,9 @@ const Indemnizaciones = () => {
   const [selectedPresupuesto, setSelectedPresupuesto] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [loadingFactura, setLoadingFactura] = useState<{ [key: number]: boolean }>({});
+
+
   const handlePagar = (presupuestoid: number) => {
     setModalMessage(null); // Limpia el mensaje anterior
     setSelectedPresupuesto(presupuestoid);
@@ -176,6 +179,23 @@ const Indemnizaciones = () => {
   const selectedIndemnizacion = indemnizaciones.find(
     (item) => item.presupuestoid === selectedPresupuesto
   );
+  const handleDescargarFactura = async (presupuestoid: number) => {
+    setLoadingFactura((prev) => ({ ...prev, [presupuestoid]: true }));
+    try {
+      const response = await fetch(`${API_INDEMNIZACIONES_URL}/${presupuestoid}/factura`);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `factura_${presupuestoid}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Error al descargar la factura", error);
+    }
+    setLoadingFactura((prev) => ({ ...prev, [presupuestoid]: false }));
+  };
  
   return (
     <>
@@ -254,6 +274,7 @@ const Indemnizaciones = () => {
                 <th className="p-3 text-center">FECHA DEL SINIESTRO</th>
                 <th className="p-3 text-center">MONTO DE INDEMNIZACION</th>
                 <th className="p-3 text-center">ESTADO DEL PAGO</th>
+                <th className="p-3 text-center">ACCIÓN</th>
               </tr>
             </thead>
             <tbody>
@@ -267,18 +288,31 @@ const Indemnizaciones = () => {
                   </td>
                   <td className="p-3 text-center">S/.{item.montototal}</td>
                   <td className="p-3 text-center">
-                    <div className="h-8 flex items-center justify-center">
-                      {item.estado === "Validado" ? (
-                        <button
-                          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
-                          onClick={() => handlePagar(item.presupuestoid)}
-                        >
-                          Pagar
-                        </button>
-                      ) : (
-                        <span>{item.estado}</span>
-                      )}
-                    </div>
+                  {item.estado === "Pagado" ? "PAGADO" : "NO PAGADO"}
+                  </td>
+                  <td className="p-3 text-center">
+                  {item.estado === "Pagado" ? (
+                       <button
+                       className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+                       onClick={() => handleDescargarFactura(item.presupuestoid)}
+                       disabled={loadingFactura[item.presupuestoid]}
+                     >
+                       {loadingFactura[item.presupuestoid] ? (
+                         <>
+                           Generando
+                         </>
+                       ) : (
+                         "Factura PDF"
+                       )}
+                     </button>
+                    ) : (
+                      <button
+                        className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
+                        onClick={() => handlePagar(item.presupuestoid)}
+                      >
+                        Pagar
+                      </button>
+                    )}
                   </td>
 
                 </tr>
