@@ -1,121 +1,183 @@
+// Dashboard.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import Alert from "../components/Alert";
 import Modal from "../components/Modal";
 import Navbar from "../components/Navbar";
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+  PieChart, Pie, Cell,
+  BarChart, Bar,
+  ComposedChart, ResponsiveContainer
+} from "recharts";
 
-// Endpoint del backend para reportes
+// URL base de la API
 const API_REPORTES_URL =
-  import.meta.env.VITE_API_REPORTES_URL || "http://localhost:5001/api/GenerarReporte";
+  import.meta.env.VITE_API_REPORTES_URL || "http://localhost:5002/api/GenerarReporte";
 
-interface ReporteSummary {
-  siniestroid: number;
-  fecha_siniestro: string;
-  estado: string;
-}
+// Colores para gráficos de pastel
+const defaultPieColors = [
+  "#82ca9d",
+  "#8884d8",
+  "#FFBB28",
+  "#FF8042",
+  "#0088FE",
+  "#FF6699",
+];
 
-interface ReporteDetail extends ReporteSummary {
-  tipo_siniestro: string;
-  descripcion: string;
-  nombre_taller: string;
-  montototal: number;
-}
-
-// Función para formatear la fecha a dd-mm-yyyy
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  const day = date.getDate().toString().padStart(2, "0");
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
+// Función para formatear valores a moneda peruana (Soles)
+const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat("es-PE", {
+    style: "currency",
+    currency: "PEN",
+  }).format(value);
 };
 
-const GenerarReporte = () => {
-  const [reportes, setReportes] = useState<ReporteSummary[]>([]);
-  const [filteredReportes, setFilteredReportes] = useState<ReporteSummary[]>([]);
-  const [search, setSearch] = useState("");
-  const [searchField, setSearchField] = useState("siniestroid"); // Filtro predeterminado
-  const [alert, setAlert] = useState<{ type: "success" | "error" | "warning" | "info"; message: string } | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedReporte, setSelectedReporte] = useState<ReporteDetail | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
+interface AlertType {
+  type: "success" | "error" | "warning" | "info";
+  message: string;
+}
+
+const Dashboard = () => {
   const navigate = useNavigate();
 
-  const itemsPerPage = 15;
+  // KPIs
+  const [kpi, setKpi] = useState({
+    totalSiniestros: 0,
+    totalPresupuestos: 0,
+    promedioPresupuesto: 0,
+  });
 
+  // Datos del backend
+  const [dataSiniestrosTendencia, setDataSiniestrosTendencia] = useState([]);
+  const [dataPresupuestosEstados, setDataPresupuestosEstados] = useState([]);
+  const [dataTalleres, setDataTalleres] = useState([]);
+  const [dataSiniestrosTipo, setDataSiniestrosTipo] = useState([]);
+  const [dataSiniestrosDistrito, setDataSiniestrosDistrito] = useState([]);
+  const [dataPresupuestosTendencia, setDataPresupuestosTendencia] = useState([]);
+
+  // Alertas
+  const [alert, setAlert] = useState<AlertType | null>(null);
+
+  // Modal PDF y selección de campo
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedCampo, setSelectedCampo] = useState("");
+
+  // Carga de datos al montar el componente
   useEffect(() => {
-    fetchReportes();
+    // 1. KPIs
+    fetch(`${API_REPORTES_URL}/dashboard/resumen`)
+      .then((res) => res.json())
+      .then((data) => setKpi(data))
+      .catch((err) =>
+        setAlert({ type: "error", message: "Error al obtener KPIs" })
+      );
+
+    // 2. Tendencia Mensual de Siniestros
+    fetch(`${API_REPORTES_URL}/dashboard/siniestros/tendencia`)
+      .then((res) => res.json())
+      .then((data) => setDataSiniestrosTendencia(data))
+      .catch((err) => console.error(err));
+
+    // 3. Presupuestos por Estado
+    fetch(`${API_REPORTES_URL}/dashboard/presupuestos/estados`)
+      .then((res) => res.json())
+      .then((data) => {
+        const parsed = data.map((item: any) => ({
+          ...item,
+          total: Number(item.total),
+          monto_total: Number(item.monto_total),
+          porcentaje: Number(item.porcentaje),
+        }));
+        setDataPresupuestosEstados(parsed);
+      })
+      .catch((err) => console.error(err));
+
+    // 4. Desglose por Taller
+    fetch(`${API_REPORTES_URL}/dashboard/talleres`)
+      .then((res) => res.json())
+      .then((data) => setDataTalleres(data))
+      .catch((err) => console.error(err));
+
+    // 5. Siniestros por Tipo
+    fetch(`${API_REPORTES_URL}/dashboard/siniestros/tipo`)
+      .then((res) => res.json())
+      .then((data) => {
+        const parsed = data.map((item: any) => ({
+          ...item,
+          total: Number(item.total),
+          porcentaje: Number(item.porcentaje),
+        }));
+        setDataSiniestrosTipo(parsed);
+      })
+      .catch((err) => console.error(err));
+
+    // 6. Siniestros por Distrito
+    fetch(`${API_REPORTES_URL}/dashboard/siniestros/distrito`)
+      .then((res) => res.json())
+      .then((data) => setDataSiniestrosDistrito(data))
+      .catch((err) => console.error(err));
+
+    // 7. Tendencia Mensual de Presupuestos
+    fetch(`${API_REPORTES_URL}/dashboard/presupuestos/tendencia`)
+      .then((res) => res.json())
+      .then((data) => setDataPresupuestosTendencia(data))
+      .catch((err) => console.error(err));
   }, []);
 
-  useEffect(() => {
-    filterReportes();
-  }, [search, searchField, reportes]);
+  // Eje Y fijo para "Tendencia Mensual de Siniestros"
+  const yTicks = [0, 5, 10, 15, 20, 25];
 
-  const fetchReportes = async () => {
-    try {
-      const response = await fetch(API_REPORTES_URL);
-      const data = await response.json();
-      setReportes(data);
-      setFilteredReportes(data);
-    } catch (error) {
-      setAlert({ type: "error", message: "Error al obtener reportes" });
+  // Formatear fecha a "mm/yyyy"
+  const formatMes = (value: string) => {
+    const date = new Date(value);
+    if (isNaN(date.getTime())) return value;
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${month}/${year}`;
+  };
+
+  // Etiqueta personalizada para "Siniestros por Tipo" (fuente reducida)
+  const renderCustomPieLabel = (props: any) => {
+    const { cx, cy, midAngle, outerRadius, payload } = props;
+    const RADIAN = Math.PI / 180;
+    const labelRadius = outerRadius * 1.2;
+    const x = cx + labelRadius * Math.cos(-midAngle * RADIAN);
+    const y = cy + labelRadius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <text
+        x={x}
+        y={y}
+        fill={payload.fill}
+        textAnchor={x > cx ? "start" : "end"}
+        dominantBaseline="central"
+        fontSize={12}
+      >
+        {`${payload.tipo_siniestro}: ${payload.porcentaje}%`}
+      </text>
+    );
+  };
+
+  // Top 5 para Talleres (ordenado por monto_total desc)
+  const topTalleres = [...dataTalleres]
+    .sort((a: any, b: any) => b.monto_total - a.monto_total)
+    .slice(0, 5);
+
+  // Top 5 para Distritos (ordenado por total desc)
+  const topDistritos = [...dataSiniestrosDistrito]
+    .sort((a: any, b: any) => b.total - a.total)
+    .slice(0, 5);
+
+  // Generar PDF
+  const handleGeneratePdf = () => {
+    if (!selectedCampo) {
+      setAlert({ type: "error", message: "Por favor, selecciona un tipo de análisis" });
+      return;
     }
-  };
-
-  // Obtener el detalle del reporte
-  const fetchReporteDetalle = async (id: number) => {
-    try {
-      const response = await fetch(`${API_REPORTES_URL}/${id}`);
-      const data = await response.json();
-      setSelectedReporte(data);
-    } catch (error) {
-      setAlert({ type: "error", message: "Error al obtener detalle del reporte" });
-    }
-  };
-
-  // Función de filtrado actualizada
-  const filterReportes = () => {
-    const searchUpper = search.toUpperCase().trim();
-    const filtered = reportes.filter((r) => {
-      let value: string = "";
-      if (searchField === "siniestroid") {
-        value = r.siniestroid.toString();
-        // Si se ingresa "SIN-" al inicio
-        if (searchUpper.startsWith("SIN-")) {
-          const numericPart = searchUpper.slice(4).trim();
-          // Si no hay números después de "SIN-", no filtra nada
-          if (!numericPart) return true;
-          return value.startsWith(numericPart);
-        }
-      } else if (searchField === "fecha_siniestro") {
-        // Transformamos la fecha a formato dd-mm-yyyy
-        value = formatDate(r.fecha_siniestro);
-      } else if (searchField === "estado") {
-        value = r.estado;
-      }
-      return value.toLowerCase().includes(search.toLowerCase());
-    });
-    setFilteredReportes(filtered);
-    setCurrentPage(1);
-  };
-
-  const totalPages = Math.ceil(filteredReportes.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredReportes.slice(indexOfFirstItem, indexOfLastItem);
-
-  const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const handleVerReporte = async (id: number) => {
-    await fetchReporteDetalle(id);
-    setModalOpen(true);
-  };
-
-  const handleDescargarPdf = (id: number) => {
-    window.open(`${API_REPORTES_URL}/${id}/pdf`, "_blank");
+    window.open(`${API_REPORTES_URL}/pdf?campo=${selectedCampo}`, "_blank");
+    setModalIsOpen(false);
   };
 
   return (
@@ -123,112 +185,280 @@ const GenerarReporte = () => {
       <Navbar />
       <div className="p-8 min-h-screen bg-gradient-to-br from-white via-gray-100 to-red-50 text-gray-900 pt-24">
         {alert && (
-          <Alert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />
+          <Alert
+            type={alert.type}
+            message={alert.message}
+            onClose={() => setAlert(null)}
+          />
         )}
-        <div className="flex items-center justify-center mb-6 relative">
-          {/* Botón "Regresar" en posición absoluta a la izquierda */}
+
+        {/* Encabezado centrado */}
+        <div className="flex items-center justify-between mb-6">
           <button
             onClick={() => navigate("/dashboard/admin")}
-            className="absolute left-0 flex items-center gap-2 bg-blue-500 text-white px-5 py-3 rounded-lg shadow-md hover:bg-blue-600 transition"
+            className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
           >
             <ArrowLeft size={18} />
             Regresar
           </button>
-          {/* Título centrado */}
-          <h1 className="text-4xl font-extrabold text-gray-800 text-center">
-            📋 GENERAR REPORTES
+          <h1 className="flex-1 text-4xl font-extrabold text-center">
+            📋 Reporte General
           </h1>
-          <div className="absolute right-0"></div>
-        </div>
-        {/* Barra de búsqueda y selección de campo */}
-        <div className="flex gap-4 mb-4">
-          <input
-            type="text"
-            placeholder="Buscar reporte... (ej. SIN-1)"
-            className="w-full p-3 border border-gray-300 rounded-lg"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <select
-            className="p-3 border border-gray-300 rounded-lg"
-            value={searchField}
-            onChange={(e) => setSearchField(e.target.value)}
+          <button
+            onClick={() => setModalIsOpen(true)}
+            className="flex items-center bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
           >
-            <option value="siniestroid">Siniestro ID</option>
-            <option value="fecha_siniestro">Fecha</option>
-            <option value="estado">Estado</option>
-          </select>
+            Generar Reporte
+          </button>
         </div>
-        {/* Tabla de Reportes */}
-        <div className="bg-white rounded-xl shadow-xl p-6">
-          <table className="w-full border border-gray-200 text-gray-800">
-            <thead className="bg-gradient-to-r from-red-500 to-red-400 text-white uppercase text-sm tracking-wide">
-              <tr>
-                <th className="p-3 text-center">ID SINIESTRO</th>
-                <th className="p-3 text-center">FECHA</th>
-                <th className="p-3 text-center">ESTADO</th>
-                <th className="p-3 text-center">ACCIÓN</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentItems.map((reporte) => (
-                <tr key={reporte.siniestroid} className="border-t hover:bg-gray-50 transition">
-                  <td className="p-3 text-center">{"SIN-" + reporte.siniestroid}</td>
-                  <td className="p-3 text-center">{formatDate(reporte.fecha_siniestro)}</td>
-                  <td className="p-3 text-center">{reporte.estado}</td>
-                  <td className="p-3 text-center">
-                    <button
-                      onClick={() => handleVerReporte(reporte.siniestroid)}
-                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition"
-                    >
-                      Ver Reporte
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+
+        {/* Tarjetas KPI */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="bg-white rounded-xl shadow-xl p-6 text-center">
+            <h2 className="text-xl font-bold">Total Siniestros</h2>
+            <p className="text-2xl mt-2">{kpi.totalSiniestros}</p>
+          </div>
+          <div className="bg-white rounded-xl shadow-xl p-6 text-center">
+            <h2 className="text-xl font-bold">Total Presupuestos</h2>
+            <p className="text-2xl mt-2">{formatCurrency(kpi.totalPresupuestos)}</p>
+          </div>
+          <div className="bg-white rounded-xl shadow-xl p-6 text-center">
+            <h2 className="text-xl font-bold">Promedio Presupuesto</h2>
+            <p className="text-2xl mt-2">{formatCurrency(kpi.promedioPresupuesto)}</p>
+          </div>
         </div>
-        {/* Paginación */}
-        <div className="flex justify-center mt-6 gap-2">
-          {[...Array(totalPages)].map((_, index) => (
-            <button
-              key={index}
-              onClick={() => handlePageChange(index + 1)}
-              className={`px-4 py-2 rounded-lg border ${
-                currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
-        {/* Modal para mostrar detalle del reporte */}
-        {modalOpen && selectedReporte && (
-          <Modal onClose={() => setModalOpen(false)}>
-            <div className="text-center">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Detalle del Reporte</h2>
-              <div className="space-y-2 text-left">
-                <p><strong>ID Siniestro:</strong> {"SIN-" + selectedReporte.siniestroid}</p>
-                <p><strong>Fecha:</strong> {formatDate(selectedReporte.fecha_siniestro)}</p>
-                <p><strong>Tipo de Siniestro:</strong> {selectedReporte.tipo_siniestro}</p>
-                <p><strong>Descripción:</strong> {selectedReporte.descripcion}</p>
-                <p><strong>Taller:</strong> {selectedReporte.nombre_taller}</p>
-                <p><strong>Monto Total:</strong> {selectedReporte.montototal}</p>
-                <p><strong>Estado:</strong> {selectedReporte.estado}</p>
-              </div>
-              <div className="flex justify-center gap-4 mt-6">
-                <button
-                  onClick={() => handleDescargarPdf(selectedReporte.siniestroid)}
-                  className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg transition"
+
+        {/* Gráficos (2 filas x 3 columnas) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* 1. Tendencia Mensual de Siniestros */}
+          <div className="bg-white rounded-xl shadow-xl p-4">
+            <h3 className="text-lg font-bold mb-2">
+              Tendencia Mensual de Siniestros
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={dataSiniestrosTendencia}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="mes"
+                  tickFormatter={formatMes}
+                  minTickGap={20}
+                  tick={{ fontSize: 12 }}
+                />
+                <YAxis ticks={yTicks} tick={{ fontSize: 12 }} />
+                <Tooltip labelFormatter={(value: string) => formatMes(value)} />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="total"
+                  stroke="#8884d8"
+                  strokeWidth={3}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* 2. Presupuestos por Estado (pastel) */}
+          <div className="bg-white rounded-xl shadow-xl p-4">
+            <h3 className="text-lg font-bold mb-2">Presupuestos por Estado</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={dataPresupuestosEstados}
+                  dataKey="porcentaje"
+                  nameKey="estado"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  label={({ payload }) =>
+                    `${payload.estado}: ${payload.porcentaje}%`
+                  }
                 >
-                  Descargar PDF
+                  {dataPresupuestosEstados.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={defaultPieColors[index % defaultPieColors.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip
+                  formatter={(value, name, props) => {
+                    if (!props || !props.payload) return [value, name];
+                    const { total = 0 } = props.payload;
+                    return [`${Number(total)} siniestros`, "Total"];
+                  }}
+                />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* 3. Desglose por Taller (barras horizontales) - Top 5 */}
+          <div className="bg-white rounded-xl shadow-xl p-4">
+            <h3 className="text-lg font-bold mb-2">Desglose por Taller (Top 5)</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={[...dataTalleres]
+                  .sort((a: any, b: any) => b.monto_total - a.monto_total)
+                  .slice(0, 5)
+                }
+                layout="vertical"
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  type="number"
+                  tickFormatter={(value) => formatCurrency(value)}
+                  tick={{ fontSize: 12 }}
+                />
+                <YAxis dataKey="taller" type="category" tick={{ fontSize: 12 }} />
+                <Tooltip
+                  formatter={(value, name) => {
+                    if (name === "monto_total") {
+                      return [formatCurrency(Number(value)), "Monto Total"];
+                    }
+                    return [value, name];
+                  }}
+                />
+                <Legend />
+                <Bar dataKey="monto_total" fill="#82ca9d" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* 4. Siniestros por Tipo (pastel) */}
+          <div className="bg-white rounded-xl shadow-xl p-4">
+            <h3 className="text-lg font-bold mb-2">Siniestros por Tipo</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={dataSiniestrosTipo}
+                  dataKey="porcentaje"
+                  nameKey="tipo_siniestro"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  label={renderCustomPieLabel}
+                >
+                  {dataSiniestrosTipo.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={defaultPieColors[index % defaultPieColors.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip
+                  formatter={(value, name, props) => {
+                    if (!props || !props.payload) return [value, name];
+                    const { total = 0 } = props.payload;
+                    return [`${Number(total)} siniestros`, "Total"];
+                  }}
+                />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* 5. Siniestros por Distrito (barras horizontales) - Top 5 */}
+          <div className="bg-white rounded-xl shadow-xl p-4">
+            <h3 className="text-lg font-bold mb-2">
+              Siniestros por Distrito (Top 5)
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={[...dataSiniestrosDistrito]
+                  .sort((a: any, b: any) => b.total - a.total)
+                  .slice(0, 5)
+                }
+                layout="vertical"
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis type="number" tick={{ fontSize: 12 }} />
+                <YAxis dataKey="distrito" type="category" tick={{ fontSize: 12 }} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="total" fill="#FFBB28" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* 6. Tendencia Mensual de Presupuestos (combinado) */}
+          <div className="bg-white rounded-xl shadow-xl p-4">
+            <h3 className="text-lg font-bold mb-2">
+              Tendencia Mensual de Presupuestos
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <ComposedChart data={dataPresupuestosTendencia}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="mes" tick={{ fontSize: 12 }} />
+                <YAxis
+                  yAxisId="left"
+                  tickFormatter={(value) => formatCurrency(value)}
+                  tick={{ fontSize: 12 }}
+                />
+                <YAxis
+                  yAxisId="right"
+                  orientation="right"
+                  tickFormatter={(value) => formatCurrency(value)}
+                  tick={{ fontSize: 12 }}
+                />
+                <Tooltip
+                  formatter={(value, name) => {
+                    if (name === "total_presupuestos") {
+                      return [formatCurrency(Number(value)), "Total Presupuestos"];
+                    } else if (name === "promedio_presupuesto") {
+                      return [formatCurrency(Number(value)), "Promedio Presupuesto"];
+                    }
+                    return [value, name];
+                  }}
+                />
+                <Legend />
+                <Bar
+                  yAxisId="left"
+                  dataKey="total_presupuestos"
+                  fill="#8884d8"
+                />
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="promedio_presupuesto"
+                  stroke="#ff7300"
+                  strokeWidth={3}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Modal para PDF */}
+        {modalIsOpen && (
+          <Modal onClose={() => setModalIsOpen(false)}>
+            <div className="p-4">
+              <h2 className="text-xl font-bold mb-4">Generar Reporte PDF</h2>
+              <p className="mb-2">Selecciona el tipo de análisis:</p>
+              <select
+                value={selectedCampo}
+                onChange={(e) => setSelectedCampo(e.target.value)}
+                className="p-2 border border-gray-300 rounded-md mb-4"
+              >
+                <option value="">-- Selecciona --</option>
+                <option value="tendencia">Tendencia Mensual de Siniestros</option>
+                <option value="presupuestos_estados">Presupuestos por Estado</option>
+                <option value="talleres">Desglose por Taller</option>
+                <option value="siniestros_tipo">Siniestros por Tipo</option>
+                <option value="siniestros_distrito">Siniestros por Distrito</option>
+                <option value="presupuestos_tendencia">Tendencia Mensual de Presupuestos</option>
+              </select>
+              <div className="flex justify-end gap-4">
+                <button
+                  onClick={() => handleGeneratePdf()}
+                  className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
+                >
+                  Generar Reporte
                 </button>
                 <button
-                  onClick={() => setModalOpen(false)}
-                  className="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg transition"
+                  onClick={() => setModalIsOpen(false)}
+                  className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition"
                 >
-                  Cerrar
+                  Cancelar
                 </button>
               </div>
             </div>
@@ -239,4 +469,4 @@ const GenerarReporte = () => {
   );
 };
 
-export default GenerarReporte;
+export default Dashboard;
