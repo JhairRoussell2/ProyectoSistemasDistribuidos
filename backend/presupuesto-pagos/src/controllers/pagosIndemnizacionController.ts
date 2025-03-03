@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
+import ejs from "ejs";
+import path from "path";
+import puppeteer from "puppeteer";
 import pool from "../config/db";
+import fs from "fs";
 class pagosIndemnizacionController {
     // Obtener datos importantes de presupuestos validados y pagados
     public async getIndemnizaciones(req: Request, res: Response): Promise<void> {
@@ -39,5 +43,79 @@ class pagosIndemnizacionController {
             res.status(500).json({ message: "Error al actualizar el estado", error });
         }
     }
+    public async generatePdf(req: Request, res: Response): Promise<void> {
+      const { id } = req.params;
+      try {
+        const query = `SELECT * FROM obtener_datos_factura($1)`;
+        const result = await pool.query(query, [id]);
+    
+        if (result.rows.length === 0) {
+          res.status(404).json({ message: "Presupuesto no encontrado" });
+          return;
+        }
+    
+        const datosFactura = result.rows[0];
+    
+        // Lee el archivo 'logo.png' y lo convierte a Base64
+        const logoPath = path.join(__dirname, "..", "views", "logo.png");
+        const logoFile = fs.readFileSync(logoPath, { encoding: "base64" });
+    
+        const templatePath = path.join(__dirname, "..", "views", "factura.ejs");
+        // 2. Renderizar la plantilla EJS, pasando la imagen como base64
+        const htmlContent = await ejs.renderFile(templatePath, {
+          logoBase64: logoFile,
+          beneficiario: {
+            nombre: datosFactura.beneficiario_nombre,
+            apellido: datosFactura.beneficiario_apellido,
+            dni: datosFactura.beneficiario_dni,
+            telefono: datosFactura.beneficiario_telefono,
+            email: datosFactura.beneficiario_email
+          },
+          poliza: { tipopoliza: datosFactura.tipopoliza },
+          presupuesto: {
+            montototal: datosFactura.montototal,
+            fechacreacion: datosFactura.fechacreacion
+          },
+          taller: {
+            nombre: datosFactura.taller_nombre,
+            direccion: datosFactura.taller_direccion,
+            telefono: datosFactura.taller_telefono
+          },
+          vehiculo: {
+            marca: datosFactura.vehiculo_marca,
+            modelo: datosFactura.vehiculo_modelo,
+            tipo: datosFactura.vehiculo_tipo,
+            placa: datosFactura.vehiculo_placa
+          }
+        });
+    
+        // 3. Generar el PDF con Puppeteer
+        const browser = await puppeteer.launch({
+          headless: true,
+          executablePath: puppeteer.executablePath(),
+          args: [
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-dev-shm-usage",
+            "--disable-gpu",
+            "--disable-software-rasterizer"
+          ],
+        });
+    
+        const page = await browser.newPage();
+        await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+        const pdfBuffer = await page.pdf({ format: "A4" });
+        await browser.close();
+    
+        // 4. Enviar el PDF al cliente
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader("Content-Disposition", "attachment; filename=factura.pdf");
+        res.end(pdfBuffer);
+        
+      } catch (error) {
+        console.error("Error al generar el PDF:", error);
+        res.status(500).json({ message: "Error al generar el PDF", error });
+      }
+    } 
 }
 export default new pagosIndemnizacionController();
