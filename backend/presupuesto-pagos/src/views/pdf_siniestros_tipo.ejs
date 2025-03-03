@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Distribución de Siniestros por Tipo</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1 { text-align: center; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #333; padding: 8px; text-align: center; }
+    th { background-color: #eee; }
+  </style>
+</head>
+<body>
+  <h1>Distribución de Siniestros por Tipo</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Tipo de Siniestro</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% datos.forEach(function(item) { %>
+      <tr>
+        <td><%= item.tipo_siniestro %></td>
+        <td><%= item.total %></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</body>
+</html>
