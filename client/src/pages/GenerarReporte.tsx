@@ -70,7 +70,7 @@ const Dashboard = () => {
     fetch(`${API_REPORTES_URL}/dashboard/resumen`)
       .then((res) => res.json())
       .then((data) => setKpi(data))
-      .catch((err) =>
+      .catch(() =>
         setAlert({ type: "error", message: "Error al obtener KPIs" })
       );
 
@@ -160,15 +160,7 @@ const Dashboard = () => {
     );
   };
 
-  // Top 5 para Talleres (ordenado por monto_total desc)
-  const topTalleres = [...dataTalleres]
-    .sort((a: any, b: any) => b.monto_total - a.monto_total)
-    .slice(0, 5);
 
-  // Top 5 para Distritos (ordenado por total desc)
-  const topDistritos = [...dataSiniestrosDistrito]
-    .sort((a: any, b: any) => b.total - a.total)
-    .slice(0, 5);
 
   // Generar PDF
   const handleGeneratePdf = () => {
@@ -273,7 +265,7 @@ const Dashboard = () => {
                     `${payload.estado}: ${payload.porcentaje}%`
                   }
                 >
-                  {dataPresupuestosEstados.map((entry, index) => (
+                  {dataPresupuestosEstados.map((_, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={defaultPieColors[index % defaultPieColors.length]}
@@ -338,7 +330,7 @@ const Dashboard = () => {
                   outerRadius={80}
                   label={renderCustomPieLabel}
                 >
-                  {dataSiniestrosTipo.map((entry, index) => (
+                  {dataSiniestrosTipo.map((_, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={defaultPieColors[index % defaultPieColors.length]}
