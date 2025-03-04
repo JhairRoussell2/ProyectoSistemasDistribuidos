@@ -59,6 +59,7 @@ class pagosIndemnizacionController {
     generatePdf(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
+            console.log("Datos de la factura:");
             try {
                 const query = `SELECT * FROM obtener_datos_factura($1)`;
                 const result = yield db_1.default.query(query, [id]);
@@ -67,9 +68,8 @@ class pagosIndemnizacionController {
                     return;
                 }
                 const datosFactura = result.rows[0];
-                // Lee el archivo 'logo.png' y lo convierte a Base64
+                console.log("Datos de la factura:", datosFactura);
                 const templatePath = path_1.default.join(__dirname, "..", "views", "factura.ejs");
-                // 2. Renderizar la plantilla EJS, pasando la imagen como base64
                 const htmlContent = yield ejs_1.default.renderFile(templatePath, {
                     beneficiario: {
                         nombre: datosFactura.beneficiario_nombre,
@@ -109,7 +109,7 @@ class pagosIndemnizacionController {
                 });
                 const page = yield browser.newPage();
                 yield page.setContent(htmlContent, { waitUntil: "networkidle0" });
-                const pdfBuffer = yield page.pdf({ format: "A4" });
+                const pdfBuffer = yield page.pdf({ format: "A4", printBackground: true });
                 yield browser.close();
                 // 4. Enviar el PDF al cliente
                 res.setHeader("Content-Type", "application/pdf");

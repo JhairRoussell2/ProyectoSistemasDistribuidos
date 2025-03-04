@@ -44,6 +44,7 @@ class pagosIndemnizacionController {
     }
     public async generatePdf(req: Request, res: Response): Promise<void> {
       const { id } = req.params;
+      console.log("Datos de la factura:");
       try {
         const query = `SELECT * FROM obtener_datos_factura($1)`;
         const result = await pool.query(query, [id]);
@@ -52,12 +53,9 @@ class pagosIndemnizacionController {
           res.status(404).json({ message: "Presupuesto no encontrado" });
           return;
         }
-    
         const datosFactura = result.rows[0];
-    
-        // Lee el archivo 'logo.png' y lo convierte a Base64
+        console.log("Datos de la factura:", datosFactura);
         const templatePath = path.join(__dirname, "..", "views", "factura.ejs");
-        // 2. Renderizar la plantilla EJS, pasando la imagen como base64
         const htmlContent = await ejs.renderFile(templatePath, {
           beneficiario: {
             nombre: datosFactura.beneficiario_nombre,
@@ -99,7 +97,7 @@ class pagosIndemnizacionController {
     
         const page = await browser.newPage();
         await page.setContent(htmlContent, { waitUntil: "networkidle0" });
-        const pdfBuffer = await page.pdf({ format: "A4" });
+        const pdfBuffer = await page.pdf({ format: "A4", printBackground: true });
         await browser.close();
     
         // 4. Enviar el PDF al cliente
