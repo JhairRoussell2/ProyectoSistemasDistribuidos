@@ -46,6 +46,7 @@ class pagosIndemnizacionController {
       const { id } = req.params;
       console.log("Datos de la factura:");
       try {
+        // Corregido: la consulta SQL se define como string
         const query = `SELECT * FROM obtener_datos_factura($1)`;
         const result = await pool.query(query, [id]);
     
@@ -56,7 +57,8 @@ class pagosIndemnizacionController {
         const datosFactura = result.rows[0];
         console.log("Datos de la factura:", datosFactura);
         const templatePath = path.join(__dirname, "..", "views", "factura.ejs");
-        const htmlContent = await ejs.renderFile(templatePath, {
+        const htmlContent= await ejs.renderFile(templatePath, {datosFactura});
+        /*const htmlContent = await ejs.renderFile(templatePath, {
           beneficiario: {
             nombre: datosFactura.beneficiario_nombre,
             apellido: datosFactura.beneficiario_apellido,
@@ -80,9 +82,9 @@ class pagosIndemnizacionController {
             tipo: datosFactura.vehiculo_tipo,
             placa: datosFactura.vehiculo_placa
           }
-        });
+        });*/
     
-        // 3. Generar el PDF con Puppeteer
+        // Generar el PDF con Puppeteer
         const browser = await puppeteer.launch({
           headless: true,
           executablePath: puppeteer.executablePath(),
@@ -100,7 +102,7 @@ class pagosIndemnizacionController {
         const pdfBuffer = await page.pdf({ format: "A4", printBackground: true });
         await browser.close();
     
-        // 4. Enviar el PDF al cliente
+        // Enviar el PDF al cliente
         res.setHeader("Content-Type", "application/pdf");
         res.setHeader("Content-Disposition", "attachment; filename=factura.pdf");
         res.end(pdfBuffer);
@@ -109,6 +111,7 @@ class pagosIndemnizacionController {
         console.error("Error al generar el PDF:", error);
         res.status(500).json({ message: "Error al generar el PDF", error });
       }
-    } 
-}
+    }
+  }
+  
 export default new pagosIndemnizacionController();
