@@ -3,6 +3,69 @@
 <head>
   <meta charset="UTF-8">
   <title>Factura de Pago - RIMAC Seguros</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    .bill-container {
+      width: 750px;
+      margin: auto;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 13px;
+    }
+    .bill-emitter-row td {
+      width: 50%;
+      border-bottom: 1px solid #000;
+      padding: 10px;
+      vertical-align: top;
+    }
+    .bill-emitter-row {
+      position: relative;
+    }
+    .bill-type {
+      border: 1px solid #000;
+      background: #fff;
+      width: 60px;
+      height: 50px;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -1px;
+      margin: auto;
+      text-align: center;
+      font-size: 40px;
+      font-weight: 600;
+    }
+    .text-lg {
+      font-size: 30px;
+    }
+    .text-center {
+      text-align: center;
+    }
+    .row {
+      overflow: hidden;
+    }
+    .margin-b-0 {
+      margin-bottom: 0px;
+    }
+    .bill-row td {
+      padding: 5px 10px;
+      border-bottom: 1px solid #000;
+    }
+    .section-title {
+      background: #c0c0c0;
+      font-weight: bold;
+      padding: 5px;
+    }
+    .text-right {
+      text-align: right;
+    }
+  </style>
 </head>
 <body>
   <table class="bill-container">
