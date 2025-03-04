@@ -3,12 +3,153 @@
 <head>
   <meta charset="UTF-8">
   <title>Factura de Pago - RIMAC Seguros</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    .bill-container {
+      width: 750px;
+      margin: auto;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 13px;
+    }
+    .bill-emitter-row td {
+      width: 50%;
+      border-bottom: 1px solid #000;
+      padding: 10px;
+      vertical-align: top;
+    }
+    .bill-emitter-row {
+      position: relative;
+    }
+    .bill-type {
+      border: 1px solid #000;
+      background: #fff;
+      width: 60px;
+      height: 50px;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -1px;
+      margin: auto;
+      text-align: center;
+      font-size: 40px;
+      font-weight: 600;
+    }
+    .text-lg {
+      font-size: 30px;
+    }
+    .text-center {
+      text-align: center;
+    }
+    .row {
+      overflow: hidden;
+    }
+    .margin-b-0 {
+      margin-bottom: 0px;
+    }
+    .bill-row td {
+      padding: 5px 10px;
+      border-bottom: 1px solid #000;
+    }
+    .section-title {
+      background: #c0c0c0;
+      font-weight: bold;
+      padding: 5px;
+    }
+    .text-right {
+      text-align: right;
+    }
+  </style>
 </head>
-<body> <p><strong>Fecha de Siniestro:</strong></p>
-  <p><strong>Tipo de Siniestro:</strong> </p>
-  <p><strong>Descripción:</strong> </p>
-  <p><strong>Taller Asignado:</strong> </p>
-  <p><strong>Monto Total:</strong> </p>
-  <p><strong>Estado:</strong> </p>
+<body>
+  <table class="bill-container">
+    <!-- Cabecera -->
+    <tr class="bill-emitter-row">
+      <td>
+        <div class="bill-type">F</div>
+        <div class="text-lg text-center">RIMAC Seguros</div>
+        <p><strong>Razón Social:</strong> RIMAC Seguros y Reaseguros</p>
+        <p><strong>Domicilio:</strong> Av. Paseo de la República Nro. 3505 Int. P-11 - San Isidro, Lima, Perú</p>
+        <p><strong>Teléfono:</strong> 4113000 - Fax: 4210555</p>
+      </td>
+      <td>
+        <div class="text-lg text-center">Factura Electrónica</div>
+        <p><strong>Fecha de Emisión:</strong> <%= presupuesto.fechacreacion %></p>
+        <p><strong>R.U.C.:</strong> 20100041953</p>
+      </td>
+    </tr>
+    
+    <!-- Datos del Asegurado (Beneficiario) -->
+    <tr class="bill-row">
+      <td colspan="2">
+        <div class="section-title">Datos del Asegurado</div>
+        <p><strong>Señor(es):</strong> <%= beneficiario.nombre %> <%= beneficiario.apellido %></p>
+        <p><strong>DNI:</strong> <%= beneficiario.dni %></p>
+        <p><strong>Dirección:</strong> [Dirección del Asegurado]</p>
+        <p><strong>Teléfono:</strong> <%= beneficiario.telefono %></p>
+        <p><strong>Email:</strong> <%= beneficiario.email %></p>
+      </td>
+    </tr>
+    
+    <!-- Datos de la Póliza -->
+    <tr class="bill-row">
+      <td colspan="2">
+        <div class="section-title">Datos de la Póliza</div>
+        <p><strong>Tipo de Póliza:</strong> <%= poliza.tipopoliza %></p>
+      </td>
+    </tr>
+    
+    <!-- Detalles del Pago -->
+    <tr class="bill-row">
+      <td colspan="2">
+        <div class="section-title">Detalles del Pago</div>
+        <p><strong>Monto Total del Presupuesto:</strong> S/ <%= presupuesto.montototal %></p>
+        <p><strong>Fecha de Pago:</strong> <%= presupuesto.fechacreacion %></p>
+      </td>
+    </tr>
+    
+    <!-- Datos del Taller -->
+    <tr class="bill-row">
+      <td colspan="2">
+        <div class="section-title">Datos del Taller</div>
+        <p><strong>Nombre del Taller:</strong> <%= taller.nombre %></p>
+        <p><strong>Dirección:</strong> <%= taller.direccion %></p>
+        <p><strong>Teléfono:</strong> <%= taller.telefono %></p>
+      </td>
+    </tr>
+    
+    <!-- Datos del Vehículo -->
+    <tr class="bill-row">
+      <td colspan="2">
+        <div class="section-title">Datos del Vehículo</div>
+        <p><strong>Marca:</strong> <%= vehiculo.marca %></p>
+        <p><strong>Modelo:</strong> <%= vehiculo.modelo %></p>
+        <p><strong>Tipo:</strong> <%= vehiculo.tipo %></p>
+        <p><strong>Placa:</strong> <%= vehiculo.placa %></p>
+      </td>
+    </tr>
+    
+    <!-- Pie de Página con QR Code y CAE -->
+    <tr class="bill-row">
+      <td>
+        <div style="background: red; width: 300px; height: 100px; position: relative; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-family: Arial, sans-serif;">
+          <div style="font-weight: bold; font-style: italic; font-size: 3rem; letter-spacing: 0.1em; position: relative;">
+            RI<span style="font-size: 4rem; display: inline-block; margin: 0 -0.05em;">M</span>AC
+          </div>
+          <div style="position: absolute; font-style: italic; bottom: 5px; right: 20px; font-size: 1.3rem;">Seguros</div>
+        </div>
+      </td>
+      <td class="text-right">
+        <p>Representación impresa de la factura electrónica</p>
+        <p>Puedes acceder a tus comprobantes en SeguroFlex</p>
+      </td>
+    </tr>
+  </table>
 </body>
 </html>
