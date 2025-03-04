@@ -138,7 +138,13 @@
     <!-- Pie de Página con QR Code y CAE -->
     <tr class="bill-row">
       <td>
-        <img src="data:image/png;base64,<%= logoBase64 %>" style="width:50%;">
+        <!-- Logo de RIMAC, reemplazando el <img> -->
+        <div style="background: #E50000; width: 300px; height: 100px; position: relative; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-family: Arial, sans-serif;">
+          <div style="font-weight: bold; font-style: italic; font-size: 3rem; letter-spacing: 0.1em; position: relative;">
+            RI<span style="font-size: 4rem; display: inline-block; margin: 0 -0.05em;">M</span>AC
+          </div>
+          <div style="position: absolute; font-style: italic; bottom: 5px; right: 20px; font-size: 1.3rem;">Seguros</div>
+        </div>
       </td>
       <td class="text-right">
         <p>Representación impresa de la factura electrónica</p>

@@ -3,7 +3,6 @@ import ejs from "ejs";
 import path from "path";
 import puppeteer from "puppeteer";
 import pool from "../config/db";
-import fs from "fs";
 class pagosIndemnizacionController {
     // Obtener datos importantes de presupuestos validados y pagados
     public async getIndemnizaciones(req: Request, res: Response): Promise<void> {
@@ -57,13 +56,9 @@ class pagosIndemnizacionController {
         const datosFactura = result.rows[0];
     
         // Lee el archivo 'logo.png' y lo convierte a Base64
-        const logoPath = path.join(__dirname, "..", "views", "logo.png");
-        const logoFile = fs.readFileSync(logoPath, { encoding: "base64" });
-    
         const templatePath = path.join(__dirname, "..", "views", "factura.ejs");
         // 2. Renderizar la plantilla EJS, pasando la imagen como base64
         const htmlContent = await ejs.renderFile(templatePath, {
-          logoBase64: logoFile,
           beneficiario: {
             nombre: datosFactura.beneficiario_nombre,
             apellido: datosFactura.beneficiario_apellido,

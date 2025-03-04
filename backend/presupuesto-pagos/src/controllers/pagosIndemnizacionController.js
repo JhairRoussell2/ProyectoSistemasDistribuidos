@@ -16,7 +16,6 @@ const ejs_1 = __importDefault(require("ejs"));
 const path_1 = __importDefault(require("path"));
 const puppeteer_1 = __importDefault(require("puppeteer"));
 const db_1 = __importDefault(require("../config/db"));
-const fs_1 = __importDefault(require("fs"));
 class pagosIndemnizacionController {
     // Obtener datos importantes de presupuestos validados y pagados
     getIndemnizaciones(req, res) {
@@ -69,12 +68,9 @@ class pagosIndemnizacionController {
                 }
                 const datosFactura = result.rows[0];
                 // Lee el archivo 'logo.png' y lo convierte a Base64
-                const logoPath = path_1.default.join(__dirname, "..", "views", "logo.png");
-                const logoFile = fs_1.default.readFileSync(logoPath, { encoding: "base64" });
                 const templatePath = path_1.default.join(__dirname, "..", "views", "factura.ejs");
                 // 2. Renderizar la plantilla EJS, pasando la imagen como base64
                 const htmlContent = yield ejs_1.default.renderFile(templatePath, {
-                    logoBase64: logoFile,
                     beneficiario: {
                         nombre: datosFactura.beneficiario_nombre,
                         apellido: datosFactura.beneficiario_apellido,
