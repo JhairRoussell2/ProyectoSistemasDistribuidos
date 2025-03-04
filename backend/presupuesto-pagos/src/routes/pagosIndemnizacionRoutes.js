@@ -8,5 +8,4 @@ const pagosIndemnizacionController_1 = __importDefault(require("../controllers/p
 const router = (0, express_1.Router)();
 router.get("/", pagosIndemnizacionController_1.default.getIndemnizaciones);
 router.patch("/:id", pagosIndemnizacionController_1.default.updateEstadoAPagado);
-router.get("/:id/factura", pagosIndemnizacionController_1.default.generatePdf);
 exports.default = router;

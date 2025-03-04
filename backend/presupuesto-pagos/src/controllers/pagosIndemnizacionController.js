@@ -12,9 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const ejs_1 = __importDefault(require("ejs"));
-const path_1 = __importDefault(require("path"));
-const puppeteer_1 = __importDefault(require("puppeteer"));
 const db_1 = __importDefault(require("../config/db"));
 class pagosIndemnizacionController {
     // Obtener datos importantes de presupuestos validados y pagados
@@ -53,72 +50,6 @@ class pagosIndemnizacionController {
             }
             catch (error) {
                 res.status(500).json({ message: "Error al actualizar el estado", error });
-            }
-        });
-    }
-    generatePdf(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.params;
-            console.log("Datos de la factura:");
-            try {
-                const query = `SELECT * FROM obtener_datos_factura($1)`;
-                const result = yield db_1.default.query(query, [id]);
-                if (result.rows.length === 0) {
-                    res.status(404).json({ message: "Presupuesto no encontrado" });
-                    return;
-                }
-                const datosFactura = result.rows[0];
-                console.log("Datos de la factura:", datosFactura);
-                const templatePath = path_1.default.join(__dirname, "..", "views", "factura.ejs");
-                const htmlContent = yield ejs_1.default.renderFile(templatePath, {
-                    beneficiario: {
-                        nombre: datosFactura.beneficiario_nombre,
-                        apellido: datosFactura.beneficiario_apellido,
-                        dni: datosFactura.beneficiario_dni,
-                        telefono: datosFactura.beneficiario_telefono,
-                        email: datosFactura.beneficiario_email
-                    },
-                    poliza: { tipopoliza: datosFactura.tipopoliza },
-                    presupuesto: {
-                        montototal: datosFactura.montototal,
-                        fechacreacion: datosFactura.fechacreacion
-                    },
-                    taller: {
-                        nombre: datosFactura.taller_nombre,
-                        direccion: datosFactura.taller_direccion,
-                        telefono: datosFactura.taller_telefono
-                    },
-                    vehiculo: {
-                        marca: datosFactura.vehiculo_marca,
-                        modelo: datosFactura.vehiculo_modelo,
-                        tipo: datosFactura.vehiculo_tipo,
-                        placa: datosFactura.vehiculo_placa
-                    }
-                });
-                // 3. Generar el PDF con Puppeteer
-                const browser = yield puppeteer_1.default.launch({
-                    headless: true,
-                    executablePath: puppeteer_1.default.executablePath(),
-                    args: [
-                        "--no-sandbox",
-                        "--disable-setuid-sandbox",
-                        "--disable-dev-shm-usage",
-                        "--disable-gpu",
-                        "--disable-software-rasterizer"
-                    ],
-                });
-                const page = yield browser.newPage();
-                yield page.setContent(htmlContent, { waitUntil: "networkidle0" });
-                const pdfBuffer = yield page.pdf({ format: "A4", printBackground: true });
-                yield browser.close();
-                // 4. Enviar el PDF al cliente
-                res.setHeader("Content-Type", "application/pdf");
-                res.setHeader("Content-Disposition", "attachment; filename=factura.pdf");
-                res.end(pdfBuffer);
-            }
-            catch (error) {
-                console.error("Error al generar el PDF:", error);
-                res.status(500).json({ message: "Error al generar el PDF", error });
             }
         });
     }

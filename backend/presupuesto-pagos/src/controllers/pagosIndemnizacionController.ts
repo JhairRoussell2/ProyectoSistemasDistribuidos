@@ -1,7 +1,4 @@
 import { Request, Response } from "express";
-import ejs from "ejs";
-import path from "path";
-import puppeteer from "puppeteer";
 import pool from "../config/db";
 class pagosIndemnizacionController {
     // Obtener datos importantes de presupuestos validados y pagados
@@ -41,76 +38,6 @@ class pagosIndemnizacionController {
         } catch (error) {
             res.status(500).json({ message: "Error al actualizar el estado", error });
         }
-    }
-    public async generatePdf(req: Request, res: Response): Promise<void> {
-      const { id } = req.params;
-      console.log("Datos de la factura:");
-      try {
-        // Corregido: la consulta SQL se define como string
-        const query = `SELECT * FROM obtener_datos_factura($1)`;
-        const result = await pool.query(query, [id]);
-    
-        if (result.rows.length === 0) {
-          res.status(404).json({ message: "Presupuesto no encontrado" });
-          return;
-        }
-        const datosFactura = result.rows[0];
-        console.log("Datos de la factura:", datosFactura);
-        const templatePath = path.join(__dirname, "..", "views", "factura.ejs");
-        const htmlContent= await ejs.renderFile(templatePath, {datosFactura});
-        /*const htmlContent = await ejs.renderFile(templatePath, {
-          beneficiario: {
-            nombre: datosFactura.beneficiario_nombre,
-            apellido: datosFactura.beneficiario_apellido,
-            dni: datosFactura.beneficiario_dni,
-            telefono: datosFactura.beneficiario_telefono,
-            email: datosFactura.beneficiario_email
-          },
-          poliza: { tipopoliza: datosFactura.tipopoliza },
-          presupuesto: {
-            montototal: datosFactura.montototal,
-            fechacreacion: datosFactura.fechacreacion
-          },
-          taller: {
-            nombre: datosFactura.taller_nombre,
-            direccion: datosFactura.taller_direccion,
-            telefono: datosFactura.taller_telefono
-          },
-          vehiculo: {
-            marca: datosFactura.vehiculo_marca,
-            modelo: datosFactura.vehiculo_modelo,
-            tipo: datosFactura.vehiculo_tipo,
-            placa: datosFactura.vehiculo_placa
-          }
-        });*/
-    
-        // Generar el PDF con Puppeteer
-        const browser = await puppeteer.launch({
-          headless: true,
-          executablePath: puppeteer.executablePath(),
-          args: [
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-dev-shm-usage",
-            "--disable-gpu",
-            "--disable-software-rasterizer"
-          ],
-        });
-    
-        const page = await browser.newPage();
-        await page.setContent(htmlContent, { waitUntil: "networkidle0" });
-        const pdfBuffer = await page.pdf({ format: "A4", printBackground: true });
-        await browser.close();
-    
-        // Enviar el PDF al cliente
-        res.setHeader("Content-Type", "application/pdf");
-        res.setHeader("Content-Disposition", "attachment; filename=factura.pdf");
-        res.end(pdfBuffer);
-        
-      } catch (error) {
-        console.error("Error al generar el PDF:", error);
-        res.status(500).json({ message: "Error al generar el PDF", error });
-      }
     }
   }
   
